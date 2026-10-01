@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Icon from "@/components/ui/icon";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { SITE, openCatalogTab, scrollToId, waLink } from "@/lib/site";
+import { SITE, openCatalogTab, scrollToId } from "@/lib/site";
 import { openLead } from "@/components/LeadDialog";
 
 type NavItem = { label: string; short: string; action: () => void };
@@ -74,16 +74,16 @@ const Header = () => {
           </a>
           <span className="hidden 2xl:block h-[18px] w-px bg-border" />
           <a
-            href={waLink("Здравствуйте! Хочу проконсультироваться по дверям ProfilDoors.")}
+            href={SITE.max}
             target="_blank"
             rel="noreferrer"
-            className="hidden md:inline-flex items-center gap-1.5 font-medium text-foreground hover:text-whatsapp transition-colors"
+            className="hidden md:inline-flex items-center gap-1.5 whitespace-nowrap font-medium text-foreground hover:text-messenger transition-colors"
           >
-            <Icon name="MessageCircle" size={15} className="text-whatsapp" />
-            Написать менеджеру
+            <Icon name="MessageCircle" size={15} className="text-messenger" />
+            Написать в MAX
           </a>
           <span className="hidden md:block h-[18px] w-px bg-border" />
-          <a href={SITE.phoneHref} className="hidden lg:inline font-medium text-muted-foreground hover:text-foreground transition-colors">
+          <a href={SITE.phoneHref} className="hidden lg:inline whitespace-nowrap font-medium text-muted-foreground hover:text-foreground transition-colors">
             {SITE.phone}
           </a>
           <a href={SITE.phoneHref} aria-label="Позвонить" className="lg:hidden grid h-9 w-9 place-items-center rounded-full bg-secondary">
@@ -137,8 +137,11 @@ const Header = () => {
                 >
                   Вызвать замерщика
                 </button>
-                <a href={waLink("Здравствуйте! Хочу проконсультироваться.")} target="_blank" rel="noreferrer" className="btn-pill btn-outline">
-                  <Icon name="MessageCircle" size={16} className="text-whatsapp" /> Написать менеджеру
+                <a href={SITE.max} target="_blank" rel="noreferrer" className="btn-pill btn-outline">
+                  <Icon name="MessageCircle" size={16} className="text-messenger" /> Написать в MAX
+                </a>
+                <a href={SITE.vk} target="_blank" rel="noreferrer" className="btn-pill btn-outline">
+                  <Icon name="Users" size={16} /> Группа ВКонтакте
                 </a>
                 <a href={SITE.phoneHref} className="btn-pill btn-outline">
                   <Icon name="Phone" size={16} /> {SITE.phone}

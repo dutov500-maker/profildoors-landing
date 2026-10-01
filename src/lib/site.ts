@@ -1,17 +1,28 @@
 export const SITE = {
-  phone: "+7 495 000-00-00",
-  phoneHref: "tel:+74950000000",
-  whatsapp: "74950000000",
-  telegram: "https://t.me/profildoors_roomer",
-  address: "Москва, ул. Ленинская Слобода, 26",
-  addressFull: "Москва, ул. Ленинская Слобода, 26 (МЦ Roomer, 1 этаж, секция А149–А151)",
+  phone: "+7 (901) 592-72-24",
+  phoneHref: "tel:+79015927224",
+  max: "https://max.ru/join/vdXcwdMFl4420hjcm8CJpanFfbi99zCSYgQiVFt-Vhg",
+  vk: "https://vk.com/profildoors__design",
+  address: "г. Москва, ул. Ленинская Слобода, 26",
+  addressFull: "г. Москва, ул. Ленинская Слобода, 26, МЦ Roomer, 1 этаж, секция А149–А151",
   metro: "м. Автозаводская",
   hours: "Ежедневно с 10:00 до 22:00",
-  routeUrl: "https://yandex.ru/maps/?rtext=~55.709806,37.654283&rtt=auto",
+  routeUrl: "https://yandex.ru/maps/?rtext=~55.709806,37.654283&rtt=mt",
 };
 
-export const waLink = (text: string) =>
-  `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(text)}`;
+export const copyText = async (text: string) => {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+export const openMax = (text?: string) => {
+  if (text) copyText(text);
+  window.open(SITE.max, "_blank", "noopener,noreferrer");
+};
 
 export const scrollToId = (id: string) => {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -19,8 +30,9 @@ export const scrollToId = (id: string) => {
 
 /** Choose a door type in the quiz from anywhere on the page and scroll to it. */
 export const QUIZ_PRESET_EVENT = "quiz:preset";
-export const presetQuiz = (typeId: string) => {
-  window.dispatchEvent(new CustomEvent(QUIZ_PRESET_EVENT, { detail: typeId }));
+export type QuizPreset = { type: string; model?: string };
+export const presetQuiz = (type: string, model?: string) => {
+  window.dispatchEvent(new CustomEvent<QuizPreset>(QUIZ_PRESET_EVENT, { detail: { type, model } }));
   scrollToId("calc");
 };
 

@@ -4,7 +4,7 @@ import Reveal from "@/components/Reveal";
 import { openLead } from "@/components/LeadDialog";
 import { CATALOG_TAB_EVENT, presetQuiz } from "@/lib/site";
 
-type Cat = "invisible" | "modern" | "classic" | "glass" | "entry";
+type Cat = "orange" | "invisible" | "modern" | "glass";
 
 type Model = {
   id: string;
@@ -12,35 +12,109 @@ type Model = {
   series: string;
   name: string;
   img: string;
-  coating: string;
-  frame: string;
-  sound: string;
-  height: string;
+  text: string;
   price: number;
-  badge?: string;
+  badge: string;
   quiz: string;
 };
 
 const TABS: { id: "all" | Cat; label: string }[] = [
   { id: "all", label: "Все" },
-  { id: "invisible", label: "Скрытые (Invisible)" },
-  { id: "modern", label: "Современные (Эмаль/Nanoflex)" },
-  { id: "classic", label: "Классические" },
-  { id: "glass", label: "Стеклянные перегородки (Алюминий)" },
-  { id: "entry", label: "Входные двери" },
+  { id: "orange", label: "ProfilDoors Orange (Флагманские новинки)" },
+  { id: "invisible", label: "Скрытые двери (Invisible & Reverse)" },
+  { id: "modern", label: "Современные серии (E, UNILACK, L, ZN)" },
+  { id: "glass", label: "Стеклянные перегородки AG & Входные двери" },
 ];
 
 const MODELS: Model[] = [
-  { id: "inv", cat: "invisible", series: "ProfilDoors Invisible", name: "Скрытая под покраску", img: "/img/invisible.webp", coating: "Грунт под покраску", frame: "Алюминиевый скрытый короб", sound: "до 32 дБ", height: "до 3000 мм", price: 38900, badge: "Хит салона", quiz: "invisible" },
-  { id: "inv-rev", cat: "invisible", series: "Invisible Reverse", name: "Скрытая обратного открывания", img: "/img/invisible.webp", coating: "Эмаль / грунт", frame: "Короб Reverse 0 мм", sound: "до 32 дБ", height: "до 3000 мм", price: 44500, quiz: "invisible" },
-  { id: "u", cat: "modern", series: "Серия U", name: "1.1.1 U Антрацит", img: "/img/modern.webp", coating: "Unilack, антрацит", frame: "Массив + МДФ", sound: "до 28 дБ", height: "до 2300 мм", price: 26700, quiz: "classic" },
-  { id: "e", cat: "modern", series: "Серия E", name: "1E Аляска, кромка ABS", img: "/img/modern.webp", coating: "Эмаль", frame: "Инженерный массив", sound: "до 30 дБ", height: "до 2400 мм", price: 31200, quiz: "classic" },
-  { id: "z", cat: "modern", series: "Серия Z", name: "1Z Nanoflex Графит", img: "/img/modern.webp", coating: "Nanoflex, soft-touch", frame: "Массив + МДФ", sound: "до 28 дБ", height: "до 2300 мм", price: 29400, badge: "Новинка", quiz: "classic" },
-  { id: "l", cat: "classic", series: "Серия L", name: "73L Манхэттен", img: "/img/classic.webp", coating: "Эмаль, патина", frame: "Массив хвойных пород", sound: "до 30 дБ", height: "до 2400 мм", price: 42800, quiz: "classic" },
-  { id: "x", cat: "classic", series: "Серия X", name: "2.8XN Пекан Кремовый", img: "/img/classic.webp", coating: "Натуральный шпон", frame: "Массив", sound: "до 30 дБ", height: "до 2300 мм", price: 36500, quiz: "classic" },
-  { id: "ag", cat: "glass", series: "Серия AG", name: "Перегородка AG Чёрный матовый", img: "/img/glass.webp", coating: "Алюминий, порошок", frame: "Профиль 20 мм", sound: "до 26 дБ", height: "до 3000 мм", price: 64000, badge: "До потолка", quiz: "glass" },
-  { id: "agn", cat: "glass", series: "Серия AGN", name: "Раздвижная AGN Компакт", img: "/img/glass.webp", coating: "Алюминий, стекло 4 мм", frame: "Скрытый механизм", sound: "до 24 дБ", height: "до 3000 мм", price: 71500, quiz: "glass" },
-  { id: "ent", cat: "entry", series: "Входные ProfilDoors", name: "Steel Графит с ручкой-скобой", img: "/img/entry.webp", coating: "МДФ-панель, эмаль", frame: "Сталь 2 мм, 3 контура", sound: "до 42 дБ", height: "до 2400 мм", price: 89000, quiz: "entry" },
+  {
+    id: "orange-wave",
+    cat: "orange",
+    series: "ProfilDoors Orange",
+    name: "Orange Wave 01 (трендовая 3D-фрезеровка)",
+    img: "/img/orange-wave.webp",
+    text: "Новая линейка Orange. Глубокая фактурная 3D-фрезеровка, бархатистое матовое покрытие Soft-Touch, алюминиевая кромка с 4 сторон.",
+    price: 36900,
+    badge: "Новинка линейки Orange",
+    quiz: "interior",
+  },
+  {
+    id: "orange-slim",
+    cat: "orange",
+    series: "ProfilDoors Orange",
+    name: "Orange Slim Glass (алюминиевый профиль)",
+    img: "/img/glass.webp",
+    text: "Ультратонкий архитектурный профиль Orange, закалённое стекло триплекс: графит, бронза или прозрачное.",
+    price: 44500,
+    badge: "Хит Orange",
+    quiz: "interior",
+  },
+  {
+    id: "0z",
+    cat: "invisible",
+    series: "Invisible",
+    name: "Скрытая дверь 0Z Invisible под покраску",
+    img: "/img/showroom-invisible.webp",
+    text: "Анодированный алюминиевый скрытый короб, заводской полимерный грунт под покраску или поклейку обоев. Скрытые итальянские петли AGB Eclipse.",
+    price: 24900,
+    badge: "Хит продаж в Москве",
+    quiz: "invisible",
+  },
+  {
+    id: "reverse",
+    cat: "invisible",
+    series: "Invisible Reverse",
+    name: "Invisible Reverse (открывание от себя)",
+    img: "/img/invisible.webp",
+    text: "Полотно с четвертью реверсивного открывания в единой плоскости со стеной. Высота до 3000 мм под заказ.",
+    price: 28800,
+    badge: "В наличии в Roomer",
+    quiz: "invisible",
+  },
+  {
+    id: "1e",
+    cat: "modern",
+    series: "Серия E",
+    name: "Серия 1E (гладкая матовая эмаль)",
+    img: "/img/modern.webp",
+    text: "Многослойная немецкая эмаль, устойчивая к ультрафиолету и влаге. Цвета: Белый матовый, Графит, Дарк вайт.",
+    price: 23400,
+    badge: "Практичный выбор",
+    quiz: "interior",
+  },
+  {
+    id: "210u",
+    cat: "modern",
+    series: "Серия U · UNILACK",
+    name: "Серия 2.10U (бархатный Unilack)",
+    img: "/img/classic.webp",
+    text: "Усиленное износостойкое покрытие УФ-лаком с шелковистой текстурой. Цвета: Аляска, Магнолия, Антрацит.",
+    price: 19800,
+    badge: "Топ цена/качество",
+    quiz: "interior",
+  },
+  {
+    id: "ag",
+    cat: "glass",
+    series: "Серия AG",
+    name: "Алюминиевая перегородка AG",
+    img: "/img/showroom-glass.webp",
+    text: "Раздвижная беспороговая система в потолок. Анодированный профиль Black Matte, безопасный триплекс 8 мм, скрытые доводчики.",
+    price: 68000,
+    badge: "Экспозиция в Roomer",
+    quiz: "glass",
+  },
+  {
+    id: "master",
+    cat: "glass",
+    series: "Входные двери",
+    name: "Стальная дверь Master Security",
+    img: "/img/entry.webp",
+    text: "Взломостойкая дверь 4 класса с терморазрывом и внутренней декоративной панелью, повторяющей межкомнатные двери ProfilDoors.",
+    price: 62500,
+    badge: "Единый стиль квартиры",
+    quiz: "entry",
+  },
 ];
 
 const fmt = (n: number) => new Intl.NumberFormat("ru-RU").format(n);
@@ -63,11 +137,11 @@ const Catalog = () => {
     <section id="catalog" className="mx-auto max-w-[1440px] px-4 py-16 sm:px-6 sm:py-24 lg:px-[34px]">
       <Reveal className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <span className="eyebrow-chip">Коллекции ProfilDoors</span>
+          <span className="eyebrow-chip">Актуальные коллекции ProfilDoors</span>
           <h2 className="section-title mt-4 max-w-[16em]">Каталог моделей, которые можно потрогать в шоуруме</h2>
         </div>
         <p className="max-w-[26em] text-muted-foreground">
-          Образцы в полный рост, веера покрытий и короба в разрезе. Цены за комплект: полотно, короб, наличники.
+          Только актуальные серии фабрики и новая линейка ProfilDoors Orange. Цены за комплект: полотно, короб, наличники.
         </p>
       </Reveal>
 
@@ -97,52 +171,42 @@ const Catalog = () => {
             <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
               <img
                 src={m.img}
-                alt={`${m.series} ${m.name}`}
+                alt={m.name}
                 loading={i < 4 ? "eager" : "lazy"}
                 className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
               />
-              {m.badge && (
-                <span className="absolute left-3 top-3 rounded-full bg-card/95 px-2.5 py-1 text-[0.75em] font-medium backdrop-blur">
-                  {m.badge}
-                </span>
-              )}
+              <span
+                className={`absolute left-3 top-3 rounded-full px-2.5 py-1 text-[0.75em] font-medium backdrop-blur ${
+                  m.cat === "orange" ? "bg-gold text-white" : "bg-card/95"
+                }`}
+              >
+                {m.badge}
+              </span>
             </div>
             <div className="flex flex-1 flex-col p-4 sm:p-5">
               <span className="text-[0.72em] font-medium uppercase tracking-[0.06em] text-gold">{m.series}</span>
-              <h3 className="mt-1 text-[1.15em] font-semibold leading-tight tracking-[-0.02em]">{m.name}</h3>
-              <dl className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 text-[0.82em]">
-                {[
-                  ["Покрытие", m.coating],
-                  ["Каркас", m.frame],
-                  ["Звукоизоляция", m.sound],
-                  ["Высота", m.height],
-                ].map(([k, v]) => (
-                  <div key={k}>
-                    <dt className="text-muted-foreground">{k}</dt>
-                    <dd className="font-medium leading-snug">{v}</dd>
-                  </div>
-                ))}
-              </dl>
+              <h3 className="mt-1 text-[1.1em] font-semibold leading-tight tracking-[-0.02em]">{m.name}</h3>
+              <p className="mt-2.5 text-[0.86em] leading-relaxed text-muted-foreground">{m.text}</p>
               <div className="mt-auto pt-4">
                 <p className="font-display text-xl font-semibold tracking-tight">
                   от {fmt(m.price)} ₽ <span className="text-[0.7em] font-medium text-muted-foreground">/ комплект</span>
                 </p>
                 <div className="mt-3 flex flex-col gap-2">
-                  <button onClick={() => presetQuiz(m.quiz)} className="btn-pill btn-dark py-2.5 text-[0.88em]">
-                    Быстрый расчёт в салон
+                  <button onClick={() => presetQuiz(m.quiz, m.name)} className="btn-pill btn-dark py-2.5 text-[0.88em]">
+                    <Icon name="Calculator" size={15} /> Рассчитать эту модель
                   </button>
                   <button
                     onClick={() =>
                       openLead({
                         title: "Посмотреть образцы в шоуруме",
-                        description: `${m.series} ${m.name}. Подготовим образец и веер покрытий к вашему визиту в МЦ Roomer.`,
-                        source: `Визит в шоурум: ${m.series} ${m.name}`,
+                        description: `${m.name}. Подготовим образец и веер покрытий к вашему визиту в МЦ Roomer.`,
+                        source: `Визит в шоурум: ${m.name}`,
                         button: "Записаться на визит",
                       })
                     }
                     className="btn-pill btn-outline py-2.5 text-[0.88em]"
                   >
-                    <Icon name="Eye" size={15} /> Посмотреть образцы в шоуруме
+                    <Icon name="Eye" size={15} /> Посмотреть в шоуруме
                   </button>
                 </div>
               </div>

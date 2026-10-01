@@ -1,9 +1,9 @@
 import Icon from "@/components/ui/icon";
 import QuizCard from "@/components/QuizCard";
-import { SITE, scrollToId, waLink } from "@/lib/site";
+import { SITE, scrollToId } from "@/lib/site";
 
 const TILES = [
-  { cap: "Гарантия", big: "1 год", sub: "Свой монтаж" },
+  { cap: "Гарантия", big: "5 лет", sub: "Полотна и фурнитура" },
   { cap: "Высота полотна", big: "3000 мм", sub: "Скрытый короб" },
   { cap: "Шоурум", big: "10–22", sub: "Ежедневно" },
 ];
@@ -23,6 +23,17 @@ const Hero = () => {
           <p className="max-w-[30em] text-[1.15em] leading-[1.5] text-foreground">
             Двери премиум-класса с установкой под ключ. 60+ моделей вживую, смета за 10 минут.
           </p>
+          <button
+            onClick={() => scrollToId("showroom")}
+            className="group flex items-center gap-3 rounded-2xl border border-border bg-card p-1.5 pr-4 text-left transition hover:border-foreground/30"
+          >
+            <img src="/img/showroom-entry.webp" alt="Шоурум ProfilDoors в МЦ Roomer" className="h-14 w-20 rounded-xl object-cover" />
+            <span className="text-[0.86em] leading-snug">
+              <span className="block font-medium">Более 60 моделей вживую</span>
+              <span className="text-muted-foreground">1 этаж, секция А149–А151</span>
+            </span>
+            <Icon name="ArrowRight" size={14} className="ml-1 text-muted-foreground transition group-hover:translate-x-0.5" />
+          </button>
         </section>
 
         <div className="lg:[grid-area:quiz] lg:min-h-0">
@@ -36,12 +47,13 @@ const Hero = () => {
               <Icon name="ArrowRight" size={14} strokeWidth={2.4} />
             </button>
             <a
-              href={waLink("Здравствуйте! Хочу задать вопрос по дверям ProfilDoors.")}
+              href={SITE.max}
               target="_blank"
               rel="noreferrer"
               className="btn-pill btn-outline"
             >
-              Написать в WhatsApp
+              <Icon name="MessageCircle" size={15} className="text-messenger" />
+              Написать в MAX
             </a>
           </div>
           <div className="grid grid-cols-3 gap-2 sm:gap-3">

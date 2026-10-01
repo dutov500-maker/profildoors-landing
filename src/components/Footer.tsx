@@ -10,6 +10,10 @@ const Footer = () => (
       <div className="flex flex-col gap-1 md:items-end">
         <a href={SITE.phoneHref} className="font-medium text-foreground">{SITE.phone}</a>
         <p>{SITE.hours}</p>
+        <div className="flex gap-3">
+          <a href={SITE.max} target="_blank" rel="noreferrer" className="font-medium text-foreground hover:text-messenger">MAX</a>
+          <a href={SITE.vk} target="_blank" rel="noreferrer" className="font-medium text-foreground hover:text-messenger">ВКонтакте</a>
+        </div>
       </div>
     </div>
   </footer>

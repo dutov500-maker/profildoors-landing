@@ -28,7 +28,7 @@ export default {
 					DEFAULT: 'hsl(var(--door))',
 					dark: 'hsl(var(--door-dark))'
 				},
-				whatsapp: 'hsl(var(--whatsapp))',
+				messenger: 'hsl(var(--messenger))',
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
@@ -108,8 +108,8 @@ export default {
 					to: { opacity: '1', transform: 'scale(1)' }
 				},
 				'soft-pulse': {
-					'0%, 100%': { boxShadow: '0 0 0 0 hsl(var(--whatsapp) / 0.45)' },
-					'50%': { boxShadow: '0 0 0 12px hsl(var(--whatsapp) / 0)' }
+					'0%, 100%': { boxShadow: '0 0 0 0 hsl(var(--messenger) / 0.45)' },
+					'50%': { boxShadow: '0 0 0 12px hsl(var(--messenger) / 0)' }
 				}
 			},
 			animation: {

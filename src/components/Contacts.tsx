@@ -1,15 +1,15 @@
 import Icon from "@/components/ui/icon";
 import Reveal from "@/components/Reveal";
-import { SITE, waLink } from "@/lib/site";
+import { SITE } from "@/lib/site";
 import { callMeasurer } from "@/components/Header";
 
 const MAP_SRC =
   "https://yandex.ru/map-widget/v1/?ll=37.654283%2C55.709806&z=16&pt=37.654283%2C55.709806%2Cpm2dgl&l=map";
 
 const ROUTE = [
-  { icon: "TrainFront", text: "Метро Автозаводская, выход 1 — 3 минуты пешком" },
-  { icon: "MapPin", text: "ул. Ленинская Слобода, 26, МЦ Roomer" },
-  { icon: "DoorOpen", text: "1 этаж, вход со стороны центральной галереи, павильон А149–А151" },
+  { icon: "TrainFront", text: "Метро Автозаводская — пара минут пешком" },
+  { icon: "MapPin", text: "г. Москва, ул. Ленинская Слобода, 26, МЦ Roomer" },
+  { icon: "DoorOpen", text: "1 этаж, секция А149–А151" },
 ];
 
 const Contacts = () => (
@@ -46,7 +46,13 @@ const Contacts = () => (
                 </li>
               ))}
             </ul>
-            <a href={SITE.routeUrl} target="_blank" rel="noreferrer" className="btn-pill btn-outline mt-5 w-full">
+            <div className="mt-5 rounded-2xl border border-gold/40 bg-card p-4 text-[0.9em] leading-relaxed">
+              <p className="mb-1 flex items-center gap-1.5 font-semibold">
+                <Icon name="Footprints" size={15} className="text-gold" fallback="Navigation" /> Как быстро пройти в салон
+              </p>
+              1 этаж, центральный вход со стороны ул. Ленинская Слобода, двигайтесь прямо по линии А до секции А149–А151 (напротив эскалатора).
+            </div>
+            <a href={SITE.routeUrl} target="_blank" rel="noreferrer" className="btn-pill btn-outline mt-4 w-full">
               <Icon name="Navigation" size={15} /> Построить маршрут
             </a>
           </div>
@@ -70,11 +76,11 @@ const Contacts = () => (
         <Reveal delay={160}>
           <div className="flex flex-col gap-2.5 rounded-[22px] border border-border p-5">
             <div className="grid grid-cols-2 gap-2.5">
-              <a href={waLink("Здравствуйте! Хочу приехать в шоурум ProfilDoors в МЦ Roomer.")} target="_blank" rel="noreferrer" className="btn-pill bg-whatsapp text-white hover:opacity-90">
-                <Icon name="MessageCircle" size={16} /> WhatsApp
+              <a href={SITE.max} target="_blank" rel="noreferrer" className="btn-pill bg-messenger text-white hover:opacity-90">
+                <Icon name="MessageCircle" size={16} /> Написать в MAX
               </a>
-              <a href={SITE.telegram} target="_blank" rel="noreferrer" className="btn-pill btn-outline">
-                <Icon name="Send" size={16} /> Telegram
+              <a href={SITE.vk} target="_blank" rel="noreferrer" className="btn-pill btn-outline">
+                <Icon name="Users" size={16} /> Группа VK
               </a>
             </div>
             <button onClick={callMeasurer} className="btn-pill btn-dark">

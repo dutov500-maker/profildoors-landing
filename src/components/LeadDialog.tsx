@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import Icon from "@/components/ui/icon";
-import { phoneMask, phoneValid, waLink } from "@/lib/site";
+import { SITE, phoneMask, phoneValid } from "@/lib/site";
 
 export type LeadOptions = {
   title: string;
@@ -60,12 +60,12 @@ const LeadDialog = () => {
               {name.trim()}, менеджер салона перезвонит вам в течение 15 минут в рабочее время (10:00–22:00).
             </DialogDescription>
             <a
-              href={waLink(`Здравствуйте! Я оставил(а) заявку: ${opts.source}. Меня зовут ${name.trim()}.`)}
+              href={SITE.max}
               target="_blank"
               rel="noreferrer"
               className="btn-pill btn-outline mt-5"
             >
-              <Icon name="MessageCircle" size={16} /> Не ждать — написать в WhatsApp
+              <Icon name="MessageCircle" size={16} /> Не ждать — написать в MAX
             </a>
           </div>
         ) : (

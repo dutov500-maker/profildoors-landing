@@ -1,6 +1,6 @@
 import Icon from "@/components/ui/icon";
 import Reveal from "@/components/Reveal";
-import { waLink } from "@/lib/site";
+import { SITE } from "@/lib/site";
 
 const TERMS = [
   { icon: "Lock", title: "Закрепление проектов", text: "Ваш клиент закреплён за вами с первого визита." },
@@ -25,13 +25,13 @@ const Designers = () => (
         </div>
         <div className="flex flex-col gap-3 min-[480px]:flex-row min-[480px]:items-center">
           <a
-            href={waLink("Здравствуйте! Я дизайнер/архитектор. Пришлите, пожалуйста, партнёрский прайс ProfilDoors.")}
+            href={SITE.max}
             target="_blank"
             rel="noreferrer"
             className="btn-pill bg-primary-foreground text-primary hover:bg-primary-foreground/90"
           >
-            <Icon name="MessageCircle" size={16} className="text-whatsapp" />
-            Получить партнёрский прайс в WhatsApp
+            <Icon name="MessageCircle" size={16} className="text-messenger" />
+            Получить партнёрский прайс в MAX
           </a>
           <span className="text-[0.86em] text-primary-foreground/60">Ответим в течение часа</span>
         </div>

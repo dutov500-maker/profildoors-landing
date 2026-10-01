@@ -2,11 +2,12 @@ import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import LeadDialog from "@/components/LeadDialog";
 import Catalog from "@/components/Catalog";
+import Showroom from "@/components/Showroom";
 import WhyUs from "@/components/WhyUs";
 import Designers from "@/components/Designers";
 import Contacts from "@/components/Contacts";
 import Footer from "@/components/Footer";
-import FloatingWhatsApp from "@/components/FloatingWhatsApp";
+import FloatingMessenger from "@/components/FloatingMessenger";
 
 const Index = () => {
   return (
@@ -14,11 +15,12 @@ const Index = () => {
       <Header />
       <Hero />
       <Catalog />
+      <Showroom />
       <WhyUs />
       <Designers />
       <Contacts />
       <Footer />
-      <FloatingWhatsApp />
+      <FloatingMessenger />
       <LeadDialog />
     </div>
   );
