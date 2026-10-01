@@ -18,7 +18,17 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				sans: ['Inter', 'sans-serif'],
+				display: ['"Inter Tight"', 'Inter', 'sans-serif']
+			},
 			colors: {
+				gold: 'hsl(var(--gold))',
+				door: {
+					DEFAULT: 'hsl(var(--door))',
+					dark: 'hsl(var(--door-dark))'
+				},
+				whatsapp: 'hsl(var(--whatsapp))',
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
@@ -84,11 +94,31 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				rise: {
+					from: { opacity: '0', transform: 'translateY(6px)' },
+					to: { opacity: '1', transform: 'none' }
+				},
+				'fade-in': {
+					from: { opacity: '0', transform: 'translateY(10px)' },
+					to: { opacity: '1', transform: 'translateY(0)' }
+				},
+				'scale-in': {
+					from: { opacity: '0', transform: 'scale(0.95)' },
+					to: { opacity: '1', transform: 'scale(1)' }
+				},
+				'soft-pulse': {
+					'0%, 100%': { boxShadow: '0 0 0 0 hsl(var(--whatsapp) / 0.45)' },
+					'50%': { boxShadow: '0 0 0 12px hsl(var(--whatsapp) / 0)' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				rise: 'rise 0.5s ease both',
+				'fade-in': 'fade-in 0.4s ease-out both',
+				'scale-in': 'scale-in 0.25s ease-out both',
+				'soft-pulse': 'soft-pulse 2.4s ease-in-out infinite'
 			}
 		}
 	},
