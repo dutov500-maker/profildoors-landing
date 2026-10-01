@@ -20,10 +20,17 @@ export default {
 		extend: {
 			fontFamily: {
 				sans: ['Inter', 'sans-serif'],
-				display: ['"Inter Tight"', 'Inter', 'sans-serif']
+				display: ['"Inter Tight"', 'Inter', 'sans-serif'],
+				serif: ['"Cormorant Garamond"', 'Georgia', 'serif']
 			},
 			colors: {
 				gold: 'hsl(var(--gold))',
+				orange: 'hsl(var(--orange))',
+				graphite: {
+					DEFAULT: 'hsl(var(--graphite))',
+					soft: 'hsl(var(--graphite-soft))'
+				},
+				sand: 'hsl(var(--sand))',
 				door: {
 					DEFAULT: 'hsl(var(--door))',
 					dark: 'hsl(var(--door-dark))'
@@ -72,6 +79,11 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				}
+			},
+			boxShadow: {
+				soft: '0 1px 2px rgba(26,26,26,0.04), 0 8px 24px -12px rgba(26,26,26,0.12)',
+				lift: '0 2px 4px rgba(26,26,26,0.04), 0 24px 48px -20px rgba(26,26,26,0.28)',
+				glass: '0 30px 80px -20px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.18)'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

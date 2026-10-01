@@ -11,11 +11,11 @@ import FloatingMessenger from "@/components/FloatingMessenger";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-card text-foreground">
       <Header />
       <Hero />
-      <Catalog />
       <Showroom />
+      <Catalog />
       <WhyUs />
       <Designers />
       <Contacts />

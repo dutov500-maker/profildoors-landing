@@ -37,9 +37,21 @@ const Header = () => {
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-background/90 backdrop-blur-md border-b border-border" : "bg-background border-b border-transparent"
+        scrolled ? "bg-card/90 backdrop-blur-xl border-b border-border shadow-soft" : "bg-card border-b border-border"
       }`}
     >
+      <div className={`overflow-hidden bg-graphite text-white/80 transition-all duration-300 ${scrolled ? "h-0" : "h-8"}`}>
+        <div className="mx-auto flex h-8 max-w-[1440px] items-center justify-center gap-2.5 px-4 text-[0.74em] tracking-[0.04em] sm:text-[0.78em]">
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-70" />
+            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+          </span>
+          <span className="truncate">
+            <span className="hidden sm:inline">Официальный дилер фабрики ProfilDoors <span className="mx-1.5 text-gold">•</span> </span>
+            Экспозиция открыта сегодня до 22:00 в МЦ Roomer
+          </span>
+        </div>
+      </div>
       <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between gap-6 px-4 sm:px-6 lg:px-[34px]">
         <a
           href="#top"
@@ -49,7 +61,7 @@ const Header = () => {
           }}
           className="flex flex-col whitespace-nowrap leading-[1.1]"
         >
-          <span className="font-display text-[1.2em] font-bold tracking-[-0.03em]">ProfilDoors</span>
+          <span className="font-display text-[1.2em] font-bold uppercase tracking-[0.08em]">Profil<span className="text-gold">Doors</span></span>
           <span className="text-[0.72em] text-muted-foreground">Фирменный салон в МЦ Roomer</span>
         </a>
 
@@ -91,7 +103,7 @@ const Header = () => {
           </a>
           <button
             onClick={callMeasurer}
-            className="hidden sm:inline-flex items-center gap-2 rounded-[9px] bg-primary px-[13px] py-2 text-[0.93em] font-medium text-primary-foreground transition hover:bg-primary/85"
+            className="btn-dark hidden sm:inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-[0.93em] font-medium transition-all active:scale-[0.97]"
           >
             <Icon name="Plus" size={13} strokeWidth={2.4} />
             Вызвать замерщика

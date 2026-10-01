@@ -13,7 +13,8 @@ const ROUTE = [
 ];
 
 const Contacts = () => (
-  <section id="contacts" className="mx-auto max-w-[1440px] px-4 py-16 sm:px-6 sm:py-20 lg:px-[34px]">
+  <section id="contacts" className="section-sand">
+    <div className="mx-auto max-w-[1440px] px-4 py-16 sm:px-6 sm:py-20 lg:px-[34px]">
     <Reveal>
       <span className="eyebrow-chip">Шоурум на Автозаводской</span>
       <h2 className="section-title mt-4 max-w-[16em]">Приезжайте выбирать двери вживую</h2>
@@ -21,7 +22,7 @@ const Contacts = () => (
 
     <div className="mt-8 grid gap-3 sm:gap-4 lg:grid-cols-[1fr_420px]">
       <Reveal className="order-2 lg:order-1">
-        <div className="relative h-[340px] overflow-hidden rounded-[22px] border border-border bg-secondary sm:h-[460px] lg:h-full lg:min-h-[520px]">
+        <div className="relative h-[340px] overflow-hidden rounded-[16px] border border-border bg-secondary shadow-soft sm:h-[460px] lg:h-full lg:min-h-[520px]">
           <iframe
             title="МЦ Roomer на карте"
             src={MAP_SRC}
@@ -34,19 +35,19 @@ const Contacts = () => (
 
       <div className="order-1 flex flex-col gap-3 sm:gap-4 lg:order-2">
         <Reveal>
-          <div className="rounded-[22px] bg-secondary p-6">
+          <div className="rounded-[16px] bg-card p-6 shadow-soft">
             <p className="text-[0.72em] font-medium uppercase tracking-[0.06em] text-muted-foreground">Как добраться</p>
             <ul className="mt-4 flex flex-col gap-3.5">
               {ROUTE.map((r) => (
                 <li key={r.text} className="flex gap-3">
-                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-card">
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-sand text-gold">
                     <Icon name={r.icon} size={17} fallback="MapPin" />
                   </span>
                   <span className="pt-1.5 leading-snug">{r.text}</span>
                 </li>
               ))}
             </ul>
-            <div className="mt-5 rounded-2xl border border-gold/40 bg-card p-4 text-[0.9em] leading-relaxed">
+            <div className="mt-5 rounded-xl border border-gold/40 bg-sand p-4 text-[0.9em] leading-relaxed">
               <p className="mb-1 flex items-center gap-1.5 font-semibold">
                 <Icon name="Footprints" size={15} className="text-gold" fallback="Navigation" /> Как быстро пройти в салон
               </p>
@@ -60,12 +61,12 @@ const Contacts = () => (
 
         <Reveal delay={80}>
           <div className="grid grid-cols-2 gap-3 sm:gap-4">
-            <div className="rounded-2xl bg-secondary p-5">
+            <div className="rounded-[16px] bg-card p-5 shadow-soft">
               <p className="text-[0.72em] font-medium uppercase tracking-[0.06em] text-muted-foreground">Часы работы</p>
               <p className="mt-1 font-display text-2xl font-semibold tracking-tight">10:00–22:00</p>
               <p className="text-[0.86em] text-muted-foreground">Ежедневно</p>
             </div>
-            <a href={SITE.phoneHref} className="rounded-2xl bg-secondary p-5 transition-colors hover:bg-secondary/60">
+            <a href={SITE.phoneHref} className="rounded-[16px] bg-card p-5 shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-lift">
               <p className="text-[0.72em] font-medium uppercase tracking-[0.06em] text-muted-foreground">Менеджер</p>
               <p className="mt-1 whitespace-nowrap font-display text-[1.05em] font-semibold leading-tight tracking-tight sm:text-lg">{SITE.phone}</p>
               <p className="text-[0.86em] text-muted-foreground">Позвонить</p>
@@ -74,7 +75,7 @@ const Contacts = () => (
         </Reveal>
 
         <Reveal delay={160}>
-          <div className="flex flex-col gap-2.5 rounded-[22px] border border-border p-5">
+          <div className="flex flex-col gap-2.5 rounded-[16px] bg-card p-5 shadow-soft">
             <div className="grid grid-cols-2 gap-2.5">
               <a href={SITE.max} target="_blank" rel="noreferrer" className="btn-pill bg-messenger text-white hover:opacity-90">
                 <Icon name="MessageCircle" size={16} /> Написать в MAX
@@ -89,6 +90,7 @@ const Contacts = () => (
           </div>
         </Reveal>
       </div>
+    </div>
     </div>
   </section>
 );

@@ -28,7 +28,7 @@ const NOTES = ["Дальше: количество, монтаж, контакт
 
 const fmt = (n: number) => new Intl.NumberFormat("ru-RU").format(Math.round(n / 1000) * 1000);
 
-const QuizCard = () => {
+const QuizCard = ({ glass = false }: { glass?: boolean }) => {
   const [step, setStep] = useState(0);
   const [type, setType] = useState<string>("invisible");
   const [model, setModel] = useState<string | null>(null);
@@ -96,28 +96,40 @@ const QuizCard = () => {
     setTouched(false);
   };
 
+  const tileOff = glass
+    ? "border-white/10 bg-white/[0.06] hover:bg-white/[0.12] hover:border-white/25"
+    : "border-transparent bg-secondary hover:bg-secondary/60 hover:border-border";
+  const tileOn = glass ? "border-white/70 bg-white/[0.16]" : "border-primary bg-card shadow-soft";
+  const muted = glass ? "text-white/60" : "text-muted-foreground";
+  const chip = glass ? "bg-white/10" : "bg-secondary";
+  const field = glass
+    ? "border-white/15 bg-white/[0.08] text-white placeholder:text-white/45 focus:border-white/60 focus:bg-white/[0.12]"
+    : "border-transparent bg-secondary focus:border-primary focus:bg-card";
+
   const optionTile = (o: Opt, on: boolean, onClick: () => void) => (
     <button
       key={o.id}
       type="button"
       onClick={onClick}
       className={`relative grid grid-cols-[44px_1fr] grid-rows-[auto_auto] content-center items-center gap-x-3.5 rounded-2xl border-[1.5px] px-4 py-3.5 text-left transition-all duration-200 animate-rise ${
-        on ? "border-primary bg-card" : "border-transparent bg-secondary hover:bg-secondary/60 hover:border-border"
+        on ? tileOn : tileOff
       }`}
     >
       <span className="row-span-2 grid place-items-center">
         {o.glyph ? (
-          <DoorGlyph kind={o.glyph} />
+          <span className={glass ? "rounded-lg bg-white/90 p-1" : ""}>
+            <DoorGlyph kind={o.glyph} />
+          </span>
         ) : (
-          <span className="grid h-11 w-11 place-items-center rounded-xl bg-card text-foreground">
+          <span className={`grid h-11 w-11 place-items-center rounded-xl ${glass ? "bg-white/10 text-gold" : "bg-card text-foreground shadow-soft"}`}>
             <Icon name={o.icon ?? "Circle"} size={20} />
           </span>
         )}
       </span>
       <span className="self-end text-[0.95em] font-semibold leading-tight">{o.name}</span>
-      <span className="mt-0.5 self-start text-[0.84em] leading-snug text-muted-foreground">{o.sub}</span>
+      <span className={`mt-0.5 self-start text-[0.84em] leading-snug ${muted}`}>{o.sub}</span>
       {on && (
-        <span className="absolute right-2.5 top-2.5 grid h-5 w-5 place-items-center rounded-full bg-primary text-primary-foreground animate-scale-in">
+        <span className={`absolute right-2.5 top-2.5 grid h-5 w-5 place-items-center rounded-full animate-scale-in ${glass ? "bg-gold text-graphite" : "bg-primary text-primary-foreground"}`}>
           <Icon name="Check" size={11} strokeWidth={3.4} />
         </span>
       )}
@@ -128,25 +140,26 @@ const QuizCard = () => {
     <section
       id="calc"
       aria-label="Расчёт стоимости"
-      className="flex min-h-[460px] flex-col rounded-[22px] border border-border bg-card p-5 shadow-[0_1px_2px_rgba(10,10,10,0.05)] sm:p-[26px]"
+      className={`flex min-h-[460px] flex-col rounded-[16px] p-5 sm:p-[26px] ${glass ? "glass-card" : "border border-border bg-card shadow-lift"}`}
     >
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="font-sans text-[1.13em] font-medium tracking-[-0.01em]">Расчёт стоимости</h2>
-          <p className="mt-1.5 max-w-[26em] text-[0.9em] leading-[1.45] text-muted-foreground">
-            4 шага — и подарок к заказу: магнитные замки или скрытые петли.
+          <p className={`text-[0.7em] font-medium uppercase tracking-[0.18em] ${glass ? "text-gold" : "text-muted-foreground"}`}>Калькулятор салона</p>
+          <h2 className="mt-1 font-serif text-[1.75em] font-medium leading-none">Расчёт за 3 клика</h2>
+          <p className={`mt-2 max-w-[26em] text-[0.88em] leading-[1.45] ${muted}`}>
+            И подарок к заказу: магнитные замки или скрытые петли.
           </p>
         </div>
-        <span className="whitespace-nowrap rounded-full bg-secondary px-[11px] py-1 text-[0.82em] font-medium">
+        <span className={`whitespace-nowrap rounded-full px-[11px] py-1 text-[0.82em] font-medium ${chip}`}>
           {done ? "Готово" : `${step + 1} / 4`}
         </span>
       </div>
 
       <div className="mb-[22px] mt-5 grid grid-cols-4 gap-1.5">
         {[0, 1, 2, 3].map((i) => (
-          <span key={i} className="h-1 overflow-hidden rounded bg-secondary">
+          <span key={i} className={`h-[3px] overflow-hidden rounded ${glass ? "bg-white/15" : "bg-secondary"}`}>
             <span
-              className="block h-full rounded bg-primary transition-all duration-500"
+              className={`block h-full rounded transition-all duration-500 ${glass ? "bg-gold" : "bg-primary"}`}
               style={{ width: done || i <= step ? "100%" : "0%" }}
             />
           </span>
@@ -155,21 +168,21 @@ const QuizCard = () => {
 
       {done ? (
         <div className="flex flex-1 flex-col items-center justify-center text-center animate-fade-in">
-          <span className="mb-4 grid h-14 w-14 place-items-center rounded-full bg-primary text-primary-foreground">
+          <span className={`mb-4 grid h-14 w-14 place-items-center rounded-full ${glass ? "bg-gold text-graphite" : "bg-primary text-primary-foreground"}`}>
             <Icon name="Check" size={26} />
           </span>
           <p className="font-display text-2xl font-semibold tracking-tight">Расчёт собран</p>
-          <p className="mt-2 max-w-[25em] text-muted-foreground">
+          <p className={`mt-2 max-w-[25em] ${muted}`}>
             Мы скопировали текст заявки — вставьте его в чат MAX и отправьте. Менеджер пришлёт смету со скидкой салона в течение 10 минут.
           </p>
           <div className="mt-5 flex flex-wrap justify-center gap-2.5">
             <button onClick={() => openMax(message())} className="btn-pill bg-messenger text-white hover:opacity-90">
               <Icon name="MessageCircle" size={16} /> Открыть MAX
             </button>
-            <a href={SITE.phoneHref} className="btn-pill btn-outline">
+            <a href={SITE.phoneHref} className={`btn-pill ${glass ? "btn-ghost-light" : "btn-outline"}`}>
               <Icon name="Phone" size={16} /> Позвонить
             </a>
-            <button onClick={reset} className="btn-pill btn-outline">
+            <button onClick={reset} className={`btn-pill ${glass ? "btn-ghost-light" : "btn-outline"}`}>
               Новый расчёт
             </button>
           </div>
@@ -178,7 +191,7 @@ const QuizCard = () => {
         <>
           <p className="mb-3 text-[0.95em] font-medium">{LABELS[step]}</p>
           {model && step > 0 && (
-            <p className="-mt-1 mb-3 inline-flex w-fit items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-[0.8em] font-medium">
+            <p className={`-mt-1 mb-3 inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1 text-[0.8em] font-medium ${chip}`}>
               <Icon name="Tag" size={12} className="text-gold" /> {model}
             </p>
           )}
@@ -206,9 +219,9 @@ const QuizCard = () => {
             )}
             {step === 3 && (
               <div className="flex flex-col gap-3 animate-rise">
-                <div className="flex items-center justify-between rounded-2xl bg-secondary px-4 py-3">
-                  <span className="text-[0.84em] text-muted-foreground">Ориентировочно</span>
-                  <span className="font-display text-lg font-semibold tracking-tight">от {fmt(estimate)} ₽</span>
+                <div className={`flex items-center justify-between rounded-xl px-4 py-3 ${chip}`}>
+                  <span className={`text-[0.84em] ${muted}`}>Ориентировочно</span>
+                  <span className={`font-display text-lg font-semibold tracking-tight ${glass ? "text-gold" : ""}`}>от {fmt(estimate)} ₽</span>
                 </div>
                 <div className="grid gap-3 min-[420px]:grid-cols-2">
                   <div>
@@ -216,9 +229,9 @@ const QuizCard = () => {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Ваше имя"
-                      className="h-12 w-full rounded-xl border border-transparent bg-secondary px-4 outline-none transition focus:border-primary focus:bg-card"
+                      className={`h-12 w-full rounded-xl border px-4 outline-none transition ${field}`}
                     />
-                    {touched && !nameOk && <p className="mt-1 text-xs text-destructive">Укажите имя</p>}
+                    {touched && !nameOk && <p className={`mt-1 text-xs ${glass ? "text-orange" : "text-destructive"}`}>Укажите имя</p>}
                   </div>
                   <div>
                     <input
@@ -226,25 +239,25 @@ const QuizCard = () => {
                       inputMode="tel"
                       onChange={(e) => setPhone(phoneMask(e.target.value))}
                       placeholder="+7 (___) ___-__-__"
-                      className="h-12 w-full rounded-xl border border-transparent bg-secondary px-4 outline-none transition focus:border-primary focus:bg-card"
+                      className={`h-12 w-full rounded-xl border px-4 outline-none transition ${field}`}
                     />
-                    {touched && !phoneOk && <p className="mt-1 text-xs text-destructive">Введите телефон полностью</p>}
+                    {touched && !phoneOk && <p className={`mt-1 text-xs ${glass ? "text-orange" : "text-destructive"}`}>Введите телефон полностью</p>}
                   </div>
                 </div>
-                <p className="text-[0.8em] leading-snug text-muted-foreground">
+                <p className={`text-[0.8em] leading-snug ${muted}`}>
                   Откроется чат салона в MAX, а текст расчёта скопируется — останется вставить и отправить.
                 </p>
               </div>
             )}
           </div>
 
-          <div className="mt-5 flex items-center justify-between gap-3 border-t border-border pt-[18px]">
+          <div className={`mt-5 flex items-center justify-between gap-3 border-t pt-[18px] ${glass ? "border-white/10" : "border-border"}`}>
             {step > 0 ? (
-              <button onClick={() => setStep(step - 1)} className="inline-flex items-center gap-1.5 text-[0.86em] text-muted-foreground hover:text-foreground">
+              <button onClick={() => setStep(step - 1)} className={`inline-flex items-center gap-1.5 text-[0.86em] ${muted} ${glass ? "hover:text-white" : "hover:text-foreground"}`}>
                 <Icon name="ArrowLeft" size={14} /> Назад
               </button>
             ) : (
-              <span className="text-[0.86em] text-muted-foreground">{NOTES[step]}</span>
+              <span className={`text-[0.86em] ${muted}`}>{NOTES[step]}</span>
             )}
             {step === 3 ? (
               <button onClick={next} className="btn-pill bg-messenger px-5 py-[11px] text-white hover:opacity-90">
@@ -254,7 +267,7 @@ const QuizCard = () => {
               <button
                 onClick={next}
                 disabled={!canNext}
-                className="btn-pill btn-dark px-[34px] py-[11px] disabled:cursor-not-allowed disabled:opacity-40"
+                className={`btn-pill px-[34px] py-[11px] disabled:cursor-not-allowed disabled:opacity-40 ${glass ? "btn-gold" : "btn-dark"}`}
               >
                 Далее
               </button>
