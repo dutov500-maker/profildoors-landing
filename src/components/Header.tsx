@@ -9,8 +9,9 @@ type NavItem = { label: string; short: string; action: () => void };
 const NAV: NavItem[] = [
   { label: "Каталог", short: "Каталог", action: () => openCatalogTab("all") },
   { label: "Скрытые двери Invisible", short: "Invisible", action: () => openCatalogTab("invisible") },
-  { label: "Раздвижные системы", short: "Раздвижные", action: () => openCatalogTab("glass") },
+  { label: "Раздвижные системы", short: "Раздвижные", action: () => openCatalogTab("alu") },
   { label: "Калькулятор стоимости", short: "Калькулятор", action: () => scrollToId("calc") },
+  { label: "Фабрика", short: "Фабрика", action: () => scrollToId("factory") },
   { label: "Дизайнерам", short: "Дизайнерам", action: () => scrollToId("b2b") },
   { label: "Контакты", short: "Контакты", action: () => scrollToId("contacts") },
 ];

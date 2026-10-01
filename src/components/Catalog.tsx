@@ -4,8 +4,7 @@ import Reveal from "@/components/Reveal";
 import { openLead } from "@/components/LeadDialog";
 import { CATALOG_TAB_EVENT, presetQuiz } from "@/lib/site";
 
-type Cat = "orange" | "invisible" | "modern" | "glass";
-type Tone = "orange" | "dark" | "light";
+type Cat = "orange" | "invisible" | "premium" | "alu" | "entry";
 
 type Model = {
   id: string;
@@ -16,45 +15,40 @@ type Model = {
   text: string;
   price: number;
   badge: string;
-  tone: Tone;
   quiz: string;
 };
 
 const TABS: { id: "all" | Cat; label: string }[] = [
   { id: "all", label: "Все" },
-  { id: "orange", label: "ProfilDoors Orange (Флагманские новинки)" },
-  { id: "invisible", label: "Скрытые двери (Invisible & Reverse)" },
-  { id: "modern", label: "Современные серии (E, UNILACK, L, ZN)" },
-  { id: "glass", label: "Стеклянные перегородки AG & Входные двери" },
+  { id: "invisible", label: "Скрытые Invisible & Короба" },
+  { id: "premium", label: "Шпон & Эмаль (Премиум)" },
+  { id: "alu", label: "Алюминиевые двери & Перегородки AG" },
+  { id: "entry", label: "Входные алюминиевые двери" },
+  { id: "orange", label: "ProfilDoors Orange" },
 ];
 
 const MODELS: Model[] = [
-  { id: "orange-wave", cat: "orange", series: "ProfilDoors Orange", name: "Orange Wave 01", img: "/img/orange-wave.webp", text: "Трендовая 3D-фрезеровка, бархатистое покрытие Soft-Touch, алюминиевая кромка с 4 сторон.", price: 36900, badge: "Новая коллекция Orange", tone: "orange", quiz: "interior" },
-  { id: "orange-slim", cat: "orange", series: "ProfilDoors Orange", name: "Orange Slim Glass", img: "/img/door-glass-bronze.webp", text: "Ультратонкий архитектурный профиль, триплекс графит, бронза или прозрачный.", price: 44500, badge: "Хит Orange", tone: "orange", quiz: "interior" },
-  { id: "orange-line", cat: "orange", series: "ProfilDoors Orange", name: "Orange Line 03", img: "/img/door-greige.webp", text: "Тонкая вертикальная фрезеровка, матовый Soft-Touch в оттенках Грейж и Кашемир.", price: 38700, badge: "Новая коллекция Orange", tone: "orange", quiz: "interior" },
-  { id: "orange-edge", cat: "orange", series: "ProfilDoors Orange", name: "Orange Edge Black", img: "/img/door-white.webp", text: "Гладкое полотно с контрастной чёрной алюминиевой кромкой и скрытым магнитным замком.", price: 34500, badge: "Новинка 2026", tone: "orange", quiz: "interior" },
+  { id: "inv-alu", cat: "invisible", series: "Короб INVISIBLE ALU", name: "Скрытый алюминиевый короб", img: "/img/showroom-invisible.webp", text: "Анодированный короб под отделку стены, скрытые петли и магнитный замок. Высота полотна до 4 000 мм.", price: 26900, badge: "Хит Roomer", quiz: "invisible" },
+  { id: "inv-slim", cat: "invisible", series: "Короб SLIM", name: "Тонкий скрытый короб SLIM", img: "/img/hero-invisible.webp", text: "Минимальный теневой зазор и облегчённый профиль — дверь читается как линия на стене.", price: 29400, badge: "Скрытый монтаж", quiz: "invisible" },
+  { id: "inv-reverse", cat: "invisible", series: "INFINITY REVERSE", name: "Полотно в плоскости стены", img: "/img/invisible.webp", text: "Реверсивное открывание: полотно в единой плоскости со стеной с обеих сторон. До 4 000 мм.", price: 34800, badge: "Скрытый монтаж", quiz: "invisible" },
+  { id: "inv-0sa", cat: "invisible", series: "Серии 0 SA · 0 SE", name: "Под покраску и сплошное зеркало", img: "/img/door-mirror.webp", text: "Полотно под покраску или со сплошным зеркалом: серебро, бронза, графит.", price: 24900, badge: "Выбор дизайнеров", quiz: "invisible" },
 
-  { id: "0z", cat: "invisible", series: "Invisible", name: "0Z Invisible под покраску", img: "/img/showroom-invisible.webp", text: "Анодированный скрытый короб, заводской грунт под покраску или обои, петли AGB Eclipse.", price: 24900, badge: "Хит Roomer", tone: "dark", quiz: "invisible" },
-  { id: "reverse", cat: "invisible", series: "Invisible Reverse", name: "Invisible Reverse", img: "/img/invisible.webp", text: "Реверсивное открывание от себя, полотно в единой плоскости со стеной. До 3000 мм.", price: 28800, badge: "Скрытый монтаж", tone: "light", quiz: "invisible" },
-  { id: "inv-ceiling", cat: "invisible", series: "Invisible", name: "Invisible в потолок 3000", img: "/img/hero-invisible.webp", text: "Полотно от пола до потолка без фрамуги, усиленный короб и 4 скрытые петли.", price: 41200, badge: "Скрытый монтаж", tone: "light", quiz: "invisible" },
-  { id: "inv-veneer", cat: "invisible", series: "Invisible", name: "Invisible под стеновые панели", img: "/img/door-graphite.webp", text: "Скрытая дверь под отделку МДФ-панелями или шпоном в едином рисунке со стеной.", price: 36400, badge: "Выбор дизайнеров", tone: "dark", quiz: "invisible" },
+  { id: "ve", cat: "premium", series: "Серии VE · VA · VT", name: "Натуральный шпон", img: "/img/door-veneer.webp", text: "Сложные текстуры Duna и Albero, руст 5 мм, диагональное и радиальное направление волокон.", price: 48500, badge: "Премиум", quiz: "interior" },
+  { id: "se", cat: "premium", series: "Серии SE · SA", name: "Шелковистая гладкая эмаль", img: "/img/door-white.webp", text: "Многослойная эмаль с бархатистой поверхностью, кромка в цвет полотна, колеровка RAL/NCS.", price: 32700, badge: "Хит Roomer", quiz: "interior" },
+  { id: "sw", cat: "premium", series: "Серия SW", name: "Неоклассическая 3D-фрезеровка", img: "/img/door-graphite.webp", text: "Объёмная фрезеровка филёнок под эмалью — современная неоклассика для высоких потолков.", price: 39800, badge: "Неоклассика", quiz: "interior" },
+  { id: "swb", cat: "premium", series: "Серия SWB", name: "Эмаль с латунными молдингами", img: "/img/door-enamel-brass.webp", text: "Тонкие латунные молдинги на шелковистой эмали — акцент для гостиных и кабинетов.", price: 46200, badge: "Новая коллекция", quiz: "interior" },
 
-  { id: "1e", cat: "modern", series: "Серия E", name: "1E Гладкая матовая эмаль", img: "/img/modern.webp", text: "Многослойная эмаль, устойчивая к влаге и УФ. Белый матовый, Графит, Дарк вайт.", price: 23400, badge: "Хит Roomer", tone: "dark", quiz: "interior" },
-  { id: "210u", cat: "modern", series: "Серия U · UNILACK", name: "2.10U Бархатный Unilack", img: "/img/classic.webp", text: "Износостойкое покрытие УФ-лаком с шелковистой текстурой. Аляска, Магнолия, Антрацит.", price: 19800, badge: "Топ цена/качество", tone: "light", quiz: "interior" },
-  { id: "l", cat: "modern", series: "Серия L", name: "3L Графит с молдингом", img: "/img/door-graphite.webp", text: "Эмаль с тонкими накладными молдингами — современная неоклассика для высоких потолков.", price: 29600, badge: "В наличии в Roomer", tone: "light", quiz: "interior" },
-  { id: "zn", cat: "modern", series: "Серия ZN", name: "1ZN Алюминиевая кромка", img: "/img/door-white.webp", text: "Гладкое полотно Nanoflex с кромкой ABS/алюминий, магнитный замок в комплекте.", price: 21900, badge: "Практичный выбор", tone: "light", quiz: "interior" },
+  { id: "agk", cat: "alu", series: "Серии AGK · AGN", name: "Алюминиевые двери с триплексом", img: "/img/door-glass-bronze.webp", text: "Двойное заполнение триплексом и декоративные панели АКП в тонком алюминиевом профиле.", price: 52400, badge: "Хит Roomer", quiz: "glass" },
+  { id: "ag", cat: "alu", series: "Серия AG", name: "Беспороговые раздвижные перегородки", img: "/img/showroom-glass.webp", text: "Перегородки в потолок без порога, профиль Black Matte, скрытые доводчики.", price: 68000, badge: "Экспозиция в Roomer", quiz: "glass" },
+  { id: "magic", cat: "alu", series: "Системы Magic · Pivot", name: "Magic, Pivot и каскадные пеналы", img: "/img/glass.webp", text: "Раздвижные системы Magic со скрытым механизмом, поворотные Pivot и каскадные пеналы.", price: 74500, badge: "Сложные проёмы", quiz: "glass" },
 
-  { id: "ag", cat: "glass", series: "Серия AG", name: "Раздвижная перегородка AG", img: "/img/showroom-glass.webp", text: "Беспороговая система в потолок, профиль Black Matte, триплекс 8 мм, скрытые доводчики.", price: 68000, badge: "Экспозиция в Roomer", tone: "dark", quiz: "glass" },
-  { id: "agn", cat: "glass", series: "Серия AGN", name: "Распашная AGN Bronze", img: "/img/door-glass-bronze.webp", text: "Стеклянная дверь в тонкой алюминиевой раме, тонированное бронзовое стекло.", price: 52400, badge: "Хит Roomer", tone: "dark", quiz: "glass" },
-  { id: "master", cat: "glass", series: "Входные двери", name: "Master Security", img: "/img/entry.webp", text: "4 класс взломостойкости, терморазрыв и панель в стиле межкомнатных дверей.", price: 62500, badge: "Единый стиль квартиры", tone: "light", quiz: "entry" },
-  { id: "master-house", cat: "glass", series: "Входные двери", name: "Master Thermo для дома", img: "/img/door-entry-house.webp", text: "Уличная дверь с тройным терморазрывом, 3 контура уплотнения и фрезерованная панель.", price: 84900, badge: "Для коттеджа", tone: "light", quiz: "entry" },
+  { id: "rp", cat: "entry", series: "Серия RP", name: "Pivot со смарт-замком", img: "/img/door-pivot.webp", text: "Премиальная алюминиевая входная дверь на поворотной оси Pivot, смарт-замок, для дома и квартиры.", price: 189000, badge: "Премиум", quiz: "entry" },
+  { id: "fn", cat: "entry", series: "Серия FN", name: "Алюминиевая дверь с терморазрывом", img: "/img/door-entry-house.webp", text: "Уличная и квартирная дверь с терморазрывом и многоконтурным уплотнением.", price: 98000, badge: "Для коттеджа", quiz: "entry" },
+  { id: "fn-flat", cat: "entry", series: "Серия FN", name: "Квартирная FN в стиле межкомнатных", img: "/img/entry.webp", text: "Внутренняя панель в едином стиле с межкомнатными дверями ProfilDoors.", price: 86500, badge: "Единый стиль", quiz: "entry" },
+
+  { id: "orange-wave", cat: "orange", series: "ProfilDoors Orange", name: "Orange Wave 01", img: "/img/orange-wave.webp", text: "3D-фрезеровка, бархатистое покрытие Soft-Touch, алюминиевая кромка с 4 сторон.", price: 36900, badge: "Новая коллекция Orange", quiz: "interior" },
+  { id: "orange-line", cat: "orange", series: "ProfilDoors Orange", name: "Orange Line 03", img: "/img/door-greige.webp", text: "Тонкая вертикальная фрезеровка, матовый Soft-Touch в оттенках Грейж и Кашемир.", price: 38700, badge: "Новая коллекция Orange", quiz: "interior" },
 ];
-
-const TONE: Record<Tone, string> = {
-  orange: "bg-white/90 text-graphite",
-  dark: "bg-white/90 text-graphite",
-  light: "bg-white/90 text-graphite",
-};
 
 const fmt = (n: number) => new Intl.NumberFormat("ru-RU").format(n);
 
@@ -115,7 +109,7 @@ const Catalog = () => {
                   loading={i < 4 ? "eager" : "lazy"}
                   className="h-full w-full object-cover transition-transform duration-[1100ms] ease-out group-hover:scale-[1.06]"
                 />
-                <span className={`absolute left-3 top-3 rounded-full px-2.5 py-1 text-[0.7em] font-medium tracking-[0.01em] backdrop-blur ${TONE[m.tone]}`}>
+                <span className={`absolute left-3 top-3 rounded-full px-2.5 py-1 text-[0.7em] font-medium tracking-[0.01em] backdrop-blur  bg-white/90 text-graphite`}>
                   {m.badge}
                 </span>
               </div>

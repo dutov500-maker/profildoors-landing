@@ -6,10 +6,10 @@ import { QUIZ_PRESET_EVENT, QuizPreset, SITE, openMax, phoneMask, phoneValid } f
 type Opt = { id: string; name: string; sub: string; glyph?: "classic" | "invisible" | "glass" | "entry"; icon?: string; price?: number; mult?: number };
 
 const TYPES: Opt[] = [
-  { id: "invisible", name: "Скрытые Invisible", sub: "Под покраску, Reverse", glyph: "invisible", price: 24900 },
-  { id: "interior", name: "Межкомнатные", sub: "Orange и эмаль", glyph: "classic", price: 23400 },
-  { id: "glass", name: "Перегородки", sub: "Алюминий AG, стекло", glyph: "glass", price: 68000 },
-  { id: "entry", name: "Входные", sub: "Master Security", glyph: "entry", price: 62500 },
+  { id: "invisible", name: "Скрытые Invisible", sub: "ALU, SLIM, Reverse", glyph: "invisible", price: 26900 },
+  { id: "interior", name: "Межкомнатные", sub: "Шпон, эмаль, Orange", glyph: "classic", price: 32700 },
+  { id: "glass", name: "Алюминий и AG", sub: "AGK, AGN, Magic, Pivot", glyph: "glass", price: 58000 },
+  { id: "entry", name: "Входные", sub: "Серии RP и FN", glyph: "entry", price: 98000 },
 ];
 
 const QTY: Opt[] = [

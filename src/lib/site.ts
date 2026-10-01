@@ -7,16 +7,16 @@ export const SITE = {
   addressFull: "г. Москва, ул. Ленинская Слобода, 26, МЦ Roomer, 1 этаж, секция А149–А151",
   metro: "м. Автозаводская",
   hours: "Ежедневно с 10:00 до 22:00",
-  routeTarget: "МЦ Roomer, ул. Ленинская Слобода, 26",
-  routeUrl: "",
+  routeTarget: "Официальный салон ProfilDoors, МЦ Roomer, 1 этаж, секция А149–А151",
+  lat: 55.712613,
+  lon: 37.653495,
+  routeUrl: "https://yandex.ru/maps/?rtext=~55.712613,37.653495&rtt=auto",
 };
 
-const ROUTE_DEST = "Москва, улица Ленинская Слобода, 26, МЦ Roomer";
+const METRO = "55.706914,37.657487";
 
-export const routeLink = (rtt: "auto" | "mt" | "pd" = "auto", from = "") =>
-  `https://yandex.ru/maps/?mode=routes&rtt=${rtt}&rtext=${encodeURIComponent(from)}~${encodeURIComponent(ROUTE_DEST)}`;
-
-SITE.routeUrl = routeLink("auto");
+export const routeLink = (rtt: "auto" | "mt" | "pd" = "auto", fromMetro = false) =>
+  `https://yandex.ru/maps/?rtext=${fromMetro ? METRO : ""}~${SITE.lat},${SITE.lon}&rtt=${rtt}`;
 
 export const copyText = async (text: string) => {
   try {

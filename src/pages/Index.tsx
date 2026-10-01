@@ -3,6 +3,7 @@ import Hero from "@/components/Hero";
 import LeadDialog from "@/components/LeadDialog";
 import Catalog from "@/components/Catalog";
 import Showroom from "@/components/Showroom";
+import Factory from "@/components/Factory";
 import WhyUs from "@/components/WhyUs";
 import Designers from "@/components/Designers";
 import Contacts from "@/components/Contacts";
@@ -15,6 +16,7 @@ const Index = () => {
       <Header />
       <Hero />
       <Showroom />
+      <Factory />
       <Catalog />
       <WhyUs />
       <Designers />

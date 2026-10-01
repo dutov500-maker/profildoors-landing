@@ -6,8 +6,8 @@ const FACTS = ["Экспозиция в Roomer", "Высота до 3 метро
 
 const Hero = () => (
   <div id="top" className="relative bg-[#0F1012] pt-24 text-white">
-    <div className="relative mx-auto grid max-w-[1440px] gap-12 px-4 pb-24 pt-10 sm:px-6 sm:pt-16 lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:px-[34px] lg:pb-32">
-      <section className="flex flex-col justify-center animate-fade-in">
+    <div className="relative mx-auto grid max-w-[1440px] items-stretch gap-14 px-4 pb-24 pt-12 sm:px-6 sm:pt-16 lg:grid-cols-[1fr_minmax(0,560px)] lg:gap-20 lg:px-[34px] lg:pb-32 lg:pt-20 xl:gap-28">
+      <section className="flex flex-col justify-center py-2 animate-fade-in lg:py-10">
         <a
           href={SITE.routeUrl}
           target="_blank"
@@ -43,7 +43,7 @@ const Hero = () => (
         </p>
       </section>
 
-      <div className="relative min-h-[600px] overflow-hidden rounded-[14px] lg:min-h-[700px]">
+      <div className="relative overflow-hidden rounded-[14px]">
         <img
           src="/img/hero-invisible.webp"
           alt="Скрытая дверь ProfilDoors в интерьере с деревянными панелями"
@@ -51,8 +51,8 @@ const Hero = () => (
           fetchPriority="high"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0F1012]/85 via-[#0F1012]/20 to-transparent" />
-        <div className="relative flex h-full items-end p-3 pt-24 sm:p-6">
-          <div className="w-full">
+        <div className="relative flex h-full flex-col justify-end p-3 pt-40 sm:p-8 sm:pt-56 lg:pt-8">
+          <div className="w-full lg:mt-auto">
             <QuizCard glass />
           </div>
         </div>
