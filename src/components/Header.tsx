@@ -37,17 +37,16 @@ const Header = () => {
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-card/90 backdrop-blur-xl border-b border-border shadow-soft" : "bg-card border-b border-border"
+        scrolled ? "bg-white/90 backdrop-blur-xl border-b border-neutral-200" : "bg-white border-b border-neutral-200"
       }`}
     >
-      <div className={`overflow-hidden bg-graphite text-white/80 transition-all duration-300 ${scrolled ? "h-0" : "h-8"}`}>
-        <div className="mx-auto flex h-8 max-w-[1440px] items-center justify-center gap-2.5 px-4 text-[0.74em] tracking-[0.04em] sm:text-[0.78em]">
+      <div className={`overflow-hidden bg-[#0F1012] text-white/55 transition-all duration-300 ${scrolled ? "h-0" : "h-8"}`}>
+        <div className="mx-auto flex h-8 max-w-[1440px] items-center justify-center gap-2.5 px-4 text-[0.72em] font-light tracking-[0.04em] sm:text-[0.76em]">
           <span className="relative flex h-1.5 w-1.5">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-70" />
-            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400/80" />
           </span>
           <span className="truncate">
-            <span className="hidden sm:inline">Официальный дилер фабрики ProfilDoors <span className="mx-1.5 text-gold">•</span> </span>
+            <span className="hidden sm:inline">Официальный дилер фабрики ProfilDoors <span className="mx-2 text-white/25">•</span> </span>
             Экспозиция открыта сегодня до 22:00 в МЦ Roomer
           </span>
         </div>
@@ -61,11 +60,11 @@ const Header = () => {
           }}
           className="flex flex-col whitespace-nowrap leading-[1.1]"
         >
-          <span className="font-display text-[1.2em] font-bold uppercase tracking-[0.08em]">Profil<span className="text-gold">Doors</span></span>
-          <span className="text-[0.72em] text-muted-foreground">Фирменный салон в МЦ Roomer</span>
+          <span className="text-[1.05em] font-semibold uppercase tracking-[0.16em]">ProfilDoors</span>
+          <span className="mt-0.5 text-[0.7em] font-light text-muted-foreground">Официальный шоурум · МЦ Roomer</span>
         </a>
 
-        <nav className="hidden xl:flex gap-[22px] text-[0.93em] font-medium">
+        <nav className="hidden xl:flex gap-7 text-[0.9em] tracking-[-0.01em]">
           {NAV.map((n) => (
             <button key={n.label} onClick={n.action} title={n.label} className="relative transition-colors hover:text-muted-foreground">
               {n.short}
@@ -89,9 +88,9 @@ const Header = () => {
             href={SITE.max}
             target="_blank"
             rel="noreferrer"
-            className="hidden md:inline-flex items-center gap-1.5 whitespace-nowrap font-medium text-foreground hover:text-messenger transition-colors"
+            className="hidden md:inline-flex items-center gap-1.5 whitespace-nowrap font-medium text-foreground hover:text-muted-foreground transition-colors"
           >
-            <Icon name="MessageCircle" size={15} className="text-messenger" />
+            <Icon name="MessageCircle" size={15} strokeWidth={1.6} />
             Написать в MAX
           </a>
           <span className="hidden md:block h-[18px] w-px bg-border" />
@@ -105,8 +104,7 @@ const Header = () => {
             onClick={callMeasurer}
             className="btn-dark hidden sm:inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-[0.93em] font-medium transition-all active:scale-[0.97]"
           >
-            <Icon name="Plus" size={13} strokeWidth={2.4} />
-            Вызвать замерщика
+                        Вызвать замерщика
           </button>
 
           <Sheet open={open} onOpenChange={setOpen}>
@@ -116,7 +114,7 @@ const Header = () => {
               </button>
             </SheetTrigger>
             <SheetContent side="right" className="w-[88vw] max-w-sm p-6">
-              <SheetTitle className="font-display text-xl font-bold tracking-tight">ProfilDoors</SheetTitle>
+              <SheetTitle className="text-lg font-semibold uppercase tracking-[0.14em]">ProfilDoors</SheetTitle>
               <p className="text-xs text-muted-foreground">Фирменный салон в МЦ Roomer</p>
               <nav className="mt-8 flex flex-col">
                 {NAV.map((n) => (
@@ -150,7 +148,7 @@ const Header = () => {
                   Вызвать замерщика
                 </button>
                 <a href={SITE.max} target="_blank" rel="noreferrer" className="btn-pill btn-outline">
-                  <Icon name="MessageCircle" size={16} className="text-messenger" /> Написать в MAX
+                  Написать в MAX
                 </a>
                 <a href={SITE.vk} target="_blank" rel="noreferrer" className="btn-pill btn-outline">
                   <Icon name="Users" size={16} /> Группа ВКонтакте

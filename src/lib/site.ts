@@ -7,8 +7,16 @@ export const SITE = {
   addressFull: "г. Москва, ул. Ленинская Слобода, 26, МЦ Roomer, 1 этаж, секция А149–А151",
   metro: "м. Автозаводская",
   hours: "Ежедневно с 10:00 до 22:00",
-  routeUrl: "https://yandex.ru/maps/?rtext=~55.709806,37.654283&rtt=mt",
+  routeTarget: "МЦ Roomer, ул. Ленинская Слобода, 26",
+  routeUrl: "",
 };
+
+const ROUTE_DEST = "Москва, улица Ленинская Слобода, 26, МЦ Roomer";
+
+export const routeLink = (rtt: "auto" | "mt" | "pd" = "auto", from = "") =>
+  `https://yandex.ru/maps/?mode=routes&rtt=${rtt}&rtext=${encodeURIComponent(from)}~${encodeURIComponent(ROUTE_DEST)}`;
+
+SITE.routeUrl = routeLink("auto");
 
 export const copyText = async (text: string) => {
   try {

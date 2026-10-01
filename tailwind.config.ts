@@ -19,9 +19,9 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				sans: ['Inter', 'sans-serif'],
-				display: ['"Inter Tight"', 'Inter', 'sans-serif'],
-				serif: ['"Cormorant Garamond"', 'Georgia', 'serif']
+				sans: ['Manrope', 'system-ui', 'sans-serif'],
+				display: ['Manrope', 'system-ui', 'sans-serif'],
+				serif: ['Manrope', 'system-ui', 'sans-serif']
 			},
 			colors: {
 				gold: 'hsl(var(--gold))',
@@ -81,9 +81,9 @@ export default {
 				}
 			},
 			boxShadow: {
-				soft: '0 1px 2px rgba(26,26,26,0.04), 0 8px 24px -12px rgba(26,26,26,0.12)',
-				lift: '0 2px 4px rgba(26,26,26,0.04), 0 24px 48px -20px rgba(26,26,26,0.28)',
-				glass: '0 30px 80px -20px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.18)'
+				soft: '0 1px 2px rgba(15,16,18,0.04)',
+				lift: '0 12px 32px -18px rgba(15,16,18,0.18)',
+				glass: '0 30px 60px -30px rgba(0,0,0,0.6)'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

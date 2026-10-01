@@ -97,13 +97,13 @@ const QuizCard = ({ glass = false }: { glass?: boolean }) => {
   };
 
   const tileOff = glass
-    ? "border-white/10 bg-white/[0.06] hover:bg-white/[0.12] hover:border-white/25"
+    ? "border-white/[0.08] bg-[#1A1B1F] hover:border-white/20 hover:bg-[#202126]"
     : "border-transparent bg-secondary hover:bg-secondary/60 hover:border-border";
-  const tileOn = glass ? "border-white/70 bg-white/[0.16]" : "border-primary bg-card shadow-soft";
-  const muted = glass ? "text-white/60" : "text-muted-foreground";
-  const chip = glass ? "bg-white/10" : "bg-secondary";
+  const tileOn = glass ? "border-white/50 bg-[#24252A]" : "border-graphite bg-card";
+  const muted = glass ? "text-white/45" : "text-muted-foreground";
+  const chip = glass ? "border border-white/[0.08] bg-[#1A1B1F]" : "bg-secondary";
   const field = glass
-    ? "border-white/15 bg-white/[0.08] text-white placeholder:text-white/45 focus:border-white/60 focus:bg-white/[0.12]"
+    ? "border-white/[0.08] bg-[#1A1B1F] text-white placeholder:text-white/35 focus:border-white/40"
     : "border-transparent bg-secondary focus:border-primary focus:bg-card";
 
   const optionTile = (o: Opt, on: boolean, onClick: () => void) => (
@@ -111,25 +111,25 @@ const QuizCard = ({ glass = false }: { glass?: boolean }) => {
       key={o.id}
       type="button"
       onClick={onClick}
-      className={`relative grid grid-cols-[44px_1fr] grid-rows-[auto_auto] content-center items-center gap-x-3.5 rounded-2xl border-[1.5px] px-4 py-3.5 text-left transition-all duration-200 animate-rise ${
+      className={`relative grid grid-cols-[44px_1fr] grid-rows-[auto_auto] content-center items-center gap-x-3.5 rounded-[10px] border px-4 py-3.5 text-left transition-all duration-200 animate-rise ${
         on ? tileOn : tileOff
       }`}
     >
       <span className="row-span-2 grid place-items-center">
         {o.glyph ? (
-          <span className={glass ? "rounded-lg bg-white/90 p-1" : ""}>
+          <span className={glass ? "rounded-md bg-white/85 p-1 opacity-90" : ""}>
             <DoorGlyph kind={o.glyph} />
           </span>
         ) : (
-          <span className={`grid h-11 w-11 place-items-center rounded-xl ${glass ? "bg-white/10 text-gold" : "bg-card text-foreground shadow-soft"}`}>
+          <span className={`grid h-11 w-11 place-items-center rounded-xl ${glass ? "border border-white/[0.08] text-white/80" : "bg-card text-foreground"}`}>
             <Icon name={o.icon ?? "Circle"} size={20} />
           </span>
         )}
       </span>
-      <span className="self-end text-[0.95em] font-semibold leading-tight">{o.name}</span>
+      <span className="self-end text-[0.93em] font-medium leading-tight tracking-[-0.01em]">{o.name}</span>
       <span className={`mt-0.5 self-start text-[0.84em] leading-snug ${muted}`}>{o.sub}</span>
       {on && (
-        <span className={`absolute right-2.5 top-2.5 grid h-5 w-5 place-items-center rounded-full animate-scale-in ${glass ? "bg-gold text-graphite" : "bg-primary text-primary-foreground"}`}>
+        <span className={`absolute right-2.5 top-2.5 grid h-5 w-5 place-items-center rounded-full animate-scale-in ${glass ? "bg-white text-graphite" : "bg-primary text-primary-foreground"}`}>
           <Icon name="Check" size={11} strokeWidth={3.4} />
         </span>
       )}
@@ -140,14 +140,14 @@ const QuizCard = ({ glass = false }: { glass?: boolean }) => {
     <section
       id="calc"
       aria-label="Расчёт стоимости"
-      className={`flex min-h-[460px] flex-col rounded-[16px] p-5 sm:p-[26px] ${glass ? "glass-card" : "border border-border bg-card shadow-lift"}`}
+      className={`flex min-h-[460px] flex-col rounded-[14px] p-5 sm:p-7 ${glass ? "glass-card" : "border border-border bg-card"}`}
     >
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className={`text-[0.7em] font-medium uppercase tracking-[0.18em] ${glass ? "text-gold" : "text-muted-foreground"}`}>Калькулятор салона</p>
-          <h2 className="mt-1 font-serif text-[1.75em] font-medium leading-none">Расчёт за 3 клика</h2>
+          <p className={`text-[0.7em] font-medium uppercase tracking-[0.18em] ${glass ? "text-white/40" : "text-muted-foreground"}`}>Калькулятор салона</p>
+          <h2 className="mt-2 text-[1.45em] font-medium leading-none tracking-[-0.03em]">Расчёт стоимости</h2>
           <p className={`mt-2 max-w-[26em] text-[0.88em] leading-[1.45] ${muted}`}>
-            И подарок к заказу: магнитные замки или скрытые петли.
+            Три вопроса — и смета с подарком: магнитные замки или скрытые петли.
           </p>
         </div>
         <span className={`whitespace-nowrap rounded-full px-[11px] py-1 text-[0.82em] font-medium ${chip}`}>
@@ -157,9 +157,9 @@ const QuizCard = ({ glass = false }: { glass?: boolean }) => {
 
       <div className="mb-[22px] mt-5 grid grid-cols-4 gap-1.5">
         {[0, 1, 2, 3].map((i) => (
-          <span key={i} className={`h-[3px] overflow-hidden rounded ${glass ? "bg-white/15" : "bg-secondary"}`}>
+          <span key={i} className={`h-[3px] overflow-hidden rounded ${glass ? "bg-white/[0.08]" : "bg-secondary"}`}>
             <span
-              className={`block h-full rounded transition-all duration-500 ${glass ? "bg-gold" : "bg-primary"}`}
+              className={`block h-full rounded transition-all duration-500 ${glass ? "bg-white/80" : "bg-primary"}`}
               style={{ width: done || i <= step ? "100%" : "0%" }}
             />
           </span>
@@ -168,15 +168,15 @@ const QuizCard = ({ glass = false }: { glass?: boolean }) => {
 
       {done ? (
         <div className="flex flex-1 flex-col items-center justify-center text-center animate-fade-in">
-          <span className={`mb-4 grid h-14 w-14 place-items-center rounded-full ${glass ? "bg-gold text-graphite" : "bg-primary text-primary-foreground"}`}>
-            <Icon name="Check" size={26} />
+          <span className={`mb-4 grid h-14 w-14 place-items-center rounded-full ${glass ? "border border-white/20 text-white" : "bg-primary text-primary-foreground"}`}>
+            <Icon name="Check" size={24} strokeWidth={1.6} />
           </span>
-          <p className="font-display text-2xl font-semibold tracking-tight">Расчёт собран</p>
+          <p className="text-2xl font-medium tracking-[-0.03em]">Расчёт собран</p>
           <p className={`mt-2 max-w-[25em] ${muted}`}>
             Мы скопировали текст заявки — вставьте его в чат MAX и отправьте. Менеджер пришлёт смету со скидкой салона в течение 10 минут.
           </p>
           <div className="mt-5 flex flex-wrap justify-center gap-2.5">
-            <button onClick={() => openMax(message())} className="btn-pill bg-messenger text-white hover:opacity-90">
+            <button onClick={() => openMax(message())} className={`btn-pill ${glass ? "btn-light" : "btn-dark"}`}>
               <Icon name="MessageCircle" size={16} /> Открыть MAX
             </button>
             <a href={SITE.phoneHref} className={`btn-pill ${glass ? "btn-ghost-light" : "btn-outline"}`}>
@@ -192,7 +192,7 @@ const QuizCard = ({ glass = false }: { glass?: boolean }) => {
           <p className="mb-3 text-[0.95em] font-medium">{LABELS[step]}</p>
           {model && step > 0 && (
             <p className={`-mt-1 mb-3 inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1 text-[0.8em] font-medium ${chip}`}>
-              <Icon name="Tag" size={12} className="text-gold" /> {model}
+              <Icon name="Tag" size={12} /> {model}
             </p>
           )}
 
@@ -221,7 +221,7 @@ const QuizCard = ({ glass = false }: { glass?: boolean }) => {
               <div className="flex flex-col gap-3 animate-rise">
                 <div className={`flex items-center justify-between rounded-xl px-4 py-3 ${chip}`}>
                   <span className={`text-[0.84em] ${muted}`}>Ориентировочно</span>
-                  <span className={`font-display text-lg font-semibold tracking-tight ${glass ? "text-gold" : ""}`}>от {fmt(estimate)} ₽</span>
+                  <span className={`text-lg font-medium tracking-[-0.02em] ${glass ? "text-white" : ""}`}>от {fmt(estimate)} ₽</span>
                 </div>
                 <div className="grid gap-3 min-[420px]:grid-cols-2">
                   <div>
@@ -231,7 +231,7 @@ const QuizCard = ({ glass = false }: { glass?: boolean }) => {
                       placeholder="Ваше имя"
                       className={`h-12 w-full rounded-xl border px-4 outline-none transition ${field}`}
                     />
-                    {touched && !nameOk && <p className={`mt-1 text-xs ${glass ? "text-orange" : "text-destructive"}`}>Укажите имя</p>}
+                    {touched && !nameOk && <p className={`mt-1 text-xs ${glass ? "text-red-300" : "text-destructive"}`}>Укажите имя</p>}
                   </div>
                   <div>
                     <input
@@ -241,7 +241,7 @@ const QuizCard = ({ glass = false }: { glass?: boolean }) => {
                       placeholder="+7 (___) ___-__-__"
                       className={`h-12 w-full rounded-xl border px-4 outline-none transition ${field}`}
                     />
-                    {touched && !phoneOk && <p className={`mt-1 text-xs ${glass ? "text-orange" : "text-destructive"}`}>Введите телефон полностью</p>}
+                    {touched && !phoneOk && <p className={`mt-1 text-xs ${glass ? "text-red-300" : "text-destructive"}`}>Введите телефон полностью</p>}
                   </div>
                 </div>
                 <p className={`text-[0.8em] leading-snug ${muted}`}>
@@ -251,7 +251,7 @@ const QuizCard = ({ glass = false }: { glass?: boolean }) => {
             )}
           </div>
 
-          <div className={`mt-5 flex items-center justify-between gap-3 border-t pt-[18px] ${glass ? "border-white/10" : "border-border"}`}>
+          <div className={`mt-5 flex items-center justify-between gap-3 border-t pt-[18px] ${glass ? "border-white/[0.08]" : "border-border"}`}>
             {step > 0 ? (
               <button onClick={() => setStep(step - 1)} className={`inline-flex items-center gap-1.5 text-[0.86em] ${muted} ${glass ? "hover:text-white" : "hover:text-foreground"}`}>
                 <Icon name="ArrowLeft" size={14} /> Назад
@@ -260,14 +260,14 @@ const QuizCard = ({ glass = false }: { glass?: boolean }) => {
               <span className={`text-[0.86em] ${muted}`}>{NOTES[step]}</span>
             )}
             {step === 3 ? (
-              <button onClick={next} className="btn-pill bg-messenger px-5 py-[11px] text-white hover:opacity-90">
+              <button onClick={next} className={`btn-pill px-5 py-[11px] ${glass ? "btn-light" : "btn-dark"}`}>
                 <Icon name="MessageCircle" size={16} /> Получить расчёт в MAX
               </button>
             ) : (
               <button
                 onClick={next}
                 disabled={!canNext}
-                className={`btn-pill px-[34px] py-[11px] disabled:cursor-not-allowed disabled:opacity-40 ${glass ? "btn-gold" : "btn-dark"}`}
+                className={`btn-pill px-[34px] py-[11px] disabled:cursor-not-allowed disabled:opacity-40 ${glass ? "border border-white/[0.12] bg-[#0A0B0D] text-white hover:border-white/40 hover:bg-black" : "btn-dark"}`}
               >
                 Далее
               </button>

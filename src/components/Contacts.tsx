@@ -1,96 +1,93 @@
 import Icon from "@/components/ui/icon";
 import Reveal from "@/components/Reveal";
-import { SITE } from "@/lib/site";
+import { SITE, routeLink } from "@/lib/site";
 import { callMeasurer } from "@/components/Header";
 
 const MAP_SRC =
-  "https://yandex.ru/map-widget/v1/?ll=37.654283%2C55.709806&z=16&pt=37.654283%2C55.709806%2Cpm2dgl&l=map";
+  "https://yandex.ru/map-widget/v1/?ll=37.654283%2C55.709806&z=16&pt=37.654283%2C55.709806%2Cpm2gnl&l=map&text=" +
+  encodeURIComponent("МЦ Roomer, Ленинская Слобода, 26");
 
-const ROUTE = [
-  { icon: "TrainFront", text: "Метро Автозаводская — пара минут пешком" },
-  { icon: "MapPin", text: "г. Москва, ул. Ленинская Слобода, 26, МЦ Roomer" },
-  { icon: "DoorOpen", text: "1 этаж, секция А149–А151" },
+const INFO = [
+  { k: "Адрес", v: "г. Москва, ул. Ленинская Слобода, 26, МЦ Roomer" },
+  { k: "Секция", v: "1 этаж, А149–А151" },
+  { k: "Метро", v: "Автозаводская — 2 минуты пешком" },
+  { k: "Часы работы", v: "Ежедневно, 10:00–22:00" },
 ];
 
 const Contacts = () => (
-  <section id="contacts" className="section-sand">
-    <div className="mx-auto max-w-[1440px] px-4 py-16 sm:px-6 sm:py-20 lg:px-[34px]">
-    <Reveal>
-      <span className="eyebrow-chip">Шоурум на Автозаводской</span>
-      <h2 className="section-title mt-4 max-w-[16em]">Приезжайте выбирать двери вживую</h2>
-    </Reveal>
-
-    <div className="mt-8 grid gap-3 sm:gap-4 lg:grid-cols-[1fr_420px]">
-      <Reveal className="order-2 lg:order-1">
-        <div className="relative h-[340px] overflow-hidden rounded-[16px] border border-border bg-secondary shadow-soft sm:h-[460px] lg:h-full lg:min-h-[520px]">
-          <iframe
-            title="МЦ Roomer на карте"
-            src={MAP_SRC}
-            className="absolute inset-0 h-full w-full grayscale-[0.6]"
-            loading="lazy"
-            allowFullScreen
-          />
-        </div>
+  <section id="contacts" className="border-t border-border bg-sand">
+    <div className="mx-auto max-w-[1440px] px-4 py-20 sm:px-6 sm:py-28 lg:px-[34px]">
+      <Reveal>
+        <span className="eyebrow-chip">Шоурум на Автозаводской</span>
+        <h2 className="section-title mt-6 max-w-[14em]">Приезжайте выбирать двери вживую</h2>
       </Reveal>
 
-      <div className="order-1 flex flex-col gap-3 sm:gap-4 lg:order-2">
-        <Reveal>
-          <div className="rounded-[16px] bg-card p-6 shadow-soft">
-            <p className="text-[0.72em] font-medium uppercase tracking-[0.06em] text-muted-foreground">Как добраться</p>
-            <ul className="mt-4 flex flex-col gap-3.5">
-              {ROUTE.map((r) => (
-                <li key={r.text} className="flex gap-3">
-                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-sand text-gold">
-                    <Icon name={r.icon} size={17} fallback="MapPin" />
-                  </span>
-                  <span className="pt-1.5 leading-snug">{r.text}</span>
-                </li>
+      <div className="mt-14 grid gap-10 lg:grid-cols-[1.4fr_1fr] lg:gap-16">
+        <Reveal className="order-2 lg:order-1">
+          <div className="relative h-[360px] overflow-hidden rounded-[10px] border border-neutral-200 bg-secondary sm:h-[480px] lg:h-full lg:min-h-[560px]">
+            <iframe
+              title="МЦ Roomer на карте"
+              src={MAP_SRC}
+              className="absolute inset-0 h-full w-full grayscale"
+              loading="lazy"
+              allowFullScreen
+            />
+          </div>
+        </Reveal>
+
+        <div className="order-1 flex flex-col lg:order-2">
+          <Reveal>
+            <dl className="border-t border-neutral-200">
+              {INFO.map((r) => (
+                <div key={r.k} className="grid grid-cols-[110px_1fr] gap-4 border-b border-neutral-200 py-4 sm:grid-cols-[140px_1fr]">
+                  <dt className="text-[0.86em] font-light text-muted-foreground">{r.k}</dt>
+                  <dd className="tracking-[-0.01em]">{r.v}</dd>
+                </div>
               ))}
-            </ul>
-            <div className="mt-5 rounded-xl border border-gold/40 bg-sand p-4 text-[0.9em] leading-relaxed">
-              <p className="mb-1 flex items-center gap-1.5 font-semibold">
-                <Icon name="Footprints" size={15} className="text-gold" fallback="Navigation" /> Как быстро пройти в салон
+              <div className="grid grid-cols-[110px_1fr] gap-4 border-b border-neutral-200 py-4 sm:grid-cols-[140px_1fr]">
+                <dt className="text-[0.86em] font-light text-muted-foreground">Телефон</dt>
+                <dd>
+                  <a href={SITE.phoneHref} className="text-[1.15em] tracking-[-0.02em] hover:underline">
+                    {SITE.phone}
+                  </a>
+                </dd>
+              </div>
+            </dl>
+          </Reveal>
+
+          <Reveal delay={80}>
+            <div className="mt-8">
+              <p className="text-[0.72em] font-medium uppercase tracking-[0.22em] text-muted-foreground">Как быстро пройти в салон</p>
+              <p className="mt-3 font-light leading-relaxed text-foreground/80">
+                1 этаж, центральный вход со стороны ул. Ленинская Слобода, двигайтесь прямо по линии А до секции А149–А151 (напротив эскалатора).
               </p>
-              1 этаж, центральный вход со стороны ул. Ленинская Слобода, двигайтесь прямо по линии А до секции А149–А151 (напротив эскалатора).
             </div>
-            <a href={SITE.routeUrl} target="_blank" rel="noreferrer" className="btn-pill btn-outline mt-4 w-full">
-              <Icon name="Navigation" size={15} /> Построить маршрут
-            </a>
-          </div>
-        </Reveal>
+          </Reveal>
 
-        <Reveal delay={80}>
-          <div className="grid grid-cols-2 gap-3 sm:gap-4">
-            <div className="rounded-[16px] bg-card p-5 shadow-soft">
-              <p className="text-[0.72em] font-medium uppercase tracking-[0.06em] text-muted-foreground">Часы работы</p>
-              <p className="mt-1 font-display text-2xl font-semibold tracking-tight">10:00–22:00</p>
-              <p className="text-[0.86em] text-muted-foreground">Ежедневно</p>
-            </div>
-            <a href={SITE.phoneHref} className="rounded-[16px] bg-card p-5 shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-lift">
-              <p className="text-[0.72em] font-medium uppercase tracking-[0.06em] text-muted-foreground">Менеджер</p>
-              <p className="mt-1 whitespace-nowrap font-display text-[1.05em] font-semibold leading-tight tracking-tight sm:text-lg">{SITE.phone}</p>
-              <p className="text-[0.86em] text-muted-foreground">Позвонить</p>
-            </a>
-          </div>
-        </Reveal>
-
-        <Reveal delay={160}>
-          <div className="flex flex-col gap-2.5 rounded-[16px] bg-card p-5 shadow-soft">
-            <div className="grid grid-cols-2 gap-2.5">
-              <a href={SITE.max} target="_blank" rel="noreferrer" className="btn-pill bg-messenger text-white hover:opacity-90">
-                <Icon name="MessageCircle" size={16} /> Написать в MAX
+          <Reveal delay={140}>
+            <div className="mt-8 flex flex-col gap-2.5">
+              <a href={SITE.routeUrl} target="_blank" rel="noreferrer" className="btn-pill btn-dark">
+                <Icon name="Navigation" size={15} strokeWidth={1.6} /> Построить маршрут до МЦ Roomer
               </a>
-              <a href={SITE.vk} target="_blank" rel="noreferrer" className="btn-pill btn-outline">
-                <Icon name="Users" size={16} /> Группа VK
+              <a href={routeLink("pd", "Москва, метро Автозаводская")} target="_blank" rel="noreferrer" className="btn-pill btn-outline">
+                <Icon name="Footprints" size={15} strokeWidth={1.6} fallback="Navigation" /> Пешком от метро
               </a>
+              <p className="text-center text-[0.78em] font-light text-muted-foreground">Конечная точка: {SITE.routeTarget}</p>
+              <div className="mt-3 grid grid-cols-2 gap-2.5">
+                <a href={SITE.max} target="_blank" rel="noreferrer" className="btn-pill btn-outline">
+                  Написать в MAX
+                </a>
+                <a href={SITE.vk} target="_blank" rel="noreferrer" className="btn-pill btn-outline">
+                  Группа VK
+                </a>
+              </div>
+              <button onClick={callMeasurer} className="btn-pill btn-outline">
+                Вызвать замерщика бесплатно
+              </button>
             </div>
-            <button onClick={callMeasurer} className="btn-pill btn-dark">
-              <Icon name="Ruler" size={16} /> Вызвать замерщика бесплатно
-            </button>
-          </div>
-        </Reveal>
+          </Reveal>
+        </div>
       </div>
-    </div>
     </div>
   </section>
 );

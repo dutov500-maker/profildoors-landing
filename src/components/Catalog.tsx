@@ -51,8 +51,8 @@ const MODELS: Model[] = [
 ];
 
 const TONE: Record<Tone, string> = {
-  orange: "bg-orange text-white",
-  dark: "bg-graphite/85 text-white",
+  orange: "bg-white/90 text-graphite",
+  dark: "bg-white/90 text-graphite",
   light: "bg-white/90 text-graphite",
 };
 
@@ -73,66 +73,63 @@ const Catalog = () => {
   const list = useMemo(() => (tab === "all" ? MODELS : MODELS.filter((m) => m.cat === tab)), [tab]);
 
   return (
-    <section id="catalog" className="bg-card">
-      <div className="mx-auto max-w-[1440px] px-4 py-16 sm:px-6 sm:py-24 lg:px-[34px]">
+    <section id="catalog" className="border-t border-border bg-card">
+      <div className="mx-auto max-w-[1440px] px-4 py-20 sm:px-6 sm:py-28 lg:px-[34px]">
         <Reveal className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <span className="eyebrow-chip">Актуальные коллекции фабрики</span>
-            <h2 className="section-title mt-5 max-w-[14em]">Каталог моделей, которые можно потрогать в шоуруме</h2>
+            <h2 className="section-title mt-6 max-w-[14em]">Каталог моделей, которые можно потрогать в шоуруме</h2>
           </div>
-          <p className="max-w-[26em] text-muted-foreground">
+          <p className="max-w-[26em] font-light leading-relaxed text-muted-foreground">
             {MODELS.length} актуальных моделей и новая линейка ProfilDoors Orange. Цены за комплект: полотно, короб, наличники.
           </p>
         </Reveal>
 
-        <div className="-mx-4 mt-10 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-0 sm:px-0">
-          <div className="flex w-max gap-1.5 rounded-full border border-border bg-sand p-1.5">
+        <div className="-mx-4 mt-14 overflow-x-auto border-b border-neutral-200 px-4 [scrollbar-width:none] sm:mx-0 sm:px-0">
+          <div className="flex w-max gap-7">
             {TABS.map((t) => (
               <button
                 key={t.id}
                 onClick={() => setTab(t.id)}
-                className={`whitespace-nowrap rounded-full px-4 py-2.5 text-[0.88em] font-medium transition-all duration-300 active:scale-[0.97] ${
-                  tab === t.id ? "bg-graphite text-white shadow-soft" : "text-muted-foreground hover:bg-card hover:text-foreground"
+                className={`-mb-px whitespace-nowrap border-b pb-4 text-[0.88em] tracking-[-0.01em] transition-colors duration-300 ${
+                  tab === t.id ? "border-graphite font-medium text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {t.id === "orange" && <span className="mr-1.5 inline-block h-1.5 w-1.5 rounded-full bg-orange align-middle" />}
                 {t.label}
               </button>
             ))}
           </div>
         </div>
 
-        <div key={tab} className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-5">
+        <div key={tab} className="mt-10 grid gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {list.map((m, i) => (
             <article
               key={m.id}
-              className="group flex flex-col overflow-hidden rounded-[16px] border border-border/70 bg-card shadow-soft transition-all duration-500 hover:-translate-y-1 hover:shadow-lift animate-rise"
+              className="group flex flex-col animate-rise"
               style={{ animationDelay: `${(i % 8) * 50}ms` }}
             >
-              <div className="relative aspect-[3/4] overflow-hidden bg-secondary">
+              <div className="relative aspect-[3/4] overflow-hidden rounded-[8px] bg-secondary">
                 <img
                   src={m.img}
                   alt={m.name}
                   loading={i < 4 ? "eager" : "lazy"}
                   className="h-full w-full object-cover transition-transform duration-[1100ms] ease-out group-hover:scale-[1.06]"
                 />
-                <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/45 to-transparent" />
-                <span className={`absolute left-3 top-3 rounded-full px-3 py-1.5 text-[0.74em] font-medium shadow-soft backdrop-blur ${TONE[m.tone]}`}>
+                <span className={`absolute left-3 top-3 rounded-full px-2.5 py-1 text-[0.7em] font-medium tracking-[0.01em] backdrop-blur ${TONE[m.tone]}`}>
                   {m.badge}
                 </span>
-                <p className="absolute bottom-3 left-4 font-serif text-[1.55em] font-medium leading-none text-white">
-                  от {fmt(m.price)} ₽
-                </p>
               </div>
-              <div className="flex flex-1 flex-col p-5">
-                <span className={`text-[0.7em] font-medium uppercase tracking-[0.14em] ${m.cat === "orange" ? "text-orange" : "text-gold"}`}>
-                  {m.series}
-                </span>
-                <h3 className="mt-1.5 font-display text-[1.12em] font-semibold leading-tight tracking-[-0.02em]">{m.name}</h3>
-                <p className="mt-2 text-[0.86em] leading-relaxed text-muted-foreground">{m.text}</p>
-                <div className="mt-auto flex flex-col gap-2 pt-5">
-                  <button onClick={() => presetQuiz(m.quiz, `${m.series} ${m.name}`)} className="btn-pill btn-dark py-3 text-[0.88em]">
-                    <Icon name="Calculator" size={15} /> Рассчитать эту модель
+              <div className="flex flex-1 flex-col pt-5">
+                <span className="text-[0.68em] font-medium uppercase tracking-[0.2em] text-muted-foreground">{m.series}</span>
+                <h3 className="mt-2 text-[1.08em] font-medium leading-tight tracking-[-0.025em]">{m.name}</h3>
+                <p className="mt-2 text-[0.85em] font-light leading-relaxed text-muted-foreground">{m.text}</p>
+                <div className="mt-auto pt-5">
+                  <div className="flex items-baseline justify-between border-t border-neutral-200 pt-4">
+                    <span className="text-[0.74em] text-muted-foreground">Комплект от</span>
+                    <span className="text-[1.5em] font-light tracking-[-0.04em]">{fmt(m.price)} ₽</span>
+                  </div>
+                  <button onClick={() => presetQuiz(m.quiz, `${m.series} ${m.name}`)} className="btn-pill btn-outline mt-4 w-full py-3 text-[0.86em]">
+                    Рассчитать эту модель
                   </button>
                   <button
                     onClick={() =>
@@ -143,7 +140,7 @@ const Catalog = () => {
                         button: "Записаться на визит",
                       })
                     }
-                    className="inline-flex items-center justify-center gap-1.5 py-1.5 text-[0.85em] font-medium text-muted-foreground transition hover:text-foreground"
+                    className="mt-2 inline-flex w-full items-center justify-center gap-1.5 py-1.5 text-[0.82em] text-muted-foreground transition hover:text-foreground"
                   >
                     <Icon name="Eye" size={14} /> Посмотреть в шоуруме
                   </button>

@@ -1,84 +1,50 @@
-import Icon from "@/components/ui/icon";
 import Reveal from "@/components/Reveal";
 
 const ITEMS = [
   {
-    icon: "DoorOpen",
-    num: "А149–А151",
+    num: "01",
     title: "Большой живой шоурум",
-    text: "Секция на 1 этаже. Образцы полотен в полный рост, веера покрытий, скрытые короба в разрезе.",
-    dark: true,
+    text: "Секция А149–А151 на 1 этаже. Образцы полотен в полный рост, веера покрытий, скрытые короба в разрезе.",
   },
   {
-    icon: "Coffee",
-    num: "1 : 1",
+    num: "02",
     title: "Индивидуальный подбор",
-    text: "Чай или кофе, раскладка проекта с дизайнером, фурнитура под цвет сантехники и ручек.",
+    text: "Раскладка проекта вместе с дизайнером, фурнитура в тон сантехники, ручек и стеновых панелей.",
   },
   {
-    icon: "ShieldCheck",
-    num: "0 пыли",
-    title: "Честный монтаж без сюрпризов",
-    text: "Собственные штатные монтажники со специнструментом и пылесосами, а не случайные мастера с биржи.",
+    num: "03",
+    title: "Монтаж без пыли",
+    text: "Штатные сертифицированные мастера со специнструментом и промышленными пылесосами.",
   },
   {
-    icon: "CalendarCheck",
-    num: "С завода",
+    num: "04",
     title: "Точно в срок",
-    text: "Прямые поставки с завода ProfilDoors с соблюдением оговоренных дат.",
+    text: "Прямые поставки с фабрики ProfilDoors в Подмосковье с соблюдением согласованных дат.",
   },
 ];
 
 const WhyUs = () => (
-  <section id="why" className="section-sand">
-    <div className="mx-auto max-w-[1440px] px-4 py-16 sm:px-6 sm:py-20 lg:px-[34px]">
-    <Reveal>
-      <span className="eyebrow-chip">Почему МЦ Roomer</span>
-      <h2 className="section-title mt-4 max-w-[18em]">Почему выбирают именно наш салон</h2>
-    </Reveal>
-    <div className="mt-8 grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4 lg:grid-rows-[auto_auto]">
-      {ITEMS.map((it, i) => (
-        <Reveal
-          key={it.title}
-          delay={i * 80}
-          className={i === 0 ? "sm:col-span-2 lg:col-span-2 lg:row-span-2" : i === 1 ? "lg:col-span-2" : ""}
-        >
-          <div
-            className={`relative flex h-full flex-col justify-between gap-8 overflow-hidden rounded-[16px] p-6 sm:p-7 shadow-soft transition-all duration-500 hover:-translate-y-1 hover:shadow-lift ${
-              it.dark ? "bg-graphite text-white min-h-[280px] lg:min-h-[400px]" : "bg-card min-h-[220px]"
-            }`}
-          >
-            {it.dark && (
-              <div className="pointer-events-none absolute -right-10 top-8 h-[120%] w-1/2 opacity-80" aria-hidden>
-                <div className="absolute right-[30%] top-0 h-full w-[54%] rounded-sm border border-white/15 bg-gradient-to-b from-white/[0.07] to-transparent" />
-                <div className="absolute right-[34%] top-[46%] h-2 w-2 rounded-full bg-gold shadow-[0_0_24px_6px_hsl(var(--gold)/0.45)]" />
-              </div>
-            )}
-            <div className="relative flex items-center justify-between">
-              <span
-                className={`grid h-11 w-11 place-items-center rounded-xl ${
-                  it.dark ? "bg-white/10 text-gold" : "bg-sand text-foreground"
-                }`}
-              >
-                <Icon name={it.icon} size={20} />
-              </span>
-              <span className={`text-[0.82em] font-medium ${it.dark ? "text-white/60" : "text-muted-foreground"}`}>
-                0{i + 1}
-              </span>
-            </div>
-            <div className="relative">
-              <p className={`font-serif font-medium tracking-[-0.01em] ${it.dark ? "text-6xl sm:text-7xl text-gold" : "text-4xl"}`}>
-                {it.num}
-              </p>
-              <h3 className={`mt-3 font-semibold tracking-[-0.02em] ${it.dark ? "text-2xl" : "text-lg"}`}>{it.title}</h3>
-              <p className={`mt-2 max-w-[28em] leading-relaxed ${it.dark ? "text-white/70" : "text-muted-foreground"}`}>
-                {it.text}
-              </p>
-            </div>
-          </div>
+  <section id="why" className="border-t border-border bg-sand">
+    <div className="mx-auto max-w-[1440px] px-4 py-20 sm:px-6 sm:py-28 lg:px-[34px]">
+      <div className="grid gap-12 lg:grid-cols-[1fr_2fr] lg:gap-20">
+        <Reveal>
+          <span className="eyebrow-chip">Почему МЦ Roomer</span>
+          <h2 className="section-title mt-6 max-w-[10em]">Почему выбирают наш салон</h2>
         </Reveal>
-      ))}
-    </div>
+        <div className="grid border-t border-neutral-200 sm:grid-cols-2">
+          {ITEMS.map((it, i) => (
+            <Reveal
+              key={it.title}
+              delay={i * 70}
+              className={`border-b border-neutral-200 py-8 sm:py-10 ${i % 2 === 0 ? "sm:border-r sm:pr-10" : "sm:pl-10"}`}
+            >
+              <span className="text-[0.78em] font-light text-muted-foreground">{it.num}</span>
+              <h3 className="mt-6 text-[1.3em] font-medium tracking-[-0.03em]">{it.title}</h3>
+              <p className="mt-3 max-w-[26em] font-light leading-relaxed text-muted-foreground">{it.text}</p>
+            </Reveal>
+          ))}
+        </div>
+      </div>
     </div>
   </section>
 );
