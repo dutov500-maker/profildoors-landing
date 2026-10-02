@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import Icon from "@/components/ui/icon";
-import { SITE, phoneMask } from "@/lib/site";
+import { SITE, phoneMask, copyText } from "@/lib/site";
 import { sendLead, pageLabel } from "@/lib/api";
 
 export type LeadOptions = {
@@ -30,6 +30,7 @@ const LeadDialog = () => {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
+  const [fallback, setFallback] = useState("");
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -37,6 +38,7 @@ const LeadDialog = () => {
       setDone(false);
       setTouched(false);
       setError("");
+      setFallback("");
       setOpen(true);
     };
     window.addEventListener(LEAD_EVENT, handler);
@@ -59,8 +61,10 @@ const LeadDialog = () => {
       setComment("");
       setTouched(false);
       setDone(true);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Не удалось отправить заявку");
+    } catch {
+      setFallback(
+        `Здравствуйте! Заявка на вызов замерщика.\nИмя: ${name.trim()}\nТелефон: ${phone}\nАдрес / комментарий: ${comment.trim() || "—"}\nСтраница: ${pageLabel()}`,
+      );
     } finally {
       setSending(false);
     }
@@ -69,7 +73,30 @@ const LeadDialog = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="max-w-[460px] rounded-[16px] border-border p-6 sm:p-8">
-        {done ? (
+        {fallback ? (
+          <div className="flex flex-col py-2 text-center animate-scale-in">
+            <DialogTitle className="text-[1.4em] font-medium tracking-[-0.03em]">Отправьте заявку в MAX</DialogTitle>
+            <DialogDescription className="mt-3 font-light leading-relaxed text-muted-foreground">
+              Сейчас форма временно не отправляется. Мы уже подготовили текст вашей заявки — нажмите кнопку, вставьте его в чат и отправьте менеджеру.
+            </DialogDescription>
+            <pre className="mt-4 whitespace-pre-wrap rounded-xl bg-secondary p-3 text-left font-sans text-[0.82em] leading-relaxed">{fallback}</pre>
+            <a
+              href={SITE.max}
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => copyText(fallback)}
+              className="btn-pill btn-dark mt-5 w-full"
+            >
+              <Icon name="MessageCircle" size={16} strokeWidth={1.6} /> Скопировать и открыть MAX
+            </a>
+            <a href={SITE.phoneHref} className="btn-pill btn-outline mt-2.5 w-full">
+              <Icon name="Phone" size={15} strokeWidth={1.6} /> Позвонить {SITE.phone}
+            </a>
+            <button onClick={() => setFallback("")} className="mt-3 text-[0.84em] text-muted-foreground hover:text-foreground">
+              Попробовать отправить ещё раз
+            </button>
+          </div>
+        ) : done ? (
           <div className="flex flex-col items-center py-2 text-center animate-scale-in">
             <span className="mb-5 grid h-14 w-14 place-items-center rounded-full bg-emerald-50 text-emerald-600">
               <Icon name="Check" size={26} strokeWidth={2} />
