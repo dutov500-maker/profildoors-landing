@@ -2,7 +2,7 @@ export type Cat = "frame" | "ve" | "inv" | "po" | "alu";
 
 export type Finish = { name: string; color: string };
 
-export type Photo = { src: string; fallback?: string };
+export type Photo = { src: string };
 
 export type Model = {
   id: string;
@@ -26,7 +26,6 @@ export const TABS: { id: "all" | Cat; label: string }[] = [
   { id: "alu", label: "Алюминий & Перегородки" },
 ];
 
-const d = (n: number) => ({ src: `/orange/design-${n}.webp` });
 
 export const MODELS: Model[] = [
   {
@@ -46,8 +45,8 @@ export const MODELS: Model[] = [
       { name: "Графит", color: "#3E3F41" },
     ],
     photos: [
-      { src: "/orange-pe-55-1.jpg", fallback: "/img/door-white.webp" },
-      { src: "/orange-pe-55-2.jpg", fallback: "/img/door-greige.webp" },
+      { src: "/orange-pe-55-1.jpg" },
+      { src: "/orange-pe-55-2.jpg" },
     ],
   },
   {
@@ -66,8 +65,8 @@ export const MODELS: Model[] = [
       { name: "Дуб Сонома", color: "#D9BF97" },
     ],
     photos: [
-      { src: "/orange-ne-46-1.jpg", fallback: "/img/door-veneer.webp" },
-      { src: "/orange-ne-46-2.jpg", fallback: "/img/modern.webp" },
+      { src: "/orange-ne-46-1.jpg" },
+      { src: "/orange-ne-46-2.jpg" },
     ],
   },
   {
@@ -86,8 +85,8 @@ export const MODELS: Model[] = [
       { name: "Грецкий орех", color: "#7B5638" },
     ],
     photos: [
-      { src: "/orange-design-1.jpg", fallback: "/img/orange-ve.webp" },
-      { src: "/orange-design-2.jpg", fallback: "/img/door-veneer.webp" },
+      { src: "/orange-design-1.jpg" },
+      { src: "/orange-design-2.jpg" },
     ],
   },
   {
@@ -106,8 +105,8 @@ export const MODELS: Model[] = [
       { name: "Мокко", color: "#6E5646" },
     ],
     photos: [
-      { src: "/orange-design-3.jpg", fallback: "/img/orange-hero.webp" },
-      { src: "/orange-design-4.jpg", fallback: "/img/door-greige.webp" },
+      { src: "/orange-design-3.jpg" },
+      { src: "/orange-design-4.jpg" },
     ],
   },
   {
@@ -125,8 +124,8 @@ export const MODELS: Model[] = [
       { name: "Зеркало Графит", color: "linear-gradient(135deg,#6B6E73,#2E3033)" },
     ],
     photos: [
-      { src: "/orange-design-5.jpg", fallback: "/img/showroom-invisible.webp" },
-      { src: "/orange-design-6.jpg", fallback: "/img/hero-invisible.webp" },
+      { src: "/orange-design-5.jpg" },
+      { src: "/orange-design-6.jpg" },
     ],
   },
   {
@@ -143,7 +142,7 @@ export const MODELS: Model[] = [
       { name: "Дарк Вайт", color: "#E4E1DA" },
       { name: "Магнолия Грей", color: "#BDB8AF" },
     ],
-    photos: [d(7), d(8)],
+    photos: [{ src: "/orange-design-7.jpg" }, { src: "/orange-design-8.jpg" }],
   },
   {
     id: "pdo",
@@ -160,7 +159,7 @@ export const MODELS: Model[] = [
       { name: "Лайт Грей", color: "#CFCFCB" },
       { name: "Блэк", color: "#1E1F21" },
     ],
-    photos: [d(9), d(10)],
+    photos: [{ src: "/orange-design-9.jpg" }, { src: "/orange-design-10.jpg" }],
   },
   {
     id: "avo",
@@ -177,7 +176,7 @@ export const MODELS: Model[] = [
       { name: "Никель", color: "linear-gradient(135deg,#E3E4E6,#9EA2A7)" },
       { name: "Деорэ", color: "linear-gradient(135deg,#E7C98A,#A97F3C)" },
     ],
-    photos: [d(11), d(12)],
+    photos: [{ src: "/orange-design-11.jpg" }, { src: "/orange-design-12.jpg" }],
   },
   {
     id: "axo",
@@ -193,6 +192,6 @@ export const MODELS: Model[] = [
       { name: "Серебро", color: "linear-gradient(135deg,#F0F1F3,#A9ADB2)" },
       { name: "Графит", color: "#4A4C4F" },
     ],
-    photos: [d(13), d(14), d(15)],
+    photos: [{ src: "/orange-design-13.jpg" }, { src: "/orange-design-14.jpg" }, { src: "/orange-design-15.jpg" }],
   },
 ];
