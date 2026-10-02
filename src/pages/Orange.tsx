@@ -7,6 +7,8 @@ import OrangeCatalog from "@/components/orange/OrangeCatalog";
 import OrangePalette from "@/components/orange/OrangePalette";
 import SalonMap from "@/components/SalonMap";
 import FloatingMessenger from "@/components/FloatingMessenger";
+import LeadDialog from "@/components/LeadDialog";
+import { callMeasurer } from "@/components/Header";
 import { SITE } from "@/lib/site";
 
 const FACTS = ["Полотна до 3000 мм", "Скрытые короба Reverse", "Экспозиция А149–А151"];
@@ -43,9 +45,9 @@ const Orange = () => {
             <a href={SITE.phoneHref} className="hidden whitespace-nowrap text-[0.88em] text-white/60 hover:text-white sm:inline">
               {SITE.phone}
             </a>
-            <a href={SITE.max} target="_blank" rel="noreferrer" className="btn-pill bg-[#E05A2B] px-4 py-2.5 text-[0.86em] text-white hover:bg-[#C94E24]">
-              Написать в MAX
-            </a>
+            <button onClick={callMeasurer} className="btn-pill bg-[#E05A2B] px-4 py-2.5 text-[0.86em] text-white hover:bg-[#C94E24]">
+              Вызвать замерщика
+            </button>
           </div>
         </div>
       </header>
@@ -119,6 +121,9 @@ const Orange = () => {
               <a href={SITE.max} target="_blank" rel="noreferrer" className="btn-pill bg-[#E05A2B] text-white hover:bg-[#C94E24]">
                 Написать в MAX
               </a>
+              <button onClick={callMeasurer} className="btn-pill btn-outline">
+                Вызвать замерщика
+              </button>
               <a href={SITE.routeUrl} target="_blank" rel="noreferrer" className="btn-pill btn-outline">
                 Построить маршрут
               </a>
@@ -146,6 +151,7 @@ const Orange = () => {
       </footer>
 
       <FloatingMessenger />
+      <LeadDialog />
     </div>
   );
 };

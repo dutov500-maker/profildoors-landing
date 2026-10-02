@@ -1,0 +1,19 @@
+{
+  "tests": [
+    {
+      "name": "CORS preflight",
+      "method": "OPTIONS",
+      "path": "/",
+      "expectedStatus": 200
+    },
+    {
+      "name": "Короткий телефон отклоняется",
+      "method": "POST",
+      "path": "/",
+      "body": {"name": "Тест", "phone": "+7 999", "comment": "", "page": "Главная"},
+      "expectedStatus": 400,
+      "expectedBody": {"ok": false},
+      "bodyMatcher": "partial"
+    }
+  ]
+}
