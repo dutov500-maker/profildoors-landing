@@ -2,9 +2,8 @@ import Icon from "@/components/ui/icon";
 import Reveal from "@/components/Reveal";
 import { SITE, routeLink } from "@/lib/site";
 import { callMeasurer } from "@/components/Header";
+import SalonMap from "@/components/SalonMap";
 
-const MAP_SRC = `https://yandex.ru/map-widget/v1/?ll=${SITE.lon}%2C${SITE.lat}&z=16&l=map&theme=light&lang=ru_RU`;
-const MAP_OPEN = `https://yandex.ru/maps/?ll=${SITE.lon}%2C${SITE.lat}&z=17&pt=${SITE.lon},${SITE.lat},pm2blackm`;
 
 const INFO = [
   { k: "Салон", v: "Официальный салон ProfilDoors, МЦ Roomer, 1 этаж, секция А149–А151" },
@@ -23,40 +22,7 @@ const Contacts = () => (
 
       <div className="mt-14 grid gap-10 lg:grid-cols-[1.4fr_1fr] lg:gap-16">
         <Reveal className="order-2 lg:order-1">
-          <div className="relative h-[360px] overflow-hidden rounded-[10px] border border-neutral-200 bg-secondary sm:h-[480px] lg:h-full lg:min-h-[560px]">
-            <iframe
-              title="МЦ Roomer на карте"
-              src={MAP_SRC}
-              className="pointer-events-none absolute inset-0 h-full w-full [filter:saturate(1.35)_contrast(1.05)]"
-              loading="lazy"
-              tabIndex={-1}
-            />
-            <a
-              href={MAP_OPEN}
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Открыть МЦ Roomer в Яндекс Картах"
-              className="absolute inset-0"
-            />
-            <div className="pointer-events-none absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-full flex-col items-center">
-              <div className="mb-2 whitespace-nowrap rounded-[10px] border border-[#E05A2B]/60 bg-[#121316] px-3.5 py-2 text-white shadow-[0_12px_30px_-10px_rgba(0,0,0,0.6)]">
-                <p className="text-[0.62em] font-medium uppercase tracking-[0.2em] text-[#E8A27E]">ProfilDoors</p>
-                <p className="text-[0.82em] font-medium tracking-[-0.01em]">МЦ Roomer · А149–А151</p>
-              </div>
-              <span className="relative grid h-11 w-11 place-items-center rounded-full rounded-br-none border-2 border-[#E05A2B] bg-[#121316] shadow-[0_8px_20px_-6px_rgba(0,0,0,0.6)] [transform:rotate(45deg)]">
-                <span className="text-[0.9em] font-bold text-white [transform:rotate(-45deg)]">P</span>
-              </span>
-              <span className="mt-1 h-2 w-5 rounded-full bg-black/25 blur-[2px]" />
-            </div>
-            <a
-              href={MAP_OPEN}
-              target="_blank"
-              rel="noreferrer"
-              className="absolute bottom-4 right-4 inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-4 py-2 text-[0.82em] font-medium shadow-sm transition hover:bg-neutral-50"
-            >
-              <Icon name="Maximize2" size={13} strokeWidth={1.8} /> Открыть в Яндекс Картах
-            </a>
-          </div>
+          <SalonMap className="h-[360px] sm:h-[480px] lg:h-full lg:min-h-[560px]" />
         </Reveal>
 
         <div className="order-1 flex flex-col lg:order-2">

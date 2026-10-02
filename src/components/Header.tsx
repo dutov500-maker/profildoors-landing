@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import Icon from "@/components/ui/icon";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { SITE, openCatalogTab, scrollToId } from "@/lib/site";
@@ -15,6 +16,18 @@ const NAV: NavItem[] = [
   { label: "Дизайнерам", short: "Дизайнерам", action: () => scrollToId("b2b") },
   { label: "Контакты", short: "Контакты", action: () => scrollToId("contacts") },
 ];
+
+export const OrangeLink = ({ className = "", onClick }: { className?: string; onClick?: () => void }) => (
+  <Link
+    to="/orange"
+    onClick={onClick}
+    className={`group inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-[#E05A2B]/35 bg-[#E05A2B]/[0.06] py-1.5 pl-1.5 pr-3.5 text-[0.88em] font-medium tracking-[-0.01em] text-foreground transition-all duration-300 hover:border-[#E05A2B] hover:bg-[#E05A2B]/10 active:scale-[0.98] ${className}`}
+  >
+    <span className="rounded-full bg-[#B8522E] px-2 py-0.5 text-[0.7em] font-semibold tracking-[0.12em] text-white">NEW</span>
+    Коллекция Orange 2026
+    <Icon name="ArrowUpRight" size={14} strokeWidth={1.8} className="transition-transform group-hover:-translate-y-px group-hover:translate-x-px" />
+  </Link>
+);
 
 export const callMeasurer = () =>
   openLead({
@@ -65,8 +78,8 @@ const Header = () => {
           <span className="mt-0.5 text-[0.7em] font-light text-muted-foreground">Официальный шоурум · МЦ Roomer</span>
         </a>
 
-        <nav className="hidden xl:flex gap-7 text-[0.9em] tracking-[-0.01em]">
-          {NAV.map((n) => (
+        <nav className="hidden xl:flex items-center gap-6 text-[0.9em] tracking-[-0.01em]">
+          {NAV.filter((n) => n.short !== "Калькулятор" && n.short !== "Раздвижные").map((n) => (
             <button key={n.label} onClick={n.action} title={n.label} className="relative transition-colors hover:text-muted-foreground">
               {n.short}
             </button>
@@ -74,6 +87,7 @@ const Header = () => {
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3.5 text-[0.9em]">
+          <OrangeLink className="hidden md:inline-flex" />
           <a
             href={SITE.routeUrl}
             target="_blank"
@@ -89,16 +103,16 @@ const Header = () => {
             href={SITE.max}
             target="_blank"
             rel="noreferrer"
-            className="hidden md:inline-flex items-center gap-1.5 whitespace-nowrap font-medium text-foreground hover:text-muted-foreground transition-colors"
+            className="hidden 2xl:inline-flex items-center gap-1.5 whitespace-nowrap font-medium text-foreground hover:text-muted-foreground transition-colors"
           >
             <Icon name="MessageCircle" size={15} strokeWidth={1.6} />
             Написать в MAX
           </a>
-          <span className="hidden md:block h-[18px] w-px bg-border" />
-          <a href={SITE.phoneHref} className="hidden lg:inline whitespace-nowrap font-medium text-muted-foreground hover:text-foreground transition-colors">
+          <span className="hidden 2xl:block h-[18px] w-px bg-border" />
+          <a href={SITE.phoneHref} className="hidden 2xl:inline whitespace-nowrap font-medium text-muted-foreground hover:text-foreground transition-colors">
             {SITE.phone}
           </a>
-          <a href={SITE.phoneHref} aria-label="Позвонить" className="lg:hidden grid h-9 w-9 place-items-center rounded-full bg-secondary">
+          <a href={SITE.phoneHref} aria-label="Позвонить" className="2xl:hidden grid h-9 w-9 place-items-center rounded-full bg-secondary">
             <Icon name="Phone" size={16} />
           </a>
           <button
@@ -117,7 +131,8 @@ const Header = () => {
             <SheetContent side="right" className="w-[88vw] max-w-sm p-6">
               <SheetTitle className="text-lg font-semibold uppercase tracking-[0.14em]">ProfilDoors</SheetTitle>
               <p className="text-xs text-muted-foreground">Фирменный салон в МЦ Roomer</p>
-              <nav className="mt-8 flex flex-col">
+              <OrangeLink className="mt-6" onClick={() => setOpen(false)} />
+              <nav className="mt-6 flex flex-col">
                 {NAV.map((n) => (
                   <button
                     key={n.label}

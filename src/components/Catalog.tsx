@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Icon from "@/components/ui/icon";
 import Reveal from "@/components/Reveal";
+import { Link } from "react-router-dom";
 import { openLead } from "@/components/LeadDialog";
 import { CATALOG_TAB_EVENT, presetQuiz } from "@/lib/site";
 
@@ -77,6 +78,34 @@ const Catalog = () => {
           <p className="max-w-[26em] font-light leading-relaxed text-muted-foreground">
             {MODELS.length} актуальных моделей и новая линейка ProfilDoors Orange. Цены за комплект: полотно, короб, наличники.
           </p>
+        </Reveal>
+
+        <Reveal delay={60}>
+          <Link
+            to="/orange"
+            className="group mt-12 grid overflow-hidden rounded-[10px] bg-[#121316] text-white md:grid-cols-[1.3fr_1fr]"
+          >
+            <div className="flex flex-col justify-center gap-5 p-7 sm:p-10">
+              <span className="inline-flex w-fit items-center gap-2 text-[0.7em] font-medium uppercase tracking-[0.22em] text-[#E8A27E]">
+                <span className="h-px w-6 bg-[#E05A2B]" /> ProfilDoors Orange 2026
+              </span>
+              <p className="max-w-[22em] text-[1.5em] font-medium leading-[1.15] tracking-[-0.035em] sm:text-[1.9em]">
+                Новая коллекция ProfilDoors Orange уже в Roomer: царговые, шпонированные и алюминиевые серии
+              </p>
+              <span className="inline-flex w-fit items-center gap-2 rounded-full bg-[#E05A2B] px-5 py-3 text-[0.9em] font-medium transition-colors group-hover:bg-[#C94E24]">
+                Смотреть коллекцию Orange <Icon name="ArrowRight" size={15} strokeWidth={1.8} />
+              </span>
+            </div>
+            <div className="relative min-h-[220px] overflow-hidden">
+              <img
+                src="/img/orange-wave.webp"
+                alt="Дверь ProfilDoors Orange"
+                loading="lazy"
+                className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1100ms] group-hover:scale-[1.04]"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#121316] via-transparent to-transparent md:via-[#121316]/10" />
+            </div>
+          </Link>
         </Reveal>
 
         <div className="-mx-4 mt-14 overflow-x-auto border-b border-neutral-200 px-4 [scrollbar-width:none] sm:mx-0 sm:px-0">
