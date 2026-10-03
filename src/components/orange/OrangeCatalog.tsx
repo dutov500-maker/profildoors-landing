@@ -3,24 +3,29 @@ import Icon from "@/components/ui/icon";
 import Reveal from "@/components/Reveal";
 import { SITE, copyText } from "@/lib/site";
 import { MODELS, TABS, type Cat, type Model } from "./orangeData";
-import OrangeCarousel from "./OrangeCarousel";
+import SmartImg from "./SmartImg";
 import OrangeLightbox from "./OrangeLightbox";
 import OrangeModelDialog from "./OrangeModelDialog";
 
 const ModelCard = ({ m, i, onDetails, onZoom }: { m: Model; i: number; onDetails: () => void; onZoom: (i: number) => void }) => {
-  const [idx, setIdx] = useState(0);
   return (
-    <article className="flex flex-col animate-rise" style={{ animationDelay: `${i * 50}ms` }}>
+    <article className="flex flex-col animate-rise" style={{ animationDelay: `${Math.min(i, 8) * 50}ms` }}>
       <div className="relative">
-        <OrangeCarousel
-          photos={m.photos}
-          index={idx}
-          onIndex={setIdx}
-          onOpen={() => onZoom(idx)}
-          alt={m.name}
-          eager={i < 3}
-          className="aspect-[3/4] rounded-[8px]"
-        />
+        <button
+          onClick={() => onZoom(0)}
+          className="group relative block aspect-[3/4] w-full cursor-zoom-in overflow-hidden rounded-[8px] bg-neutral-200"
+          aria-label={`Открыть фото ${m.name}`}
+        >
+          <SmartImg
+            photo={m.photos[0]}
+            alt={`${m.name} — ${m.subtitle}`}
+            loading={i < 3 ? "eager" : "lazy"}
+            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+          />
+          <span className="absolute bottom-3 right-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-[#121316] opacity-0 backdrop-blur transition-opacity group-hover:opacity-100">
+            <Icon name="Maximize2" size={16} />
+          </span>
+        </button>
         <span className="pointer-events-none absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[0.7em] font-medium text-[#121316] backdrop-blur">
           {m.badge}
         </span>
@@ -38,9 +43,7 @@ const ModelCard = ({ m, i, onDetails, onZoom }: { m: Model; i: number; onDetails
           {m.finishes.map((s) => (
             <span key={s.name} title={s.name} className="h-4 w-4 rounded-full border border-black/10" style={{ background: s.color }} />
           ))}
-          <span className="ml-1 text-[0.75em] text-muted-foreground">
-            {m.finishesLabel === "Цвет профиля" ? "цвета профиля" : "отделки"}
-          </span>
+          <span className="ml-1 text-[0.75em] text-muted-foreground">отделки</span>
         </button>
         <div className="mt-auto flex items-end justify-between gap-3 pt-5">
           <p className="text-[1.25em] font-medium tracking-[-0.02em]">{m.price}</p>
@@ -119,13 +122,13 @@ const OrangeCatalog = () => {
               <Icon name="MapPin" size={22} />
             </span>
             <p className="max-w-[44em] text-[1.02em] font-light leading-relaxed text-white/80">
-              Все представленные серии и более 100 вариантов выкрасов, образцов шпона и профилей представлены в натуральную величину в шоуруме ProfilDoors:{" "}
+              В онлайн-каталоге представлены 19 ключевых конфигураций серии Orange. Полная экспозиция фабрики — более 70 вариантов остеклений, веера выкрасов эмали и образцы шпона — представлена в салоне:{" "}
               <span className="font-medium text-white">Москва, МЦ Roomer, 1 этаж, секция А149–А151</span>.
             </p>
           </div>
           <div className="flex shrink-0 flex-col gap-2.5 sm:flex-row">
             <a href={SITE.max} target="_blank" rel="noreferrer" className="btn-pill bg-[#E05A2B] text-white hover:bg-[#C94E24]">
-              Рассчитать в MAX
+              Забронировать консультацию в салоне
             </a>
             <a href={SITE.routeUrl} target="_blank" rel="noreferrer" className="btn-pill btn-ghost-light">
               Маршрут
