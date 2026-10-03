@@ -15,8 +15,10 @@ export const SITE = {
   routeTarget: "Официальный салон ProfilDoors, МЦ Roomer, этаж 1, павильон А149–А151",
   lat: 55.712613,
   lon: 37.653495,
-  routeUrl: "https://yandex.ru/maps/?rtext=~55.712613,37.653495&rtt=auto",
+  routeUrl: `https://yandex.ru/maps/?rtext=~${encodeURIComponent("Москва, улица Ленинская Слобода, 26")}&rtt=auto`,
 };
+
+export const ADDRESS_QUERY = encodeURIComponent("Москва, улица Ленинская Слобода, 26");
 
 export const METRO_LINES = [
   { color: "#4DAC4B", name: "Автозаводская", line: "Замоскворецкая линия", time: "3 мин пешком", mck: false },
@@ -26,7 +28,7 @@ export const METRO_LINES = [
 const METRO = "55.706914,37.657487";
 
 export const routeLink = (rtt: "auto" | "mt" | "pd" = "auto", fromMetro = false) =>
-  `https://yandex.ru/maps/?rtext=${fromMetro ? METRO : ""}~${SITE.lat},${SITE.lon}&rtt=${rtt}`;
+  `https://yandex.ru/maps/?rtext=${fromMetro ? METRO : ""}~${ADDRESS_QUERY}&rtt=${rtt}`;
 
 export const copyText = async (text: string) => {
   try {

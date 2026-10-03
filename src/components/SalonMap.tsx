@@ -1,7 +1,7 @@
 import Icon from "@/components/ui/icon";
-import { SITE } from "@/lib/site";
+import { SITE, ADDRESS_QUERY } from "@/lib/site";
 
-const MAP_SRC = `https://yandex.ru/map-widget/v1/?ll=${SITE.lon}%2C${SITE.lat}&z=17&pt=${SITE.lon}%2C${SITE.lat}%2Cpm2blm&l=map`;
+const MAP_SRC = `https://yandex.ru/map-widget/v1/?ll=${SITE.lon}%2C${SITE.lat}&z=17&mode=search&text=${ADDRESS_QUERY}`;
 
 const SalonMap = ({ className = "" }: { className?: string }) => (
   <div className={`relative overflow-hidden rounded-[10px] border border-neutral-200 bg-[#f2efe9] ${className}`}>
