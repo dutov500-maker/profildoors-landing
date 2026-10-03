@@ -1,4 +1,4 @@
-export type Cat = "frame" | "ve" | "inv" | "po" | "alu";
+export type Cat = "design" | "relief" | "classic" | "glass";
 
 export type Finish = { name: string; color: string };
 
@@ -19,54 +19,93 @@ export type Model = {
 
 export const TABS: { id: "all" | Cat; label: string }[] = [
   { id: "all", label: "Все модели" },
-  { id: "frame", label: "Каркасные (PE.O / NE.O)" },
-  { id: "ve", label: "Шпон & Эмаль (VE / SE)" },
-  { id: "inv", label: "Скрытые Invisible" },
-  { id: "po", label: "Царговые (P.O / PD.O)" },
-  { id: "alu", label: "Алюминий & Перегородки" },
+  { id: "design", label: "Дизайнерские & Эмаль" },
+  { id: "relief", label: "Фактурные & Рельеф" },
+  { id: "classic", label: "Классика" },
+  { id: "glass", label: "Стекло & Алюминий" },
 ];
 
-export const BASE_FINISHES: Finish[] = [
-  { name: "Вайт", color: "#F4F3EF" },
-  { name: "Кашемир", color: "#D6C8B4" },
-  { name: "Графит", color: "#3E3F41" },
-  { name: "Дуб", color: "#C59D6B" },
-  { name: "Чёрный анод", color: "#1C1D1F" },
+export const MODELS: Model[] = [
+  {
+    id: "grafika",
+    cat: "design",
+    name: "ProfilDoors Серия «Графика»",
+    subtitle: "Модель с радиусной фрезеровкой",
+    badge: "Новинка 2026",
+    price: "от 24 500 ₽",
+    text: "Премиальная матовая эмаль с объемной радиусной 3D-гравировкой. Черная матовая фурнитура, скрытые петли.",
+    finishesLabel: "Отделки",
+    finishes: [
+      { name: "Вайт", color: "#F4F3EF" },
+      { name: "Кашемир", color: "#D6C8B4" },
+      { name: "Тёплый шёлк", color: "#E8DFD0" },
+      { name: "Графит", color: "#3E3F41" },
+    ],
+    photos: [{ src: "/orange-design-3.jpg" }],
+  },
+  {
+    id: "vertikal",
+    cat: "design",
+    name: "ProfilDoors Серия «Вертикаль»",
+    subtitle: "Светлое полотно у стеллажа",
+    badge: "Хит продаж",
+    price: "от 22 900 ₽",
+    text: "Каркасно-щитовое полотно с вертикальной линейной фрезеровкой. Идеально для современных минималистичных интерьеров.",
+    finishesLabel: "Отделки",
+    finishes: [
+      { name: "Матовая эмаль", color: "#EDE6D8" },
+      { name: "Unilack Вайт", color: "#F6F5F1" },
+      { name: "Лайт Грей", color: "#CFCFCB" },
+    ],
+    photos: [{ src: "/orange-design-9.jpg" }],
+  },
+  {
+    id: "relief",
+    cat: "relief",
+    name: "ProfilDoors Серия «Рельеф / Вельвет»",
+    subtitle: "Тёмная реечная дверь",
+    badge: "Трендовая рейка",
+    price: "от 26 800 ₽",
+    text: "Объемный вертикальный реечный фасад в глубоком оттенке Dark Oak. Высокая устойчивость к механическим повреждениям.",
+    finishesLabel: "Отделки",
+    finishes: [
+      { name: "Венге", color: "#2F2520" },
+      { name: "Тёмный Орех", color: "#4A3226" },
+      { name: "Мокко", color: "#6E5646" },
+      { name: "Графит", color: "#3E3F41" },
+    ],
+    photos: [{ src: "/orange-design-4.jpg" }],
+  },
+  {
+    id: "classic",
+    cat: "classic",
+    name: "ProfilDoors Классика",
+    subtitle: "Серия P.O / PM",
+    badge: "Неоклассика",
+    price: "от 19 800 ₽",
+    text: "Элегантные пропорции, объемный классический багет, шелковистая матовая эмаль.",
+    finishesLabel: "Отделки",
+    finishes: [
+      { name: "Вайт", color: "#F4F3EF" },
+      { name: "Крем", color: "#EDE3CF" },
+      { name: "Жемчуг", color: "linear-gradient(135deg,#F3F0EA,#D9D4CB)" },
+    ],
+    photos: [{ src: "/orange-design-6.jpg" }],
+  },
+  {
+    id: "avo",
+    cat: "glass",
+    name: "ProfilDoors Серия AV.O",
+    subtitle: "Двустворчатая стеклянная система",
+    badge: "Архитектурный стиль",
+    price: "от 68 000 ₽",
+    text: "Распашная конструкция из закаленного триплекса в узком алюминиевом профиле Black Muar. Зонирование гостиных и холлов.",
+    finishesLabel: "Профиль",
+    finishes: [
+      { name: "Чёрный муар", color: "#232325" },
+      { name: "Шампань", color: "linear-gradient(135deg,#E6D3B0,#B79D73)" },
+      { name: "Никель", color: "linear-gradient(135deg,#E3E4E6,#9EA2A7)" },
+    ],
+    photos: [{ src: "/orange-design-15.jpg" }],
+  },
 ];
-
-type Raw = [id: string, cat: Cat, name: string, subtitle: string, src: string, badge: string, text: string, price: string];
-
-const RAW: Raw[] = [
-  ["pe55-1", "frame", "ProfilDoors 55 PE.O", "Интерьер 1", "/orange-pe-55-1.jpg", "Хит продаж", "Гладкое каркасное полотно с защитной алюминиевой кромкой. Покрытие матовая эмаль.", "от 21 800 ₽"],
-  ["pe55-2", "frame", "ProfilDoors 55 PE.O", "Интерьер 2", "/orange-pe-55-2.jpg", "Новинка", "Минималистичный монохромный дизайн в современном интерьере. Высокая шумоизоляция.", "от 21 800 ₽"],
-  ["ne46-1", "frame", "ProfilDoors 46 NE.O", "Фактура Дуб", "/orange-ne-46-1.jpg", "Эко-фактура", "Бархатистая тактильная древесная текстура, устойчивая к царапинам и влаге.", "от 19 600 ₽"],
-  ["ne46-2", "frame", "ProfilDoors 46 NE.O", "Фактура Орех", "/orange-ne-46-2.jpg", "Эко-фактура", "Глубокий благородный древесный оттенок. Заводская врезка под бесшумный магнитный замок.", "от 19 600 ₽"],
-  ["ve-1", "ve", "ProfilDoors Серия VE", "Американский орех", "/orange-design-1.jpg", "Натуральный шпон", "Отделка натуральным шпоном ценных пород дерева. Толщина 44 мм, высота до 3000 мм.", "от 38 900 ₽"],
-  ["ve-2", "ve", "ProfilDoors Серия VE", "Натуральный дуб", "/orange-design-2.jpg", "Премиум", "Скрытый короб Reverse Infinity, безупречный вертикальный рисунок древесных волокон.", "от 38 900 ₽"],
-  ["se-1", "ve", "ProfilDoors Серия SE", "Эмаль Тёплый шёлк", "/orange-design-3.jpg", "Трендовая эмаль", "Шелковистая глубокоматовая эмаль Soft-Touch. Скрытые итальянские петли в цвет фурнитуры.", "от 32 500 ₽"],
-  ["se-2", "ve", "ProfilDoors Серия SE", "Эмаль Кашемир / Тауп", "/orange-design-4.jpg", "Дизайнерский выбор", "Архитектурные оттенки сложной палитры 2026 года с защитным полимерным лаком.", "от 32 500 ₽"],
-  ["inv-1", "inv", "ProfilDoors Orange Invisible", "Под покраску", "/orange-design-5.jpg", "В наличии на складе", "Анодированный скрытый алюминиевый короб Slim/Reverse, полотно с фабричным грунтом под обои или покраску.", "от 24 900 ₽"],
-  ["inv-2", "inv", "ProfilDoors Orange Invisible", "Интерьерное решение", "/orange-design-6.jpg", "Без наличников", "Дверь в единой плоскости со стеной. Визуально расширяет пространство прихожих и коридоров.", "от 24 900 ₽"],
-  ["graf", "po", "ProfilDoors Серия Графика", "Геометрия", "/orange-design-7.jpg", "Новинка 2026", "Дизайнерская радиусная и линейная 3D-гравировка на полотне в матовой эмали.", "от 24 500 ₽"],
-  ["relief", "po", "ProfilDoors Серия Рельеф", "Вертикальный вельвет", "/orange-design-8.jpg", "Трендовая рейка", "Фактурный вертикальный реечный фасад в глубоком шоколадном оттенке.", "от 26 800 ₽"],
-  ["po11", "po", "ProfilDoors 1.1 P.O", "Классическая царга", "/orange-design-9.jpg", "Хит для квартир", "Прочная сборно-разборная конструкция. Износостойкий полимер Unilack, устойчивый к влаге и сколам.", "от 16 900 ₽"],
-  ["pdo", "po", "ProfilDoors PD.O", "С сатинированным стеклом", "/orange-design-10.jpg", "Матовое стекло", "Вставки из непрозрачного белого сатинированного триплекса, мягко рассеивающего свет.", "от 19 400 ₽"],
-  ["avo-1", "alu", "ProfilDoors AV.O", "Тонкий алюминиевый профиль", "/orange-design-11.jpg", "Архитектурный стиль", "Распашная дверь из сверхпрочного анодированного алюминия со стеклом триплекс 8 мм.", "от 43 500 ₽"],
-  ["avo-2", "alu", "ProfilDoors AV.O", "Профиль Чёрный муар", "/orange-design-12.jpg", "Премиум стекло", "Матовое сатинированное стекло в черном графичном обрамлении с магнитной фиксацией.", "от 45 000 ₽"],
-  ["axo-1", "alu", "ProfilDoors AX.O", "Раздвижная перегородка Magic", "/orange-design-13.jpg", "Зонирование комнат", "Беспороговая верхнеподвесная раздвижная система для разделения кухни и гостиной.", "от 64 000 ₽"],
-  ["axo-2", "alu", "ProfilDoors AX.O", "Каскадная система 2 створки", "/orange-design-14.jpg", "Экспозиция в Roomer", "Синхронное телескопическое открывание створок. Закаленное ударопрочное стекло.", "от 72 000 ₽"],
-  ["axo-3", "alu", "ProfilDoors AX.O", "Зонирование спальни/гардеробной", "/orange-design-15.jpg", "Индивидуальный размер", "Раздвижная конструкция в потолок до 3000 мм с бесшумными доводчиками плавного хода.", "от 68 000 ₽"],
-];
-
-export const MODELS: Model[] = RAW.map(([id, cat, name, subtitle, src, badge, text, price]) => ({
-  id,
-  cat,
-  name,
-  subtitle,
-  badge,
-  price,
-  text,
-  finishesLabel: "Доступные отделки",
-  finishes: BASE_FINISHES,
-  photos: [{ src }],
-}));

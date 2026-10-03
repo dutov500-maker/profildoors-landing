@@ -43,7 +43,7 @@ const ModelCard = ({ m, i, onDetails, onZoom }: { m: Model; i: number; onDetails
           {m.finishes.map((s) => (
             <span key={s.name} title={s.name} className="h-4 w-4 rounded-full border border-black/10" style={{ background: s.color }} />
           ))}
-          <span className="ml-1 text-[0.75em] text-muted-foreground">отделки</span>
+          <span className="ml-1 text-[0.75em] text-muted-foreground">{m.finishesLabel === "Профиль" ? "цвета профиля" : "отделки"}</span>
         </button>
         <div className="mt-auto flex items-end justify-between gap-3 pt-5">
           <p className="text-[1.25em] font-medium tracking-[-0.02em]">{m.price}</p>
@@ -122,7 +122,7 @@ const OrangeCatalog = () => {
               <Icon name="MapPin" size={22} />
             </span>
             <p className="max-w-[44em] text-[1.02em] font-light leading-relaxed text-white/80">
-              В онлайн-каталоге представлены 19 ключевых конфигураций серии Orange. Полная экспозиция фабрики — более 70 вариантов остеклений, веера выкрасов эмали и образцы шпона — представлена в салоне:{" "}
+              В онлайн-каталоге представлены ключевые конфигурации серии Orange. Полная экспозиция фабрики — более 70 вариантов остеклений, веера выкрасов эмали и образцы шпона — представлена в салоне:{" "}
               <span className="font-medium text-white">Москва, МЦ Roomer, 1 этаж, секция А149–А151</span>.
             </p>
           </div>
