@@ -5,7 +5,7 @@ import { SITE, openCatalogTab, scrollToId } from "@/lib/site";
 type Tile = { src: string; cap: string; sub: string; alt: string; big?: boolean; go: () => void };
 
 const TILES: Tile[] = [
-  { src: "/img/roomer-consult.webp", cap: "Зона консультаций и экспозиция", sub: "Секция А149–А151", alt: "Зона консультаций шоурума ProfilDoors в Roomer", big: true, go: () => scrollToId("contacts") },
+  { src: "/img/roomer-consult.webp", cap: "Зона консультаций и экспозиция", sub: "Павильон А149–А151", alt: "Зона консультаций шоурума ProfilDoors в Roomer", big: true, go: () => scrollToId("contacts") },
   { src: "/img/roomer-bifold.webp", cap: "Складные системы и перегородки", sub: "Bifold, гармошки, раздвижные профили", alt: "Стеклянная складная перегородка-гармошка в белом профиле", go: () => openCatalogTab("alu") },
   { src: "/img/roomer-entry.webp", cap: "Входные двери и Smart-замки", sub: "Биометрия и усиленные короба", alt: "Графитовая входная дверь с умным замком", go: () => openCatalogTab("entry") },
   { src: "/img/roomer-invisible.webp", cap: "Скрытые двери Invisible", sub: "Полотна под покраску и зеркальные системы", alt: "Скрытая зеркальная дверь Invisible", go: () => openCatalogTab("invisible") },
@@ -30,7 +30,7 @@ const Showroom = () => (
         </div>
         <div className="flex max-w-[26em] flex-col gap-4">
           <p className="font-light leading-relaxed text-muted-foreground">
-            Экспозиция более 60 моделей дверей и перегородок вживую. 1 этаж, секция А149–А151. Ежедневно с 10:00 до 22:00.
+            Экспозиция более 60 моделей дверей и перегородок вживую. этаж 1, павильон А149–А151. Ежедневно с 10:00 до 22:00.
           </p>
           <a href={SITE.routeUrl} target="_blank" rel="noreferrer" className="btn-pill btn-outline w-fit">
             <Icon name="Navigation" size={15} /> Как добраться

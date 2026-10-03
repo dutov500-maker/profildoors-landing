@@ -57,7 +57,7 @@ const OrangePalette = () => {
           <span className="eyebrow-chip text-[#E8A27E]">Палитра Orange</span>
           <h2 className="section-title mt-6 max-w-[11em]">Официальные текстуры коллекции</h2>
           <p className="mt-6 max-w-[28em] font-light leading-relaxed text-white/55">
-            Выберите покрытие, чтобы увидеть оттенок. Живые образцы каждой текстуры — в шоуруме Roomer, секция А149–А151.
+            Выберите покрытие, чтобы увидеть оттенок. Живые образцы каждой текстуры — в шоуруме Roomer, павильон А149–А151.
           </p>
 
           <div className="mt-10 flex gap-7 border-b border-white/[0.08]">

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Icon from "@/components/ui/icon";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { SITE, openCatalogTab, scrollToId } from "@/lib/site";
+import { SITE, openCalc, openCatalogTab, scrollToId } from "@/lib/site";
 import { openLead } from "@/components/LeadDialog";
 
 type NavItem = { label: string; short: string; action: () => void };
@@ -10,9 +10,7 @@ type NavItem = { label: string; short: string; action: () => void };
 const NAV: NavItem[] = [
   { label: "Каталог", short: "Каталог", action: () => openCatalogTab("all") },
   { label: "Скрытые двери Invisible", short: "Invisible", action: () => openCatalogTab("invisible") },
-  { label: "Раздвижные системы", short: "Раздвижные", action: () => openCatalogTab("alu") },
-  { label: "Калькулятор стоимости", short: "Калькулятор", action: () => scrollToId("calc") },
-  { label: "Фабрика", short: "Фабрика", action: () => scrollToId("factory") },
+  { label: "Шоурум в Roomer", short: "Шоурум", action: () => scrollToId("showroom") },
   { label: "Дизайнерам", short: "Дизайнерам", action: () => scrollToId("b2b") },
   { label: "Контакты", short: "Контакты", action: () => scrollToId("contacts") },
 ];
@@ -79,7 +77,7 @@ const Header = () => {
         </a>
 
         <nav className="hidden xl:flex items-center gap-6 text-[0.9em] tracking-[-0.01em]">
-          {NAV.filter((n) => n.short !== "Калькулятор" && n.short !== "Раздвижные").map((n) => (
+          {NAV.map((n) => (
             <button key={n.label} onClick={n.action} title={n.label} className="relative transition-colors hover:text-muted-foreground">
               {n.short}
             </button>
@@ -88,38 +86,25 @@ const Header = () => {
 
         <div className="flex items-center gap-2 sm:gap-3.5 text-[0.9em]">
           <OrangeLink className="hidden md:inline-flex" />
-          <a
-            href={SITE.routeUrl}
-            target="_blank"
-            rel="noreferrer"
+          <button
+            onClick={() => scrollToId("contacts")}
             title={SITE.addressFull}
-            className="hidden 2xl:inline-flex items-center gap-[7px] rounded-[10px] bg-secondary px-3 py-2 text-foreground"
+            className="hidden 2xl:inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-secondary px-3 py-2 text-[0.92em] text-foreground"
           >
-            <Icon name="MapPin" size={14} className="text-muted-foreground" />
+            <span className="h-2 w-2 rounded-full bg-[#4DAC4B]" />
             {SITE.metro}
-          </a>
-          <span className="hidden 2xl:block h-[18px] w-px bg-border" />
-          <a
-            href={SITE.max}
-            target="_blank"
-            rel="noreferrer"
-            className="hidden 2xl:inline-flex items-center gap-1.5 whitespace-nowrap font-medium text-foreground hover:text-muted-foreground transition-colors"
-          >
-            <Icon name="MessageCircle" size={15} strokeWidth={1.6} />
-            Написать в MAX
-          </a>
-          <span className="hidden 2xl:block h-[18px] w-px bg-border" />
-          <a href={SITE.phoneHref} className="hidden 2xl:inline whitespace-nowrap font-medium text-muted-foreground hover:text-foreground transition-colors">
+          </button>
+          <a href={SITE.phoneHref} className="hidden lg:inline whitespace-nowrap font-medium tracking-[-0.01em] text-foreground hover:text-muted-foreground transition-colors">
             {SITE.phone}
           </a>
-          <a href={SITE.phoneHref} aria-label="Позвонить" className="2xl:hidden grid h-9 w-9 place-items-center rounded-full bg-secondary">
+          <a href={SITE.phoneHref} aria-label="Позвонить" className="lg:hidden grid h-9 w-9 place-items-center rounded-full bg-secondary">
             <Icon name="Phone" size={16} />
           </a>
           <button
-            onClick={callMeasurer}
-            className="btn-dark hidden sm:inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-[0.93em] font-medium transition-all active:scale-[0.97]"
+            onClick={() => openCalc()}
+            className="btn-graphite hidden sm:inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-[0.93em] font-medium transition-all active:scale-[0.97]"
           >
-                        Вызвать замерщика
+            Заказать расчёт
           </button>
 
           <Sheet open={open} onOpenChange={setOpen}>
@@ -149,19 +134,17 @@ const Header = () => {
               </nav>
               <div className="mt-6 flex items-start gap-2 rounded-2xl bg-secondary p-4 text-sm">
                 <Icon name="MapPin" size={16} className="mt-0.5 shrink-0 text-muted-foreground" />
-                <span>
-                  {SITE.addressFull} · {SITE.metro}
-                </span>
+                <span>{SITE.addressFull}</span>
               </div>
               <div className="mt-4 flex flex-col gap-2.5">
                 <button
                   onClick={() => {
                     setOpen(false);
-                    setTimeout(callMeasurer, 250);
+                    setTimeout(() => openCalc(), 250);
                   }}
-                  className="btn-pill btn-dark"
+                  className="btn-pill btn-graphite"
                 >
-                  Вызвать замерщика
+                  Заказать расчёт
                 </button>
                 <a href={SITE.max} target="_blank" rel="noreferrer" className="btn-pill btn-outline">
                   Написать в MAX

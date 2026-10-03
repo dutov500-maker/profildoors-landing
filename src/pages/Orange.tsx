@@ -6,6 +6,7 @@ import OrangeQuiz from "@/components/orange/OrangeQuiz";
 import OrangeCatalog from "@/components/orange/OrangeCatalog";
 import OrangePalette from "@/components/orange/OrangePalette";
 import SalonMap from "@/components/SalonMap";
+import MetroList from "@/components/MetroList";
 import FloatingMessenger from "@/components/FloatingMessenger";
 import LeadDialog from "@/components/LeadDialog";
 import { callMeasurer } from "@/components/Header";
@@ -101,8 +102,7 @@ const Orange = () => {
             <h2 className="section-title mt-6 max-w-[12em]">Смотрите коллекцию в шоуруме Roomer</h2>
             <dl className="mt-10 border-t border-neutral-200">
               {[
-                ["Адрес", "г. Москва, ул. Ленинская Слобода, 26, МЦ Roomer, 1 этаж, секция А149–А151"],
-                ["Метро", "Автозаводская"],
+                ["Адрес", SITE.addressFull],
                 ["Часы", "Ежедневно, 10:00–22:00"],
               ].map(([k, v]) => (
                 <div key={k} className="grid grid-cols-[90px_1fr] gap-4 border-b border-neutral-200 py-4">
@@ -110,6 +110,10 @@ const Orange = () => {
                   <dd className="tracking-[-0.01em]">{v}</dd>
                 </div>
               ))}
+              <div className="grid grid-cols-[90px_1fr] gap-4 border-b border-neutral-200 py-4">
+                <dt className="text-[0.86em] font-light text-muted-foreground">Метро</dt>
+                <dd><MetroList /></dd>
+              </div>
               <div className="grid grid-cols-[90px_1fr] gap-4 border-b border-neutral-200 py-4">
                 <dt className="text-[0.86em] font-light text-muted-foreground">Телефон</dt>
                 <dd>

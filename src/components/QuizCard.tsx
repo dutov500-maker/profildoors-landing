@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import Icon from "@/components/ui/icon";
 import DoorGlyph from "@/components/DoorGlyph";
-import { QUIZ_PRESET_EVENT, QuizPreset, SITE, openMax, phoneMask, phoneValid } from "@/lib/site";
+import { QuizPreset, SITE, openMax, phoneMask, phoneValid } from "@/lib/site";
+import { sendLead, pageLabel } from "@/lib/api";
 
 type Opt = { id: string; name: string; sub: string; glyph?: "classic" | "invisible" | "glass" | "entry"; icon?: string; price?: number; mult?: number };
 
@@ -24,11 +25,11 @@ const INSTALL: Opt[] = [
 ];
 
 const LABELS = ["Какие двери нужны?", "Сколько дверей?", "Нужен ли замер и монтаж в Москве/МО?", "Получите расчёт стоимости и зафиксируйте скидку салона"];
-const NOTES = ["Дальше: количество, монтаж, контакт", "Дальше: монтаж и контакт", "Остался последний шаг", "Ответим в MAX в течение 10 минут"];
+const NOTES = ["Дальше: количество, монтаж, контакт", "Дальше: монтаж и контакт", "Остался последний шаг", "Перезвоним в течение 15 минут"];
 
 const fmt = (n: number) => new Intl.NumberFormat("ru-RU").format(Math.round(n / 1000) * 1000);
 
-const QuizCard = ({ glass = false }: { glass?: boolean }) => {
+const QuizCard = ({ glass = false, preset, title = "Расчёт стоимости" }: { glass?: boolean; preset?: QuizPreset; title?: string }) => {
   const [step, setStep] = useState(0);
   const [type, setType] = useState<string>("invisible");
   const [model, setModel] = useState<string | null>(null);
@@ -38,20 +39,21 @@ const QuizCard = ({ glass = false }: { glass?: boolean }) => {
   const [phone, setPhone] = useState("");
   const [touched, setTouched] = useState(false);
   const [done, setDone] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
-    const handler = (e: Event) => {
-      const d = (e as CustomEvent<QuizPreset>).detail;
-      if (TYPES.some((t) => t.id === d.type)) {
-        setType(d.type);
-        setModel(d.model ?? null);
-        setDone(false);
-        setStep(1);
-      }
-    };
-    window.addEventListener(QUIZ_PRESET_EVENT, handler);
-    return () => window.removeEventListener(QUIZ_PRESET_EVENT, handler);
-  }, []);
+    if (!preset) return;
+    if (preset.type && TYPES.some((t) => t.id === preset.type)) {
+      setType(preset.type);
+      setModel(preset.model ?? null);
+      setStep(1);
+    } else {
+      setModel(null);
+      setStep(0);
+    }
+    setDone(false);
+  }, [preset]);
 
   const estimate = useMemo(() => {
     const t = TYPES.find((x) => x.id === type)?.price ?? 0;
@@ -71,15 +73,32 @@ const QuizCard = ({ glass = false }: { glass?: boolean }) => {
     return `Здравствуйте! Собрал расчёт на сайте ProfilDoors Roomer: ${t}, количество: ${q}, ${i?.toLowerCase()}. Меня зовут ${name.trim()}, телефон ${phone}. Хочу зафиксировать скидку салона и получить точную смету.`;
   };
 
-  const next = () => {
+  const next = async () => {
     if (step < 3) {
       if (canNext) setStep(step + 1);
       return;
     }
     setTouched(true);
-    if (!nameOk || !phoneOk) return;
-    openMax(message());
-    setDone(true);
+    if (!nameOk || !phoneOk || sending) return;
+    setSending(true);
+    setFailed(false);
+    const t = model ?? TYPES.find((x) => x.id === type)?.name;
+    const q = QTY.find((x) => x.id === qty)?.name;
+    const i = INSTALL.find((x) => x.id === install)?.name;
+    try {
+      await sendLead({
+        name: name.trim(),
+        phone,
+        comment: `${t}; количество: ${q}; ${i}; ориентировочно от ${fmt(estimate)} ₽`,
+        page: pageLabel(),
+        source: "Калькулятор стоимости",
+      });
+    } catch {
+      setFailed(true);
+    } finally {
+      setSending(false);
+      setDone(true);
+    }
   };
 
   const choose = (setter: (v: string) => void, v: string) => {
@@ -94,12 +113,13 @@ const QuizCard = ({ glass = false }: { glass?: boolean }) => {
     setQty(null);
     setInstall(null);
     setTouched(false);
+    setFailed(false);
   };
 
   const tileOff = glass
     ? "border-white/[0.08] bg-[#1A1B1F] hover:border-white/20 hover:bg-[#202126]"
     : "border-transparent bg-secondary hover:bg-secondary/60 hover:border-border";
-  const tileOn = glass ? "border-white/50 bg-[#24252A]" : "border-graphite bg-card";
+  const tileOn = glass ? "border-white/45 bg-[#24252A]" : "border-[#1A1A1A] bg-card";
   const muted = glass ? "text-white/45" : "text-muted-foreground";
   const chip = glass ? "border border-white/[0.08] bg-[#1A1B1F]" : "bg-secondary";
   const field = glass
@@ -129,7 +149,7 @@ const QuizCard = ({ glass = false }: { glass?: boolean }) => {
       <span className="self-end text-[0.93em] font-medium leading-tight tracking-[-0.01em]">{o.name}</span>
       <span className={`mt-0.5 self-start text-[0.84em] leading-snug ${muted}`}>{o.sub}</span>
       {on && (
-        <span className={`absolute right-2.5 top-2.5 grid h-5 w-5 place-items-center rounded-full animate-scale-in ${glass ? "bg-white text-graphite" : "bg-primary text-primary-foreground"}`}>
+        <span className={`absolute right-2.5 top-2.5 grid h-5 w-5 place-items-center rounded-full animate-scale-in ${glass ? "bg-white text-graphite" : "bg-[#1A1A1A] text-white"}`}>
           <Icon name="Check" size={11} strokeWidth={3.4} />
         </span>
       )}
@@ -138,19 +158,18 @@ const QuizCard = ({ glass = false }: { glass?: boolean }) => {
 
   return (
     <section
-      id="calc"
       aria-label="Расчёт стоимости"
       className={`flex min-h-[460px] flex-col rounded-[14px] p-5 sm:p-7 ${glass ? "glass-card" : "border border-border bg-card"}`}
     >
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className={`text-[0.7em] font-medium uppercase tracking-[0.18em] ${glass ? "text-white/40" : "text-muted-foreground"}`}>Калькулятор салона</p>
-          <h2 className="mt-2 text-[1.45em] font-medium leading-none tracking-[-0.03em]">Расчёт стоимости</h2>
+          <h2 className="mt-2 text-[1.45em] font-medium leading-none tracking-[-0.03em]">{title}</h2>
           <p className={`mt-2 max-w-[26em] text-[0.88em] leading-[1.45] ${muted}`}>
             Три вопроса — и смета с подарком: магнитные замки или скрытые петли.
           </p>
         </div>
-        <span className={`whitespace-nowrap rounded-full px-[11px] py-1 text-[0.82em] font-medium ${chip}`}>
+        <span className={`whitespace-nowrap rounded-full px-[11px] py-1 text-[0.82em] font-medium ${chip} ${glass ? "" : "mr-8"}`}>
           {done ? "Готово" : `${step + 1} / 4`}
         </span>
       </div>
@@ -159,7 +178,7 @@ const QuizCard = ({ glass = false }: { glass?: boolean }) => {
         {[0, 1, 2, 3].map((i) => (
           <span key={i} className={`h-[3px] overflow-hidden rounded ${glass ? "bg-white/[0.08]" : "bg-secondary"}`}>
             <span
-              className={`block h-full rounded transition-all duration-500 ${glass ? "bg-white/80" : "bg-primary"}`}
+              className={`block h-full rounded transition-all duration-500 ${glass ? "bg-white/80" : "bg-[#1A1A1A]"}`}
               style={{ width: done || i <= step ? "100%" : "0%" }}
             />
           </span>
@@ -168,16 +187,18 @@ const QuizCard = ({ glass = false }: { glass?: boolean }) => {
 
       {done ? (
         <div className="flex flex-1 flex-col items-center justify-center text-center animate-fade-in">
-          <span className={`mb-4 grid h-14 w-14 place-items-center rounded-full ${glass ? "border border-white/20 text-white" : "bg-primary text-primary-foreground"}`}>
+          <span className={`mb-4 grid h-14 w-14 place-items-center rounded-full ${glass ? "border border-white/20 text-white" : "bg-[#1A1A1A] text-white"}`}>
             <Icon name="Check" size={24} strokeWidth={1.6} />
           </span>
-          <p className="text-2xl font-medium tracking-[-0.03em]">Расчёт собран</p>
+          <p className="text-2xl font-medium tracking-[-0.03em]">{failed ? "Почти готово" : "Заявка принята"}</p>
           <p className={`mt-2 max-w-[25em] ${muted}`}>
-            Мы скопировали текст заявки — вставьте его в чат MAX и отправьте. Менеджер пришлёт смету со скидкой салона в течение 10 минут.
+            {failed
+              ? "Связь с сервером прервалась. Отправьте расчёт менеджеру в MAX — текст уже скопирован — или позвоните нам."
+              : "Менеджер перезвонит в течение 15 минут и пришлёт точную смету со скидкой салона."}
           </p>
           <div className="mt-5 flex flex-wrap justify-center gap-2.5">
-            <button onClick={() => openMax(message())} className={`btn-pill ${glass ? "btn-light" : "btn-dark"}`}>
-              <Icon name="MessageCircle" size={16} /> Открыть MAX
+            <button onClick={() => openMax(message())} className="btn-pill btn-graphite">
+              <Icon name="MessageCircle" size={16} /> Написать в MAX
             </button>
             <a href={SITE.phoneHref} className={`btn-pill ${glass ? "btn-ghost-light" : "btn-outline"}`}>
               <Icon name="Phone" size={16} /> Позвонить
@@ -245,7 +266,7 @@ const QuizCard = ({ glass = false }: { glass?: boolean }) => {
                   </div>
                 </div>
                 <p className={`text-[0.8em] leading-snug ${muted}`}>
-                  Откроется чат салона в MAX, а текст расчёта скопируется — останется вставить и отправить.
+                  Нажимая кнопку, вы соглашаетесь на обработку персональных данных. Расчёт придёт от менеджера салона.
                 </p>
               </div>
             )}
@@ -260,14 +281,14 @@ const QuizCard = ({ glass = false }: { glass?: boolean }) => {
               <span className={`text-[0.86em] ${muted}`}>{NOTES[step]}</span>
             )}
             {step === 3 ? (
-              <button onClick={next} className={`btn-pill px-5 py-[11px] ${glass ? "btn-light" : "btn-dark"}`}>
-                <Icon name="MessageCircle" size={16} /> Получить расчёт в MAX
+              <button onClick={next} disabled={sending} className={`btn-pill btn-graphite px-5 py-[11px] disabled:opacity-60 ${glass ? "border-white/[0.14]" : ""}`}>
+                {sending ? <Icon name="Loader2" size={16} className="animate-spin" /> : <Icon name="Send" size={15} />} Получить расчёт
               </button>
             ) : (
               <button
                 onClick={next}
                 disabled={!canNext}
-                className={`btn-pill px-[34px] py-[11px] disabled:cursor-not-allowed disabled:opacity-40 ${glass ? "border border-white/[0.12] bg-[#0A0B0D] text-white hover:border-white/40 hover:bg-black" : "btn-dark"}`}
+                className={`btn-pill btn-graphite px-[34px] py-[11px] disabled:cursor-not-allowed disabled:opacity-40 ${glass ? "border-white/[0.14]" : ""}`}
               >
                 Далее
               </button>

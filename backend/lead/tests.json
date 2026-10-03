@@ -5,6 +5,15 @@
       "method": "OPTIONS",
       "path": "/",
       "expectedStatus": 200
+    },
+    {
+      "name": "Validation error on empty name",
+      "method": "POST",
+      "path": "/",
+      "body": {"name": "", "phone": "+7 (900) 000-00-00"},
+      "expectedStatus": 400,
+      "expectedBody": {"ok": false},
+      "bodyMatcher": "partial"
     }
   ]
 }

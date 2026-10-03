@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import LeadDialog from "@/components/LeadDialog";
+import CalcDialog from "@/components/CalcDialog";
 import Catalog from "@/components/Catalog";
 import Showroom from "@/components/Showroom";
 import Factory from "@/components/Factory";
@@ -24,6 +25,7 @@ const Index = () => {
       <Footer />
       <FloatingMessenger />
       <LeadDialog />
+      <CalcDialog />
     </div>
   );
 };

@@ -92,7 +92,7 @@ const Catalog = () => {
               <p className="max-w-[22em] text-[1.5em] font-medium leading-[1.15] tracking-[-0.035em] sm:text-[1.9em]">
                 Новая коллекция ProfilDoors Orange уже в Roomer: царговые, шпонированные и алюминиевые серии
               </p>
-              <span className="inline-flex w-fit items-center gap-2 rounded-full bg-[#E05A2B] px-5 py-3 text-[0.9em] font-medium transition-colors group-hover:bg-[#C94E24]">
+              <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white px-5 py-3 text-[0.9em] font-medium text-[#1A1A1A] transition-opacity group-hover:opacity-85">
                 Смотреть коллекцию Orange <Icon name="ArrowRight" size={15} strokeWidth={1.8} />
               </span>
             </div>
@@ -124,14 +124,14 @@ const Catalog = () => {
           </div>
         </div>
 
-        <div key={tab} className="mt-10 grid gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div key={tab} className="mt-10 grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {list.map((m, i) => (
             <article
               key={m.id}
-              className="group flex flex-col animate-rise"
+              className="group flex h-full flex-col overflow-hidden rounded-[12px] border border-neutral-200 bg-card animate-rise"
               style={{ animationDelay: `${(i % 8) * 50}ms` }}
             >
-              <div className="relative aspect-[3/4] overflow-hidden rounded-[8px] bg-secondary">
+              <div className="relative aspect-[3/4] shrink-0 overflow-hidden bg-secondary">
                 <img
                   src={m.img}
                   alt={m.name}
@@ -142,16 +142,16 @@ const Catalog = () => {
                   {m.badge}
                 </span>
               </div>
-              <div className="flex flex-1 flex-col pt-5">
-                <span className="text-[0.68em] font-medium uppercase tracking-[0.2em] text-muted-foreground">{m.series}</span>
-                <h3 className="mt-2 text-[1.08em] font-medium leading-tight tracking-[-0.025em]">{m.name}</h3>
-                <p className="mt-2 text-[0.85em] font-light leading-relaxed text-muted-foreground">{m.text}</p>
+              <div className="flex flex-1 flex-col p-5">
+                <span className="line-clamp-1 text-[0.68em] font-medium uppercase tracking-[0.2em] text-muted-foreground">{m.series}</span>
+                <h3 className="mt-2 line-clamp-2 min-h-[2.5em] text-[1.08em] font-medium leading-[1.25] tracking-[-0.025em]">{m.name}</h3>
+                <p className="mt-2 line-clamp-3 min-h-[4.875em] text-[0.85em] font-light leading-[1.625] text-muted-foreground">{m.text}</p>
                 <div className="mt-auto pt-5">
                   <div className="flex items-baseline justify-between border-t border-neutral-200 pt-4">
                     <span className="text-[0.74em] text-muted-foreground">Комплект от</span>
                     <span className="text-[1.5em] font-light tracking-[-0.04em]">{fmt(m.price)} ₽</span>
                   </div>
-                  <button onClick={() => presetQuiz(m.quiz, `${m.series} ${m.name}`)} className="btn-pill btn-outline mt-4 w-full py-3 text-[0.86em]">
+                  <button onClick={() => presetQuiz(m.quiz, `${m.series} ${m.name}`)} className="btn-pill btn-graphite mt-4 w-full py-3 text-[0.86em]">
                     Рассчитать эту модель
                   </button>
                   <button

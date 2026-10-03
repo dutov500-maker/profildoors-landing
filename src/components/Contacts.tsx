@@ -3,12 +3,11 @@ import Reveal from "@/components/Reveal";
 import { SITE, routeLink } from "@/lib/site";
 import { callMeasurer } from "@/components/Header";
 import SalonMap from "@/components/SalonMap";
+import MetroList from "@/components/MetroList";
 
 
 const INFO = [
-  { k: "Салон", v: "Официальный салон ProfilDoors, МЦ Roomer, 1 этаж, секция А149–А151" },
-  { k: "Адрес", v: "г. Москва, ул. Ленинская Слобода, 26" },
-  { k: "Метро", v: "Автозаводская — 2 минуты пешком" },
+  { k: "Адрес", v: SITE.addressFull },
   { k: "Часы работы", v: "Ежедневно, 10:00–22:00" },
 ];
 
@@ -35,6 +34,10 @@ const Contacts = () => (
                 </div>
               ))}
               <div className="grid grid-cols-[110px_1fr] gap-4 border-b border-neutral-200 py-4 sm:grid-cols-[140px_1fr]">
+                <dt className="text-[0.86em] font-light text-muted-foreground">Метро</dt>
+                <dd><MetroList /></dd>
+              </div>
+              <div className="grid grid-cols-[110px_1fr] gap-4 border-b border-neutral-200 py-4 sm:grid-cols-[140px_1fr]">
                 <dt className="text-[0.86em] font-light text-muted-foreground">Телефон</dt>
                 <dd>
                   <a href={SITE.phoneHref} className="text-[1.15em] tracking-[-0.02em] hover:underline">
@@ -49,14 +52,14 @@ const Contacts = () => (
             <div className="mt-8">
               <p className="text-[0.72em] font-medium uppercase tracking-[0.22em] text-muted-foreground">Как быстро пройти в салон</p>
               <p className="mt-3 font-light leading-relaxed text-foreground/80">
-                1 этаж, центральный вход со стороны ул. Ленинская Слобода, двигайтесь прямо по линии А до секции А149–А151 (напротив эскалатора).
+                1 этаж, центральный вход со стороны ул. Ленинская Слобода, двигайтесь прямо по линии А до павильона А149–А151 (напротив эскалатора).
               </p>
             </div>
           </Reveal>
 
           <Reveal delay={140}>
             <div className="mt-8 flex flex-col gap-2.5">
-              <a href={SITE.routeUrl} target="_blank" rel="noreferrer" className="btn-pill btn-dark">
+              <a href={SITE.routeUrl} target="_blank" rel="noreferrer" className="btn-pill btn-graphite">
                 <Icon name="Navigation" size={15} strokeWidth={1.6} /> Построить маршрут
               </a>
               <a href={routeLink("pd", true)} target="_blank" rel="noreferrer" className="btn-pill btn-outline">

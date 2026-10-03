@@ -123,7 +123,7 @@ const OrangeCatalog = () => {
             </span>
             <p className="max-w-[44em] text-[1.02em] font-light leading-relaxed text-white/80">
               В онлайн-каталоге представлены ключевые конфигурации серии Orange. Полная экспозиция фабрики — более 70 вариантов остеклений, веера выкрасов эмали и образцы шпона — представлена в салоне:{" "}
-              <span className="font-medium text-white">Москва, МЦ Roomer, 1 этаж, секция А149–А151</span>.
+              <span className="font-medium text-white">Москва, МЦ Roomer, этаж 1, павильон А149–А151</span>.
             </p>
           </div>
           <div className="flex shrink-0 flex-col gap-2.5 sm:flex-row">

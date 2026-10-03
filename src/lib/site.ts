@@ -1,17 +1,27 @@
 export const SITE = {
   phone: "+7 (901) 592-72-24",
   phoneHref: "tel:+79015927224",
-  max: "https://max.ru/join/vdXcwdMFl4420hjcm8CJpanFfbi99zCSYgQiVFt-Vhg",
+  /** Личный диалог с менеджером: вставьте сюда ссылку на профиль вида https://max.ru/u/... */
+  maxManager: "",
+  maxChannel: "https://max.ru/join/vdXcwdMFl4420hjcm8CJpanFfbi99zCSYgQiVFt-Vhg",
+  get max() {
+    return this.maxManager || this.maxChannel;
+  },
   vk: "https://vk.com/profildoors__design",
   address: "г. Москва, ул. Ленинская Слобода, 26",
-  addressFull: "г. Москва, ул. Ленинская Слобода, 26, МЦ Roomer, 1 этаж, секция А149–А151",
+  addressFull: "г. Москва, ул. Ленинская Слобода, 26 (МЦ Roomer, этаж 1, павильон А149–А151)",
   metro: "м. Автозаводская",
   hours: "Ежедневно с 10:00 до 22:00",
-  routeTarget: "Официальный салон ProfilDoors, МЦ Roomer, 1 этаж, секция А149–А151",
+  routeTarget: "Официальный салон ProfilDoors, МЦ Roomer, этаж 1, павильон А149–А151",
   lat: 55.712613,
   lon: 37.653495,
   routeUrl: "https://yandex.ru/maps/?rtext=~55.712613,37.653495&rtt=auto",
 };
+
+export const METRO_LINES = [
+  { color: "#4DAC4B", name: "Автозаводская", line: "Замоскворецкая линия", time: "3 мин пешком", mck: false },
+  { color: "#E44036", name: "Автозаводская", line: "МЦК", time: "7 мин пешком", mck: true },
+];
 
 const METRO = "55.706914,37.657487";
 
@@ -36,13 +46,13 @@ export const scrollToId = (id: string) => {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 };
 
-/** Choose a door type in the quiz from anywhere on the page and scroll to it. */
-export const QUIZ_PRESET_EVENT = "quiz:preset";
-export type QuizPreset = { type: string; model?: string };
-export const presetQuiz = (type: string, model?: string) => {
-  window.dispatchEvent(new CustomEvent<QuizPreset>(QUIZ_PRESET_EVENT, { detail: { type, model } }));
-  scrollToId("calc");
+/** Open the cost calculator modal from anywhere, optionally with a preset door type/model. */
+export const CALC_OPEN_EVENT = "calc:open";
+export type QuizPreset = { type?: string; model?: string };
+export const openCalc = (preset: QuizPreset = {}) => {
+  window.dispatchEvent(new CustomEvent<QuizPreset>(CALC_OPEN_EVENT, { detail: preset }));
 };
+export const presetQuiz = (type: string, model?: string) => openCalc({ type, model });
 
 /** Switch the catalog tab from anywhere on the page and scroll to it. */
 export const CATALOG_TAB_EVENT = "catalog:tab";
