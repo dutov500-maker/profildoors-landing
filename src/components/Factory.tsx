@@ -22,18 +22,20 @@ const Factory = () => (
       </Reveal>
 
       <Reveal delay={80}>
-        <div className="relative mt-14 aspect-[16/9] overflow-hidden rounded-[10px] sm:aspect-[21/9]">
-          <img
-            src="/img/factory.webp"
-            alt="Роботизированный производственный комплекс ProfilDoors в Подмосковье"
-            loading="lazy"
-            className="h-full w-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0F1012]/70 via-transparent to-transparent" />
-          <p className="absolute bottom-5 left-5 text-[0.8em] font-light text-white/70 sm:bottom-7 sm:left-7">
-            Производственный комплекс ProfilDoors · Московская область
-          </p>
-        </div>
+        <figure className="mt-14">
+          <div className="relative aspect-[1116/469] overflow-hidden rounded-[14px] ring-1 ring-white/10 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8),0_0_60px_-10px_rgba(224,90,43,0.18)]">
+            <img
+              src="/img/profildoors-factory-aerial.webp"
+              alt="Аэроснимок производственного комплекса ProfilDoors в Кубинке, Московская область"
+              loading="lazy"
+              className="h-full w-full object-cover"
+            />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0F1012]/35 via-transparent to-transparent" />
+          </div>
+          <figcaption className="mt-4 text-[0.82em] font-light text-white/60">
+            Производственный комплекс ProfilDoors — Кубинка, Московская область
+          </figcaption>
+        </figure>
       </Reveal>
 
       <div className="mt-3 grid border-t border-white/[0.08] sm:grid-cols-2 lg:grid-cols-5">
