@@ -19,7 +19,7 @@ export const sendLead = async (data: LeadPayload) => {
   const json = await res.json().catch(() => ({}));
   if (res.status !== 200 || !json.ok) throw new Error(json.error || "Не удалось отправить заявку");
   const ym = (window as unknown as { ym?: (...a: unknown[]) => void }).ym;
-  ym?.(101026698, "reachGoal", "lead", { source: data.source });
+  ym?.(113657043, "reachGoal", "lead", { source: data.source });
   return json;
 };
 
