@@ -52,9 +52,43 @@ def send_telegram(text: str) -> bool:
     try:
         with urllib.request.urlopen(req, timeout=3) as r:
             return r.status == 200
-    except (urllib.error.URLError, TimeoutError) as err:
+    except urllib.error.HTTPError as err:
+        print('Telegram HTTP error', err.code, err.read().decode()[:300])
+        return False
+    except (urllib.error.URLError, TimeoutError, OSError) as err:
         print('Telegram error', str(err)[:300])
         return False
+
+
+def lead_text(lead_id, name, phone, comment, page, source) -> str:
+    e = html.escape
+    title = e(source) if source else 'Новая заявка'
+    return (
+        f'🔥 <b>{title}</b> (№{lead_id})\n\n'
+        f'👤 <b>Имя:</b> {e(name)}\n'
+        f'📞 <b>Телефон:</b> {e(phone)}\n'
+        f'📝 <b>Комментарий:</b> {e(comment or "") or "—"}\n'
+        f'🌐 <b>Страница:</b> {e(page or "") or "—"}'
+    )
+
+
+def resend_pending(schema: str, limit: int = 5) -> int:
+    conn = psycopg2.connect(os.environ['DATABASE_URL'])
+    conn.autocommit = True
+    cur = conn.cursor()
+    cur.execute(
+        f'SELECT id, name, phone, comment, page, source FROM {schema}.leads '
+        f'WHERE telegram_sent = FALSE ORDER BY id LIMIT {int(limit)}'
+    )
+    rows = cur.fetchall()
+    sent = 0
+    for row in rows:
+        if not send_telegram(lead_text(*row)):
+            break
+        cur.execute(f'UPDATE {schema}.leads SET telegram_sent = TRUE WHERE id = {int(row[0])}')
+        sent += 1
+    conn.close()
+    return sent
 
 
 def handler(event: dict, context) -> dict:
@@ -82,16 +116,7 @@ def handler(event: dict, context) -> dict:
         f'VALUES ({q(name)}, {q(phone)}, {q(comment)}, {q(page)}, {q(source)}) RETURNING id'
     )[0]
 
-    e = html.escape
-    title = e(source) if source else 'Новая заявка'
-    text = (
-        f'🔥 <b>{title}</b> (№{lead_id})\n\n'
-        f'👤 <b>Имя:</b> {e(name)}\n'
-        f'📞 <b>Телефон:</b> {e(phone)}\n'
-        f'📝 <b>Комментарий:</b> {e(comment) or "—"}\n'
-        f'🌐 <b>Страница:</b> {e(page) or "—"}'
-    )
-    if send_telegram(text):
-        db_query(f'UPDATE {schema}.leads SET telegram_sent = TRUE WHERE id = {int(lead_id)}')
+    sent = resend_pending(schema, limit=3)
+    print('Telegram sent', sent)
 
     return reply(200, {'ok': True, 'id': lead_id})
