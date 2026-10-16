@@ -4,6 +4,7 @@ import Icon from "@/components/ui/icon";
 import { AuthError, adminApi, adminToken, type CatalogData, type CatalogProduct, type Lead, type LeadsData } from "@/lib/api";
 import LeadsPanel from "@/components/admin/LeadsPanel";
 import useNoIndex from "@/hooks/useNoIndex";
+import useLeadsPolling, { playChime } from "@/hooks/useLeadsPolling";
 import CategoriesPanel from "@/components/admin/CategoriesPanel";
 import ProductForm, { type ProductDraft } from "@/components/admin/ProductForm";
 
@@ -30,6 +31,22 @@ const Admin = () => {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [editing, setEditing] = useState<ProductDraft | null>(null);
   const [error, setError] = useState("");
+  const [sound, setSound] = useState(() => localStorage.getItem("pd_admin_sound") !== "off");
+
+  useLeadsPolling(!!data, leads, setLeads, sound);
+
+  useEffect(() => {
+    const reset = () => (document.title = "Панель управления");
+    window.addEventListener("focus", reset);
+    return () => window.removeEventListener("focus", reset);
+  }, []);
+
+  const toggleSound = () => {
+    const next = !sound;
+    setSound(next);
+    localStorage.setItem("pd_admin_sound", next ? "on" : "off");
+    if (next) playChime();
+  };
 
   const fail = useCallback(
     (e: unknown) => {
@@ -107,6 +124,14 @@ const Admin = () => {
             <Link to="/#catalog" target="_blank" className="hidden items-center gap-1.5 text-muted-foreground hover:text-foreground sm:inline-flex">
               <Icon name="ExternalLink" size={14} /> Открыть сайт
             </Link>
+            <button
+              onClick={toggleSound}
+              title={sound ? "Звук новых заявок включён" : "Звук новых заявок выключен"}
+              className="grid h-9 w-9 place-items-center rounded-full border border-[#E5E7EB] hover:bg-secondary"
+              aria-label="Звук уведомлений"
+            >
+              <Icon name={sound ? "Bell" : "BellOff"} size={16} />
+            </button>
             <span className="hidden text-muted-foreground sm:inline">{login}</span>
             <button onClick={logout} className="btn-pill btn-outline px-4 py-2">
               <Icon name="LogOut" size={14} /> Выйти

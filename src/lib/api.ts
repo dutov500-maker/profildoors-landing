@@ -69,11 +69,24 @@ export class AuthError extends Error {}
 
 export const adminApi = async <T = CatalogData>(action: string, body?: unknown): Promise<T> => {
   if (!urls.admin) throw new Error("Панель управления ещё не опубликована");
-  const res = await fetch(`${urls.admin}?action=${action}`, {
-    method: body === undefined ? "GET" : "POST",
-    headers: { "Content-Type": "application/json", "X-Auth-Token": adminToken.get() },
-    body: body === undefined ? undefined : JSON.stringify(body),
-  });
+  const call = () =>
+    fetch(`${urls.admin}?action=${action}`, {
+      method: body === undefined ? "GET" : "POST",
+      headers: { "Content-Type": "application/json", "X-Auth-Token": adminToken.get() },
+      body: body === undefined ? undefined : JSON.stringify(body),
+    });
+  let res: Response;
+  try {
+    res = await call();
+  } catch {
+    await new Promise((r) => setTimeout(r, 1200));
+    try {
+      res = await call();
+    } catch {
+      throw new Error("Нет связи с сервером. Проверьте интернет и обновите страницу. Если не помогает — возможно, исчерпан лимит тарифа (poehali.dev/p/pay).");
+    }
+  }
+  if (res.status === 402) throw new Error("Сервер временно недоступен: достигнут лимит тарифа. Обновите подписку на poehali.dev/p/pay.");
   const json = await res.json().catch(() => ({}));
   if (res.status === 401 && action !== "login") {
     adminToken.clear();
