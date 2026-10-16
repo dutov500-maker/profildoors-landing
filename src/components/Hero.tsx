@@ -10,7 +10,7 @@ const Hero = () => (
       src="/img/hero-interior.webp"
       alt=""
       aria-hidden
-      fetchPriority="high"
+      {...{ fetchpriority: "high" }}
       className="absolute inset-0 -z-20 h-full w-full object-cover object-[70%_50%]"
     />
     <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(0,0,0,0.6)_0%,rgba(0,0,0,0.85)_100%)]" />

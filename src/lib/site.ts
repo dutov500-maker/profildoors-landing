@@ -1,3 +1,5 @@
+import { goal } from "@/lib/metrika";
+
 export const SITE = {
   phone: "+7 (901) 592-72-24",
   phoneHref: "tel:+79015927224",
@@ -40,6 +42,7 @@ export const copyText = async (text: string) => {
 };
 
 export const openMax = (text?: string) => {
+  goal("max_click", { page: location.pathname, from: "button" });
   if (text) copyText(text);
   window.open(SITE.max, "_blank", "noopener,noreferrer");
 };
@@ -59,6 +62,7 @@ export const presetQuiz = (type: string, model?: string) => openCalc({ type, mod
 /** Switch the catalog tab from anywhere on the page and scroll to it. */
 export const CATALOG_TAB_EVENT = "catalog:tab";
 export const openCatalogTab = (tabId: string) => {
+  goal("catalog_tab", { tab: tabId });
   window.dispatchEvent(new CustomEvent(CATALOG_TAB_EVENT, { detail: tabId }));
   scrollToId("catalog");
 };

@@ -6,6 +6,7 @@ import { MODELS, TABS, type Cat, type Model } from "./orangeData";
 import SmartImg from "./SmartImg";
 import OrangeLightbox from "./OrangeLightbox";
 import OrangeModelDialog from "./OrangeModelDialog";
+import { goal } from "@/lib/metrika";
 
 const ModelCard = ({ m, i, onDetails, onZoom }: { m: Model; i: number; onDetails: () => void; onZoom: (i: number) => void }) => {
   return (
@@ -112,7 +113,13 @@ const OrangeCatalog = () => {
 
         <div key={tab} className="mt-10 grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
           {list.map((m, i) => (
-            <ModelCard key={m.id} m={m} i={i} onDetails={() => setDetails(m)} onZoom={(idx) => setZoom({ m, i: idx })} />
+            <ModelCard key={m.id} m={m} i={i} onDetails={() => {
+              setDetails(m);
+              goal("orange_model_open", { model: m.name });
+            }} onZoom={(idx) => {
+              setZoom({ m, i: idx });
+              goal("orange_photo_zoom", { model: m.name });
+            }} />
           ))}
         </div>
 

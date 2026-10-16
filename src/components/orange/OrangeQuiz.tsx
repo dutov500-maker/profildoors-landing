@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { goal, goalOnce } from "@/lib/metrika";
 import Icon from "@/components/ui/icon";
 import { SITE, copyText } from "@/lib/site";
 
@@ -39,12 +40,14 @@ const OrangeQuiz = () => {
   const done = step >= STEPS.length;
 
   const pick = (id: string) => {
+    goalOnce(`orange_quiz_step_${step + 1}`);
     const next = [...answers.slice(0, step), id];
     setAnswers(next);
     setTimeout(() => setStep(step + 1), 200);
   };
 
   const send = () => {
+    goal("orange_quiz_max", { answers: answers.join(" / ") });
     copyText(
       `Здравствуйте! Хочу рассчитать комплект ProfilDoors Orange: ${answers[0]}, ${answers[1]}, ${answers[2]?.toLowerCase()}. Прошу смету и скидку салона Roomer.`,
     );

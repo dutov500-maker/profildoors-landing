@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import Icon from "@/components/ui/icon";
 import { SITE, phoneMask, copyText } from "@/lib/site";
 import { sendLead, pageLabel } from "@/lib/api";
+import { goal } from "@/lib/metrika";
 
 export type LeadOptions = {
   title: string;
@@ -34,7 +35,9 @@ const LeadDialog = () => {
 
   useEffect(() => {
     const handler = (e: Event) => {
-      setOpts((e as CustomEvent<LeadOptions>).detail);
+      const d = (e as CustomEvent<LeadOptions>).detail;
+      setOpts(d);
+      goal("form_open", { source: d.source, page: location.pathname });
       setDone(false);
       setTouched(false);
       setError("");
@@ -62,6 +65,7 @@ const LeadDialog = () => {
       setTouched(false);
       setDone(true);
     } catch {
+      goal("lead_error", { source: opts.source });
       setFallback(
         `Здравствуйте! Заявка на вызов замерщика.\nИмя: ${name.trim()}\nТелефон: ${phone}\nАдрес / комментарий: ${comment.trim() || "—"}\nСтраница: ${pageLabel()}`,
       );

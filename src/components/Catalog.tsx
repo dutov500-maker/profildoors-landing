@@ -4,6 +4,7 @@ import Reveal from "@/components/Reveal";
 import { Link } from "react-router-dom";
 import { openLead } from "@/components/LeadDialog";
 import { CATALOG_TAB_EVENT, presetQuiz } from "@/lib/site";
+import { goal } from "@/lib/metrika";
 import { fetchCatalog, type CatalogCategory } from "@/lib/api";
 
 type Model = {
@@ -75,6 +76,7 @@ const Catalog = () => {
         <Reveal delay={60}>
           <Link
             to="/orange"
+            onClick={() => goal("orange_banner_click")}
             className="group mt-12 grid overflow-hidden rounded-[10px] bg-[#121316] text-white md:grid-cols-[1.3fr_1fr]"
           >
             <div className="flex flex-col justify-center gap-5 p-7 sm:p-10">
@@ -105,7 +107,10 @@ const Catalog = () => {
             {TABS.map((t) => (
               <button
                 key={t.id}
-                onClick={() => setTab(t.id)}
+                onClick={() => {
+                  setTab(t.id);
+                  goal("catalog_tab", { tab: t.label });
+                }}
                 className={`-mb-px whitespace-nowrap border-b pb-4 text-[0.88em] tracking-[-0.01em] transition-colors duration-300 ${
                   active === t.id ? "border-graphite font-medium text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
                 }`}

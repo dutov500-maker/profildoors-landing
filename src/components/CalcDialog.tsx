@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import QuizCard from "@/components/QuizCard";
 import { CALC_OPEN_EVENT, QuizPreset } from "@/lib/site";
+import { goal } from "@/lib/metrika";
 
 const CalcDialog = () => {
   const [open, setOpen] = useState(false);
@@ -9,7 +10,9 @@ const CalcDialog = () => {
 
   useEffect(() => {
     const h = (e: Event) => {
-      setPreset({ ...(e as CustomEvent<QuizPreset>).detail });
+      const d = (e as CustomEvent<QuizPreset>).detail;
+      setPreset({ ...d });
+      goal("calc_open", { type: d.type, model: d.model, page: location.pathname });
       setOpen(true);
     };
     window.addEventListener(CALC_OPEN_EVENT, h);

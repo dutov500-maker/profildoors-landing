@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
+import MetrikaTracker from "./components/MetrikaTracker";
 
 const Orange = lazy(() => import("./pages/Orange"));
 const Admin = lazy(() => import("./pages/Admin"));
@@ -21,6 +22,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <MetrikaTracker />
         <Suspense fallback={<Fallback />}>
           <Routes>
             <Route path="/" element={<Index />} />

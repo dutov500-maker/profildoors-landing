@@ -1,3 +1,4 @@
+import { goal, setUserParams } from "@/lib/metrika";
 const mods = import.meta.glob<{ default: Record<string, string> }>("../../backend/func2url.json", { eager: true });
 const urls: Record<string, string> = Object.values(mods)[0]?.default ?? {};
 
@@ -18,8 +19,10 @@ export const sendLead = async (data: LeadPayload) => {
   });
   const json = await res.json().catch(() => ({}));
   if (res.status !== 200 || !json.ok) throw new Error(json.error || "Не удалось отправить заявку");
-  const ym = (window as unknown as { ym?: (...a: unknown[]) => void }).ym;
-  ym?.(113657043, "reachGoal", "lead", { source: data.source });
+  const where = window.location.pathname.startsWith("/orange") ? "orange" : "main";
+  goal("lead", { source: data.source, page: where });
+  goal(data.source === "Калькулятор стоимости" ? "lead_calc" : "lead_form", { source: data.source, page: where });
+  setUserParams({ lead_sent: true, last_lead_source: data.source });
   return json;
 };
 

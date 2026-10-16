@@ -3,6 +3,7 @@ import Icon from "@/components/ui/icon";
 import DoorGlyph from "@/components/DoorGlyph";
 import { QuizPreset, SITE, openMax, phoneMask, phoneValid } from "@/lib/site";
 import { sendLead, pageLabel } from "@/lib/api";
+import { goal, goalOnce } from "@/lib/metrika";
 
 type Opt = { id: string; name: string; sub: string; glyph?: "classic" | "invisible" | "glass" | "entry"; icon?: string; price?: number; mult?: number };
 
@@ -38,6 +39,10 @@ const QuizCard = ({ glass = false, preset, title = "Расчёт стоимос�
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [touched, setTouched] = useState(false);
+
+  useEffect(() => {
+    if (step > 0) goalOnce(`calc_step_${step}`, { page: location.pathname }, `calc_step_${step}_${title}`);
+  }, [step, title]);
   const [done, setDone] = useState(false);
   const [sending, setSending] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -94,6 +99,7 @@ const QuizCard = ({ glass = false, preset, title = "Расчёт стоимос�
         source: "Калькулятор стоимости",
       });
     } catch {
+      goal("lead_error", { source: "Калькулятор стоимости" });
       setFailed(true);
     } finally {
       setSending(false);
