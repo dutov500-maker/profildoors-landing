@@ -20,6 +20,10 @@ const EMPTY: ProductDraft = {
   category_id: 0,
   status: "published",
   sort_order: 0,
+  in_main: true,
+  in_orange: false,
+  finishes: [],
+  finishes_label: "Отделки",
 };
 
 const Admin = () => {
@@ -30,6 +34,7 @@ const Admin = () => {
   const [tab, setTab] = useState<"leads" | "products" | "categories">("leads");
   const [leads, setLeads] = useState<Lead[]>([]);
   const [editing, setEditing] = useState<ProductDraft | null>(null);
+  const [section, setSection] = useState<"all" | "main" | "orange">("all");
   const [error, setError] = useState("");
   const [sound, setSound] = useState(() => localStorage.getItem("pd_admin_sound") !== "off");
 
@@ -109,7 +114,15 @@ const Admin = () => {
   }
 
   const catName = (id: number) => data.categories.find((c) => c.id === id)?.name ?? "—";
-  const products = data.products as CatalogProduct[];
+  const allProducts = data.products as CatalogProduct[];
+  const products = allProducts.filter((p) => section === "all" || (section === "orange" ? p.in_orange : p.in_main));
+  const swap = (a: number, b: number) => {
+    const ids = allProducts.map((x) => x.id);
+    const ia = ids.indexOf(a);
+    const ib = ids.indexOf(b);
+    [ids[ia], ids[ib]] = [ids[ib], ids[ia]];
+    safeRun("product_reorder", { ids });
+  };
   const newLeads = leads.filter((l) => l.status === "new").length;
 
   return (
@@ -146,7 +159,7 @@ const Admin = () => {
             {(
               [
                 ["leads", `Заявки${newLeads ? ` · ${newLeads} нов.` : ` (${leads.length})`}`],
-                ["products", `Модели (${products.length})`],
+                ["products", `Модели (${allProducts.length})`],
                 ["categories", `Категории каталога (${data.categories.length})`],
               ] as const
             ).map(([id, l]) => (
@@ -165,7 +178,7 @@ const Admin = () => {
           {tab === "products" && !editing && (
             <button
               onClick={() =>
-                setEditing({ ...EMPTY, category_id: data.categories[0]?.id ?? 0, sort_order: (products.at(-1)?.sort_order ?? 0) + 10 })
+                setEditing({ ...EMPTY, category_id: data.categories[0]?.id ?? 0, sort_order: (allProducts.at(-1)?.sort_order ?? 0) + 10, in_main: section !== "orange", in_orange: section === "orange" })
               }
               className="btn-pill btn-graphite"
             >
@@ -204,6 +217,27 @@ const Admin = () => {
           )}
 
           {tab === "products" && !editing && (
+            <div className="mb-4 flex flex-wrap gap-2">
+              {(
+                [
+                  ["all", "Все"],
+                  ["main", "Основной каталог"],
+                  ["orange", "Коллекция Orange"],
+                ] as const
+              ).map(([id, l]) => (
+                <button
+                  key={id}
+                  onClick={() => setSection(id)}
+                  className={`rounded-full border px-3 py-1.5 text-sm transition ${
+                    section === id ? "border-[#1A1A1A] bg-[#1A1A1A] text-white" : "border-[#E5E7EB] bg-card text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {l} ({id === "all" ? allProducts.length : allProducts.filter((p) => (id === "orange" ? p.in_orange : p.in_main)).length})
+                </button>
+              ))}
+            </div>
+          )}
+          {tab === "products" && !editing && (
             <div className="overflow-hidden rounded-[14px] border border-[#E5E7EB] bg-card">
               {!products.length && <p className="p-10 text-center text-muted-foreground">Пока нет моделей. Нажмите «Добавить модель».</p>}
               <ul>
@@ -213,9 +247,7 @@ const Admin = () => {
                       <button
                         disabled={i === 0}
                         onClick={() => {
-                          const ids = products.map((x) => x.id);
-                          [ids[i - 1], ids[i]] = [ids[i], ids[i - 1]];
-                          safeRun("product_reorder", { ids });
+                          swap(p.id, products[i - 1].id);
                         }}
                         className="text-muted-foreground hover:text-foreground disabled:opacity-25"
                         aria-label="Выше"
@@ -225,9 +257,7 @@ const Admin = () => {
                       <button
                         disabled={i === products.length - 1}
                         onClick={() => {
-                          const ids = products.map((x) => x.id);
-                          [ids[i + 1], ids[i]] = [ids[i], ids[i + 1]];
-                          safeRun("product_reorder", { ids });
+                          swap(p.id, products[i + 1].id);
                         }}
                         className="text-muted-foreground hover:text-foreground disabled:opacity-25"
                         aria-label="Ниже"
@@ -243,6 +273,10 @@ const Admin = () => {
                       <p className="truncate font-medium">{p.name}</p>
                       <p className="text-sm text-muted-foreground">
                         {catName(p.category_id)} · {fmt(p.price)} ₽{p.badge ? ` · ${p.badge}` : ""}
+                      </p>
+                      <p className="mt-1 flex flex-wrap gap-1.5">
+                        {p.in_main && <span className="rounded-full bg-secondary px-2 py-0.5 text-[0.7em] font-medium text-muted-foreground">Основной каталог</span>}
+                        {p.in_orange && <span className="rounded-full bg-[#E05A2B]/10 px-2 py-0.5 text-[0.7em] font-medium text-[#B8522E]">Orange</span>}
                       </p>
                     </div>
                     <span

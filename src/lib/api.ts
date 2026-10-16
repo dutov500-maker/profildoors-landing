@@ -44,12 +44,17 @@ export type CatalogProduct = {
   image_url: string;
   status?: "published" | "draft";
   sort_order?: number;
+  in_main?: boolean;
+  in_orange?: boolean;
+  finishes?: Finish[];
+  finishes_label?: string;
 };
+export type Finish = { name: string; color: string };
 export type CatalogData = { categories: CatalogCategory[]; products: CatalogProduct[] };
 
-export const fetchCatalog = async (): Promise<CatalogData> => {
+export const fetchCatalog = async (section: "main" | "orange" = "main"): Promise<CatalogData> => {
   if (!urls.catalog) throw new Error("Каталог ещё не подключён");
-  const res = await fetch(urls.catalog);
+  const res = await fetch(`${urls.catalog}?section=${section}`);
   if (!res.ok) throw new Error("Не удалось загрузить каталог");
   return res.json();
 };

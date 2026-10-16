@@ -11,6 +11,12 @@
       "method": "GET",
       "path": "/",
       "expectedStatus": 200
+    },
+    {
+      "name": "Orange section",
+      "method": "GET",
+      "path": "/?section=orange",
+      "expectedStatus": 200
     }
   ]
 }

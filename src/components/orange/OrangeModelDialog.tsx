@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import Icon from "@/components/ui/icon";
-import { SITE, copyText } from "@/lib/site";
+import { SITE, copyText, waLink } from "@/lib/site";
 import OrangeCarousel from "./OrangeCarousel";
 import type { Model } from "./orangeData";
 
@@ -18,6 +18,7 @@ const OrangeModelDialog = ({ model, onClose, onZoom }: Props) => {
 
   if (!model) return null;
   const f = model.finishes[finish];
+  const msg = `Здравствуйте! Хочу рассчитать комплектацию: ${model.name}${model.subtitle ? ` (${model.subtitle})` : ""}${f ? `, отделка «${f.name}»` : ""}.`;
 
   return (
     <Dialog open={!!model} onOpenChange={(o) => !o && onClose()}>
@@ -41,6 +42,7 @@ const OrangeModelDialog = ({ model, onClose, onZoom }: Props) => {
               {model.text}
             </DialogDescription>
 
+            {f && (
             <div className="mt-8 border-t border-neutral-200 pt-6">
               <div className="flex items-baseline justify-between gap-3">
                 <span className="text-[0.72em] font-medium uppercase tracking-[0.18em] text-muted-foreground">{model.finishesLabel}</span>
@@ -67,21 +69,28 @@ const OrangeModelDialog = ({ model, onClose, onZoom }: Props) => {
                 ))}
               </div>
             </div>
+            )}
 
             <div className="mt-auto pt-8">
               <a
                 href={SITE.max}
                 target="_blank"
                 rel="noreferrer"
-                onClick={() =>
-                  copyText(`Здравствуйте! Хочу рассчитать комплектацию: ${model.name} (${model.subtitle}), отделка «${f.name}».`)
-                }
-                className="btn-pill w-full bg-[#E05A2B] py-3.5 text-white hover:bg-[#C94E24]"
+                onClick={() => copyText(msg)}
+                className="btn-pill w-full bg-[#121316] py-3.5 text-white hover:bg-black"
               >
-                Рассчитать комплектацию в MAX <Icon name="ArrowUpRight" size={15} strokeWidth={1.8} />
+                Рассчитать в MAX <Icon name="ArrowUpRight" size={15} strokeWidth={1.8} />
               </a>
+              <div className="mt-2.5 grid grid-cols-2 gap-2.5">
+                <a href={waLink(msg)} target="_blank" rel="noreferrer" className="btn-pill border border-neutral-300 py-3 text-[0.86em] hover:border-[#121316]">
+                  <Icon name="MessageCircle" size={15} /> WhatsApp
+                </a>
+                <a href={SITE.telegram} target="_blank" rel="noreferrer" onClick={() => copyText(msg)} className="btn-pill border border-neutral-300 py-3 text-[0.86em] hover:border-[#121316]">
+                  <Icon name="Send" size={15} /> Telegram
+                </a>
+              </div>
               <p className="mt-3 text-center text-[0.75em] font-light text-muted-foreground">
-                Название модели и отделки скопируется — просто вставьте в чат
+                Текст с моделью{f ? " и отделкой" : ""} скопируется — просто вставьте в чат. Или звоните: <a href={SITE.phoneHref} className="text-foreground">{SITE.phone}</a>
               </p>
             </div>
           </div>

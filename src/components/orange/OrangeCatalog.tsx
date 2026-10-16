@@ -1,8 +1,9 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Icon from "@/components/ui/icon";
 import Reveal from "@/components/Reveal";
 import { SITE, copyText } from "@/lib/site";
-import { MODELS, TABS, type Cat, type Model } from "./orangeData";
+import { fetchCatalog } from "@/lib/api";
+import { toModel, type Model } from "./orangeData";
 import SmartImg from "./SmartImg";
 import OrangeLightbox from "./OrangeLightbox";
 import OrangeModelDialog from "./OrangeModelDialog";
@@ -27,9 +28,11 @@ const ModelCard = ({ m, i, onDetails, onZoom }: { m: Model; i: number; onDetails
             <Icon name="Maximize2" size={16} />
           </span>
         </button>
-        <span className="pointer-events-none absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[0.7em] font-medium text-[#121316] backdrop-blur">
-          {m.badge}
-        </span>
+        {m.badge && (
+          <span className="pointer-events-none absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[0.7em] font-medium text-[#121316] backdrop-blur">
+            {m.badge}
+          </span>
+        )}
         <span className="pointer-events-none absolute right-3 top-3 rounded-full bg-[#B8522E] px-2 py-0.5 text-[0.62em] font-semibold tracking-[0.12em] text-white">
           ORANGE
         </span>
@@ -40,24 +43,26 @@ const ModelCard = ({ m, i, onDetails, onZoom }: { m: Model; i: number; onDetails
           <p className="mt-1 text-[0.86em] text-muted-foreground">{m.subtitle}</p>
         </button>
         <p className="mt-3 line-clamp-3 text-[0.85em] font-light leading-relaxed text-muted-foreground">{m.text}</p>
+        {m.finishes.length > 0 && (
         <button onClick={onDetails} className="mt-4 flex w-fit items-center gap-1.5">
           {m.finishes.map((s) => (
             <span key={s.name} title={s.name} className="h-4 w-4 rounded-full border border-black/10" style={{ background: s.color }} />
           ))}
           <span className="ml-1 text-[0.75em] text-muted-foreground">{m.finishesLabel === "Профиль" ? "цвета профиля" : "отделки"}</span>
         </button>
+        )}
         <div className="mt-auto flex items-end justify-between gap-3 pt-5">
           <p className="text-[1.25em] font-medium tracking-[-0.02em]">{m.price}</p>
-          <button onClick={onDetails} className="text-[0.82em] text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">
-            Подробнее
+          <button onClick={onDetails} className="inline-flex items-center gap-1 text-[0.84em] font-medium text-foreground underline-offset-4 hover:underline">
+            Подробнее <Icon name="ArrowRight" size={13} strokeWidth={1.8} />
           </button>
         </div>
         <a
           href={SITE.max}
           target="_blank"
           rel="noreferrer"
-          onClick={() => copyText(`Здравствуйте! Хочу рассчитать ${m.name} (${m.subtitle}).`)}
-          className="btn-pill mt-4 w-full border border-neutral-300 py-3 text-[0.86em] hover:border-[#E05A2B] hover:bg-[#E05A2B] hover:text-white"
+          onClick={() => copyText(`Здравствуйте! Хочу рассчитать ${m.name}${m.subtitle ? ` (${m.subtitle})` : ""}.`)}
+          className="btn-pill mt-4 w-full bg-[#121316] py-3 text-[0.86em] text-white hover:bg-black"
         >
           Рассчитать в MAX <Icon name="ArrowUpRight" size={14} strokeWidth={1.8} />
         </a>
@@ -69,10 +74,27 @@ const ModelCard = ({ m, i, onDetails, onZoom }: { m: Model; i: number; onDetails
 type Zoom = { m: Model; i: number; back?: boolean };
 
 const OrangeCatalog = () => {
-  const [tab, setTab] = useState<"all" | Cat>("all");
+  const [tab, setTab] = useState<string>("all");
+  const [models, setModels] = useState<Model[]>([]);
+  const [tabs, setTabs] = useState<{ id: string; label: string }[]>([]);
+  const [loading, setLoading] = useState(true);
   const [details, setDetails] = useState<Model | null>(null);
   const [zoom, setZoom] = useState<Zoom | null>(null);
-  const list = useMemo(() => (tab === "all" ? MODELS : MODELS.filter((m) => m.cat === tab)), [tab]);
+
+  useEffect(() => {
+    fetchCatalog("orange")
+      .then(({ categories, products }) => {
+        const slug = new Map(categories.map((c) => [c.id, c.slug]));
+        setModels(products.map((p) => toModel(p, slug.get(p.category_id) ?? "")));
+        setTabs(categories.map((c) => ({ id: c.slug, label: c.name })));
+      })
+      .catch(() => setModels([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const TABS = useMemo(() => [{ id: "all", label: "Все модели" }, ...tabs], [tabs]);
+  const active = TABS.some((t) => t.id === tab) ? tab : "all";
+  const list = useMemo(() => (active === "all" ? models : models.filter((m) => m.cat === active)), [active, models]);
 
   const closeZoom = () => {
     if (zoom?.back) setDetails(zoom.m);
@@ -95,13 +117,13 @@ const OrangeCatalog = () => {
         <div className="-mx-4 mt-14 overflow-x-auto border-b border-neutral-200 px-4 [scrollbar-width:none] sm:mx-0 sm:px-0">
           <div className="flex w-max gap-7">
             {TABS.map((t) => {
-              const count = t.id === "all" ? MODELS.length : MODELS.filter((m) => m.cat === t.id).length;
+              const count = t.id === "all" ? models.length : models.filter((m) => m.cat === t.id).length;
               return (
                 <button
                   key={t.id}
                   onClick={() => setTab(t.id)}
                   className={`-mb-px whitespace-nowrap border-b pb-4 text-[0.88em] tracking-[-0.01em] transition-colors duration-300 ${
-                    tab === t.id ? "border-[#E05A2B] font-medium text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
+                    active === t.id ? "border-[#E05A2B] font-medium text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   {t.label} <span className="ml-1 text-[0.85em] text-muted-foreground">{count}</span>
@@ -111,7 +133,23 @@ const OrangeCatalog = () => {
           </div>
         </div>
 
-        <div key={tab} className="mt-10 grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+        {loading && (
+          <div className="mt-10 grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+            {[0, 1, 2].map((i) => (
+              <div key={i}>
+                <div className="aspect-[3/4] animate-pulse rounded-[8px] bg-neutral-200" />
+                <div className="mt-5 h-5 w-2/3 animate-pulse rounded bg-neutral-200" />
+                <div className="mt-3 h-4 w-1/2 animate-pulse rounded bg-neutral-200" />
+              </div>
+            ))}
+          </div>
+        )}
+        {!loading && !list.length && (
+          <p className="mt-10 rounded-[12px] border border-neutral-200 bg-white p-10 text-center font-light text-muted-foreground">
+            Витрина обновляется. Актуальные модели Orange подскажет менеджер салона: <a href={SITE.phoneHref} className="text-foreground">{SITE.phone}</a>
+          </p>
+        )}
+        <div key={active} className="mt-10 grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
           {list.map((m, i) => (
             <ModelCard key={m.id} m={m} i={i} onDetails={() => {
               setDetails(m);

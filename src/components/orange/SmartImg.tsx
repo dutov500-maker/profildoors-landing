@@ -1,8 +1,12 @@
-import { ImgHTMLAttributes } from "react";
-import type { Photo } from "./orangeData";
+import { ImgHTMLAttributes, useState } from "react";
+import { PLACEHOLDER, type Photo } from "./orangeData";
 
-type Props = Omit<ImgHTMLAttributes<HTMLImageElement>, "src"> & { photo: Photo };
+type Props = Omit<ImgHTMLAttributes<HTMLImageElement>, "src"> & { photo?: Photo };
 
-const SmartImg = ({ photo, ...rest }: Props) => <img {...rest} src={photo.src} draggable={false} />;
+const SmartImg = ({ photo, ...rest }: Props) => {
+  const [broken, setBroken] = useState(false);
+  const src = !photo?.src || broken ? PLACEHOLDER : photo.src;
+  return <img {...rest} src={src} draggable={false} onError={() => !broken && setBroken(true)} />;
+};
 
 export default SmartImg;

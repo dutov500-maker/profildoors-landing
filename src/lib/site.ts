@@ -10,6 +10,8 @@ export const SITE = {
     return this.maxManager || this.maxChannel;
   },
   vk: "https://vk.com/profildoors__design",
+  whatsapp: "https://wa.me/79015927224",
+  telegram: "https://t.me/+79015927224",
   address: "г. Москва, ул. Ленинская Слобода, 26",
   addressFull: "г. Москва, ул. Ленинская Слобода, 26 (МЦ Roomer, этаж 1, павильон А149–А151)",
   metro: "м. Автозаводская",
@@ -83,3 +85,5 @@ export const phoneMask = (raw: string) => {
 };
 
 export const phoneValid = (v: string) => v.replace(/\D/g, "").length === 11;
+
+export const waLink = (text: string) => `${SITE.whatsapp}?text=${encodeURIComponent(text)}`;

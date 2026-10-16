@@ -144,12 +144,19 @@ def slugify(name: str) -> str:
 
 def all_data(db: Db) -> dict:
     s = schema()
+    products = db.all(
+            f'SELECT id, category_id, name, series, badge, description, price, image_url, status, sort_order, updated_at, '
+            f'in_main, in_orange, finishes, finishes_label '
+            f'FROM {s}.products ORDER BY sort_order, id'
+    )
+    for p in products:
+        try:
+            p['finishes'] = json.loads(p['finishes'] or '[]')
+        except ValueError:
+            p['finishes'] = []
     return {
         'categories': db.all(f'SELECT id, slug, name, quiz_type, sort_order FROM {s}.categories ORDER BY sort_order, id'),
-        'products': db.all(
-            f'SELECT id, category_id, name, series, badge, description, price, image_url, status, sort_order, updated_at '
-            f'FROM {s}.products ORDER BY sort_order, id'
-        ),
+        'products': products,
     }
 
 
@@ -204,6 +211,18 @@ def save_product(db: Db, body: dict) -> dict:
     except (TypeError, ValueError):
         return reply(400, {'error': 'Цена и порядок должны быть числами'})
     status = body.get('status') if body.get('status') in STATUSES else 'draft'
+    in_main = bool(body.get('in_main', True))
+    in_orange = bool(body.get('in_orange', False))
+    if not in_main and not in_orange:
+        return reply(400, {'error': 'Выберите хотя бы один раздел: основной каталог или Orange'})
+    finishes = []
+    for f in (body.get('finishes') or [])[:12]:
+        if not isinstance(f, dict):
+            continue
+        fname = str(f.get('name', '')).strip()[:40]
+        color = str(f.get('color', '')).strip()[:20]
+        if fname and re.fullmatch(r'#[0-9a-fA-F]{6}', color or ''):
+            finishes.append({'name': fname, 'color': color})
     image = str(body.get('image_url', '')).strip()[:500]
     cdn_prefix = f"https://cdn.poehali.dev/projects/{os.environ.get('AWS_ACCESS_KEY_ID', '')}/"
     if image and not (image.startswith('/img/') or image.startswith(cdn_prefix)):
@@ -218,6 +237,10 @@ def save_product(db: Db, body: dict) -> dict:
         'image_url': q(image),
         'status': q(status),
         'sort_order': str(sort_order),
+        'in_main': 'TRUE' if in_main else 'FALSE',
+        'in_orange': 'TRUE' if in_orange else 'FALSE',
+        'finishes': q(json.dumps(finishes, ensure_ascii=False)),
+        'finishes_label': q(str(body.get('finishes_label') or 'Отделки').strip()[:40]),
     }
     pid = body.get('id')
     if pid:

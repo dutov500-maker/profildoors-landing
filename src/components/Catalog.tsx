@@ -38,7 +38,7 @@ const Catalog = () => {
             cat: byId.get(p.category_id)?.slug ?? "",
             series: p.series,
             name: p.name,
-            img: p.image_url,
+            img: p.image_url || "/img/door-placeholder.webp",
             text: p.description,
             price: p.price,
             badge: p.badge,
@@ -144,6 +144,10 @@ const Catalog = () => {
                 <img
                   src={m.img}
                   alt={m.name}
+                  onError={(e) => {
+                    const el = e.currentTarget;
+                    if (!el.src.endsWith("/img/door-placeholder.webp")) el.src = "/img/door-placeholder.webp";
+                  }}
                   loading={i < 4 ? "eager" : "lazy"}
                   className="h-full w-full object-cover transition-transform duration-[1100ms] ease-out group-hover:scale-[1.06]"
                 />

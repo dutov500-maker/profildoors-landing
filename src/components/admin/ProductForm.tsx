@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import Icon from "@/components/ui/icon";
 import { adminApi, type CatalogCategory, type CatalogProduct } from "@/lib/api";
+import FinishesEditor from "./FinishesEditor";
 
 export type ProductDraft = Omit<CatalogProduct, "id"> & { id?: number };
 
@@ -58,6 +59,7 @@ const ProductForm = ({ initial, categories, onSave, onCancel }: Props) => {
     setError("");
     if (p.name.trim().length < 2) return setError("Укажите название модели");
     if (!p.category_id) return setError("Выберите категорию");
+    if (!p.in_main && !p.in_orange) return setError("Отметьте, где показывать модель: основной каталог и/или Orange");
     setSaving(true);
     try {
       await onSave(p);
@@ -95,6 +97,30 @@ const ProductForm = ({ initial, categories, onSave, onCancel }: Props) => {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
+        <div className="sm:col-span-2">
+          <span className={label}>Где показывать модель</span>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {(
+              [
+                ["in_main", "Основной каталог ProfilDoors", "Главная страница, блок «Каталог»"],
+                ["in_orange", "Коллекция ProfilDoors Orange", "Страница /orange"],
+              ] as const
+            ).map(([k, t, d]) => (
+              <label
+                key={k}
+                className={`flex cursor-pointer items-start gap-3 rounded-[10px] border p-3 transition ${
+                  p[k] ? "border-[#1A1A1A] bg-secondary" : "border-[#E5E7EB] hover:border-[#1A1A1A]/40"
+                }`}
+              >
+                <input type="checkbox" checked={!!p[k]} onChange={(e) => set(k, e.target.checked)} className="mt-0.5 h-4 w-4 accent-[#1A1A1A]" />
+                <span>
+                  <span className="block text-sm font-medium">{t}</span>
+                  <span className="block text-[0.75em] text-muted-foreground">{d}</span>
+                </span>
+              </label>
+            ))}
+          </div>
+        </div>
         <label className="sm:col-span-2">
           <span className={label}>Название модели</span>
           <Input value={p.name} onChange={(e) => set("name", e.target.value)} placeholder="Натуральный шпон" maxLength={160} />
@@ -131,6 +157,14 @@ const ProductForm = ({ initial, categories, onSave, onCancel }: Props) => {
           <Textarea value={p.description} onChange={(e) => set("description", e.target.value)} rows={3} maxLength={600} />
           <span className="mt-1 block text-right text-[0.72em] text-muted-foreground">{p.description.length} / 160 рекомендуемо</span>
         </label>
+        <div className="sm:col-span-2">
+          <FinishesEditor
+            value={p.finishes ?? []}
+            label={p.finishes_label || "Отделки"}
+            onChange={(v) => set("finishes", v)}
+            onLabel={(v) => set("finishes_label", v)}
+          />
+        </div>
         <label>
           <span className={label}>Статус</span>
           <select
