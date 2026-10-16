@@ -1,0 +1,7 @@
+{
+  "tests": [
+    {"name": "CORS preflight", "method": "OPTIONS", "path": "/", "expectedStatus": 200},
+    {"name": "Data without token is rejected", "method": "GET", "path": "/?action=data", "expectedStatus": 401, "expectedBody": {"error": "string"}, "bodyMatcher": "partial"},
+    {"name": "Mutation without token is rejected", "method": "POST", "path": "/?action=product_delete", "body": {"id": 1}, "expectedStatus": 401, "expectedBody": {"error": "string"}, "bodyMatcher": "partial"}
+  ]
+}

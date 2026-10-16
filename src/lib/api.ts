@@ -21,3 +21,50 @@ export const pageLabel = () => {
   const name = p.startsWith("/orange") ? "/orange (Коллекция Orange)" : "Главная";
   return `${name} — ${window.location.origin}${p}`;
 };
+
+export type CatalogCategory = { id: number; slug: string; name: string; quiz_type: string; sort_order?: number };
+export type CatalogProduct = {
+  id: number;
+  category_id: number;
+  name: string;
+  series: string;
+  badge: string;
+  description: string;
+  price: number;
+  image_url: string;
+  status?: "published" | "draft";
+  sort_order?: number;
+};
+export type CatalogData = { categories: CatalogCategory[]; products: CatalogProduct[] };
+
+export const fetchCatalog = async (): Promise<CatalogData> => {
+  if (!urls.catalog) throw new Error("Каталог ещё не подключён");
+  const res = await fetch(urls.catalog);
+  if (!res.ok) throw new Error("Не удалось загрузить каталог");
+  return res.json();
+};
+
+const TOKEN_KEY = "pd_admin_token";
+export const adminToken = {
+  get: () => sessionStorage.getItem(TOKEN_KEY) || "",
+  set: (t: string) => sessionStorage.setItem(TOKEN_KEY, t),
+  clear: () => sessionStorage.removeItem(TOKEN_KEY),
+};
+
+export class AuthError extends Error {}
+
+export const adminApi = async <T = CatalogData>(action: string, body?: unknown): Promise<T> => {
+  if (!urls.admin) throw new Error("Панель управления ещё не опубликована");
+  const res = await fetch(`${urls.admin}?action=${action}`, {
+    method: body === undefined ? "GET" : "POST",
+    headers: { "Content-Type": "application/json", "X-Auth-Token": adminToken.get() },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (res.status === 401 && action !== "login") {
+    adminToken.clear();
+    throw new AuthError(json.error || "Требуется вход");
+  }
+  if (!res.ok) throw new Error(json.error || "Ошибка сервера");
+  return json as T;
+};

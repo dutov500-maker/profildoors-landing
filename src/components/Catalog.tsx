@@ -4,12 +4,11 @@ import Reveal from "@/components/Reveal";
 import { Link } from "react-router-dom";
 import { openLead } from "@/components/LeadDialog";
 import { CATALOG_TAB_EVENT, presetQuiz } from "@/lib/site";
-
-type Cat = "orange" | "invisible" | "premium" | "alu" | "entry";
+import { fetchCatalog, type CatalogCategory } from "@/lib/api";
 
 type Model = {
-  id: string;
-  cat: Cat;
+  id: number;
+  cat: string;
   series: string;
   name: string;
   img: string;
@@ -19,53 +18,46 @@ type Model = {
   quiz: string;
 };
 
-const TABS: { id: "all" | Cat; label: string }[] = [
-  { id: "all", label: "Все" },
-  { id: "invisible", label: "Скрытые Invisible & Короба" },
-  { id: "premium", label: "Шпон & Эмаль (Премиум)" },
-  { id: "alu", label: "Алюминиевые двери & Перегородки AG" },
-  { id: "entry", label: "Входные алюминиевые двери" },
-  { id: "orange", label: "ProfilDoors Orange" },
-];
-
-const MODELS: Model[] = [
-  { id: "inv-alu", cat: "invisible", series: "Короб INVISIBLE ALU", name: "Скрытый алюминиевый короб", img: "/img/showroom-invisible.webp", text: "Анодированный короб под отделку стены, скрытые петли и магнитный замок. Высота полотна до 4 000 мм.", price: 26900, badge: "Хит Roomer", quiz: "invisible" },
-  { id: "inv-slim", cat: "invisible", series: "Короб SLIM", name: "Тонкий скрытый короб SLIM", img: "/img/hero-invisible.webp", text: "Минимальный теневой зазор и облегчённый профиль — дверь читается как линия на стене.", price: 29400, badge: "Скрытый монтаж", quiz: "invisible" },
-  { id: "inv-reverse", cat: "invisible", series: "INFINITY REVERSE", name: "Полотно в плоскости стены", img: "/img/invisible.webp", text: "Реверсивное открывание: полотно в единой плоскости со стеной с обеих сторон. До 4 000 мм.", price: 34800, badge: "Скрытый монтаж", quiz: "invisible" },
-  { id: "inv-0sa", cat: "invisible", series: "Серии 0 SA · 0 SE", name: "Под покраску и сплошное зеркало", img: "/img/door-mirror.webp", text: "Полотно под покраску или со сплошным зеркалом: серебро, бронза, графит.", price: 24900, badge: "Выбор дизайнеров", quiz: "invisible" },
-
-  { id: "ve", cat: "premium", series: "Серии VE · VA · VT", name: "Натуральный шпон", img: "/img/door-veneer.webp", text: "Сложные текстуры Duna и Albero, руст 5 мм, диагональное и радиальное направление волокон.", price: 48500, badge: "Премиум", quiz: "interior" },
-  { id: "se", cat: "premium", series: "Серии SE · SA", name: "Шелковистая гладкая эмаль", img: "/img/door-white.webp", text: "Многослойная эмаль с бархатистой поверхностью, кромка в цвет полотна, колеровка RAL/NCS.", price: 32700, badge: "Хит Roomer", quiz: "interior" },
-  { id: "sw", cat: "premium", series: "Серия SW", name: "Неоклассическая 3D-фрезеровка", img: "/img/door-graphite.webp", text: "Объёмная фрезеровка филёнок под эмалью — современная неоклассика для высоких потолков.", price: 39800, badge: "Неоклассика", quiz: "interior" },
-  { id: "swb", cat: "premium", series: "Серия SWB", name: "Эмаль с латунными молдингами", img: "/img/door-enamel-brass.webp", text: "Тонкие латунные молдинги на шелковистой эмали — акцент для гостиных и кабинетов.", price: 46200, badge: "Новая коллекция", quiz: "interior" },
-
-  { id: "agk", cat: "alu", series: "Серии AGK · AGN", name: "Алюминиевые двери с триплексом", img: "/img/door-glass-bronze.webp", text: "Двойное заполнение триплексом и декоративные панели АКП в тонком алюминиевом профиле.", price: 52400, badge: "Хит Roomer", quiz: "glass" },
-  { id: "ag", cat: "alu", series: "Серия AG", name: "Беспороговые раздвижные перегородки", img: "/img/showroom-glass.webp", text: "Перегородки в потолок без порога, профиль Black Matte, скрытые доводчики.", price: 68000, badge: "Экспозиция в Roomer", quiz: "glass" },
-  { id: "magic", cat: "alu", series: "Системы Magic · Pivot", name: "Magic, Pivot и каскадные пеналы", img: "/img/glass.webp", text: "Раздвижные системы Magic со скрытым механизмом, поворотные Pivot и каскадные пеналы.", price: 74500, badge: "Сложные проёмы", quiz: "glass" },
-
-  { id: "rp", cat: "entry", series: "Серия RP", name: "Pivot со смарт-замком", img: "/img/door-pivot.webp", text: "Премиальная алюминиевая входная дверь на поворотной оси Pivot, смарт-замок, для дома и квартиры.", price: 189000, badge: "Премиум", quiz: "entry" },
-  { id: "fn", cat: "entry", series: "Серия FN", name: "Алюминиевая дверь с терморазрывом", img: "/img/door-entry-house.webp", text: "Уличная и квартирная дверь с терморазрывом и многоконтурным уплотнением.", price: 98000, badge: "Для коттеджа", quiz: "entry" },
-  { id: "fn-flat", cat: "entry", series: "Серия FN", name: "Квартирная FN в стиле межкомнатных", img: "/img/entry.webp", text: "Внутренняя панель в едином стиле с межкомнатными дверями ProfilDoors.", price: 86500, badge: "Единый стиль", quiz: "entry" },
-
-  { id: "orange-wave", cat: "orange", series: "ProfilDoors Orange", name: "Orange Wave 01", img: "/img/orange-wave.webp", text: "3D-фрезеровка, бархатистое покрытие Soft-Touch, алюминиевая кромка с 4 сторон.", price: 36900, badge: "Новая коллекция Orange", quiz: "interior" },
-  { id: "orange-line", cat: "orange", series: "ProfilDoors Orange", name: "Orange Line 03", img: "/img/door-greige.webp", text: "Тонкая вертикальная фрезеровка, матовый Soft-Touch в оттенках Грейж и Кашемир.", price: 38700, badge: "Новая коллекция Orange", quiz: "interior" },
-];
-
 const fmt = (n: number) => new Intl.NumberFormat("ru-RU").format(n);
 
 const Catalog = () => {
-  const [tab, setTab] = useState<"all" | Cat>("all");
+  const [tab, setTab] = useState<string>("all");
+  const [cats, setCats] = useState<CatalogCategory[]>([]);
+  const [models, setModels] = useState<Model[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const h = (e: Event) => {
-      const id = (e as CustomEvent<string>).detail as "all" | Cat;
-      if (TABS.some((t) => t.id === id)) setTab(id);
-    };
+    fetchCatalog()
+      .then(({ categories, products }) => {
+        const byId = new Map(categories.map((c) => [c.id, c]));
+        setCats(categories);
+        setModels(
+          products.map((p) => ({
+            id: p.id,
+            cat: byId.get(p.category_id)?.slug ?? "",
+            series: p.series,
+            name: p.name,
+            img: p.image_url,
+            text: p.description,
+            price: p.price,
+            badge: p.badge,
+            quiz: byId.get(p.category_id)?.quiz_type ?? "interior",
+          })),
+        );
+      })
+      .catch(() => setModels([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    const h = (e: Event) => setTab((e as CustomEvent<string>).detail || "all");
     window.addEventListener(CATALOG_TAB_EVENT, h);
     return () => window.removeEventListener(CATALOG_TAB_EVENT, h);
   }, []);
 
-  const list = useMemo(() => (tab === "all" ? MODELS : MODELS.filter((m) => m.cat === tab)), [tab]);
+  const TABS = useMemo(() => [{ id: "all", label: "Все модели" }, ...cats.map((c) => ({ id: c.slug, label: c.name }))], [cats]);
+  const active = TABS.some((t) => t.id === tab) ? tab : "all";
+  const list = useMemo(() => (active === "all" ? models : models.filter((m) => m.cat === active)), [active, models]);
 
   return (
     <section id="catalog" className="border-t border-border bg-card">
@@ -76,7 +68,7 @@ const Catalog = () => {
             <h2 className="section-title mt-6 max-w-[14em]">Каталог моделей, которые можно потрогать в шоуруме</h2>
           </div>
           <p className="max-w-[26em] font-light leading-relaxed text-muted-foreground">
-            {MODELS.length} актуальных моделей и новая линейка ProfilDoors Orange. Цены за комплект: полотно, короб, наличники.
+            {models.length || ""} актуальных моделей и новая линейка ProfilDoors Orange. Цены за комплект: полотно, короб, наличники.
           </p>
         </Reveal>
 
@@ -115,7 +107,7 @@ const Catalog = () => {
                 key={t.id}
                 onClick={() => setTab(t.id)}
                 className={`-mb-px whitespace-nowrap border-b pb-4 text-[0.88em] tracking-[-0.01em] transition-colors duration-300 ${
-                  tab === t.id ? "border-graphite font-medium text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
+                  active === t.id ? "border-graphite font-medium text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {t.label}
@@ -124,7 +116,19 @@ const Catalog = () => {
           </div>
         </div>
 
-        <div key={tab} className="mt-10 grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {loading && (
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {[0, 1, 2, 3].map((i) => (
+              <div key={i} className="h-[620px] animate-pulse rounded-[12px] bg-secondary" />
+            ))}
+          </div>
+        )}
+        {!loading && !list.length && (
+          <p className="mt-10 rounded-[12px] border border-neutral-200 p-10 text-center font-light text-muted-foreground">
+            Каталог обновляется. Актуальные модели и цены подскажет менеджер салона.
+          </p>
+        )}
+        <div key={active} className="mt-10 grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {list.map((m, i) => (
             <article
               key={m.id}

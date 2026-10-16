@@ -1,0 +1,6 @@
+{
+  "tests": [
+    {"name": "CORS preflight", "method": "OPTIONS", "path": "/", "expectedStatus": 200},
+    {"name": "Public catalog", "method": "GET", "path": "/", "expectedStatus": 200, "expectedBody": {"categories": "array", "products": "array"}, "bodyMatcher": "partial"}
+  ]
+}

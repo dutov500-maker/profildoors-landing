@@ -6,10 +6,10 @@ type Tile = { src: string; cap: string; sub: string; alt: string; big?: boolean;
 
 const TILES: Tile[] = [
   { src: "/img/roomer-consult.webp", cap: "Зона консультаций и экспозиция", sub: "Павильон А149–А151", alt: "Зона консультаций шоурума ProfilDoors в Roomer", big: true, go: () => scrollToId("contacts") },
-  { src: "/img/roomer-bifold.webp", cap: "Складные системы и перегородки", sub: "Bifold, гармошки, раздвижные профили", alt: "Стеклянная складная перегородка-гармошка в белом профиле", go: () => openCatalogTab("alu") },
+  { src: "/img/roomer-bifold.webp", cap: "Складные системы и перегородки", sub: "Bifold, гармошки, раздвижные профили", alt: "Стеклянная складная перегородка-гармошка в белом профиле", go: () => openCatalogTab("partitions") },
   { src: "/img/roomer-entry.webp", cap: "Входные двери и Smart-замки", sub: "Биометрия и усиленные короба", alt: "Графитовая входная дверь с умным замком", go: () => openCatalogTab("entry") },
   { src: "/img/roomer-invisible.webp", cap: "Скрытые двери Invisible", sub: "Полотна под покраску и зеркальные системы", alt: "Скрытая зеркальная дверь Invisible", go: () => openCatalogTab("invisible") },
-  { src: "/img/roomer-classic.webp", cap: "Классика и дизайнерские серии", sub: "Эмаль, багетные филенки, анодированный алюминий", alt: "Дверь цвета шампань со стеклом и белая классическая дверь", go: () => openCatalogTab("premium") },
+  { src: "/img/roomer-classic.webp", cap: "Классика и дизайнерские серии", sub: "Эмаль, багетные филенки, анодированный алюминий", alt: "Дверь цвета шампань со стеклом и белая классическая дверь", go: () => openCatalogTab("enamel") },
 ];
 
 const GUARANTEE = [
