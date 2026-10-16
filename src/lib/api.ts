@@ -6,13 +6,20 @@ export type LeadPayload = { name: string; phone: string; comment: string; page: 
 export const sendLead = async (data: LeadPayload) => {
   const url = urls.lead;
   if (!url) throw new Error("Сервис заявок ещё не подключён");
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
+  const call = () =>
+    fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+  const res = await call().catch(async () => {
+    await new Promise((r) => setTimeout(r, 1500));
+    return call();
   });
   const json = await res.json().catch(() => ({}));
   if (res.status !== 200 || !json.ok) throw new Error(json.error || "Не удалось отправить заявку");
+  const ym = (window as unknown as { ym?: (...a: unknown[]) => void }).ym;
+  ym?.(101026698, "reachGoal", "lead", { source: data.source });
   return json;
 };
 

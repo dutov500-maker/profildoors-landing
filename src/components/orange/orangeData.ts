@@ -41,7 +41,7 @@ export const MODELS: Model[] = [
       { name: "Тёплый шёлк", color: "#E8DFD0" },
       { name: "Графит", color: "#3E3F41" },
     ],
-    photos: [{ src: "/orange-design-3.jpg" }],
+    photos: [{ src: "/img/orange-design-3.webp" }],
   },
   {
     id: "vertikal",
@@ -57,7 +57,7 @@ export const MODELS: Model[] = [
       { name: "Unilack Вайт", color: "#F6F5F1" },
       { name: "Лайт Грей", color: "#CFCFCB" },
     ],
-    photos: [{ src: "/orange-design-9.jpg" }],
+    photos: [{ src: "/img/orange-design-9.webp" }],
   },
   {
     id: "relief",
@@ -74,7 +74,7 @@ export const MODELS: Model[] = [
       { name: "Мокко", color: "#6E5646" },
       { name: "Графит", color: "#3E3F41" },
     ],
-    photos: [{ src: "/orange-design-4.jpg" }],
+    photos: [{ src: "/img/orange-design-4.webp" }],
   },
   {
     id: "classic",
@@ -90,7 +90,7 @@ export const MODELS: Model[] = [
       { name: "Крем", color: "#EDE3CF" },
       { name: "Жемчуг", color: "linear-gradient(135deg,#F3F0EA,#D9D4CB)" },
     ],
-    photos: [{ src: "/orange-design-6.jpg" }],
+    photos: [{ src: "/img/orange-design-6.webp" }],
   },
   {
     id: "avo",
@@ -106,6 +106,6 @@ export const MODELS: Model[] = [
       { name: "Шампань", color: "linear-gradient(135deg,#E6D3B0,#B79D73)" },
       { name: "Никель", color: "linear-gradient(135deg,#E3E4E6,#9EA2A7)" },
     ],
-    photos: [{ src: "/orange-design-15.jpg" }],
+    photos: [{ src: "/img/orange-design-15.webp" }],
   },
 ];

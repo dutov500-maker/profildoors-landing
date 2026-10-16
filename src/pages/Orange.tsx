@@ -11,6 +11,7 @@ import FloatingMessenger from "@/components/FloatingMessenger";
 import LeadDialog from "@/components/LeadDialog";
 import { callMeasurer } from "@/components/Header";
 import { SITE } from "@/lib/site";
+import useSeo from "@/hooks/useSeo";
 
 const FACTS = ["Полотна до 3000 мм", "Скрытые короба Reverse", "Экспозиция А149–А151"];
 
@@ -21,9 +22,14 @@ const BackLink = ({ className = "" }: { className?: string }) => (
 );
 
 const Orange = () => {
+  useSeo({
+    title: "ProfilDoors Orange 2026 — новая коллекция дверей в МЦ Roomer, Москва",
+    description:
+      "Коллекция ProfilDoors Orange 2026: дизайнерские двери в эмали, рельефные, классические и алюминиевые серии. Смотрите вживую в шоуруме МЦ Roomer, м. Автозаводская. Расчёт и замер бесплатно.",
+    path: "/orange",
+  });
   useEffect(() => {
     window.scrollTo(0, 0);
-    document.title = "ProfilDoors Orange 2026 — коллекция в МЦ Roomer";
   }, []);
 
   return (
