@@ -44,6 +44,20 @@ export const fetchCatalog = async (): Promise<CatalogData> => {
   return res.json();
 };
 
+export type LeadStatus = "new" | "in_work" | "done" | "spam";
+export type Lead = {
+  id: number;
+  name: string;
+  phone: string;
+  comment: string;
+  page: string;
+  source: string;
+  status: LeadStatus;
+  manager_note: string;
+  created_at: string;
+};
+export type LeadsData = { leads: Lead[] };
+
 const TOKEN_KEY = "pd_admin_token";
 export const adminToken = {
   get: () => sessionStorage.getItem(TOKEN_KEY) || "",

@@ -233,6 +233,36 @@ def delete_product(db: Db, body: dict) -> dict:
     return reply(200, all_data(db))
 
 
+LEAD_STATUSES = {'new', 'in_work', 'done', 'spam'}
+
+
+def leads_data(db: Db) -> dict:
+    s = schema()
+    return {
+        'leads': db.all(
+            f'SELECT id, name, phone, comment, page, source, status, manager_note, created_at '
+            f'FROM {s}.leads ORDER BY created_at DESC, id DESC LIMIT 500'
+        )
+    }
+
+
+def update_lead(db: Db, body: dict) -> dict:
+    lid = int(body.get('id', 0))
+    sets = []
+    if body.get('status') in LEAD_STATUSES:
+        sets.append(f"status = {q(body['status'])}")
+    if 'manager_note' in body:
+        sets.append(f"manager_note = {q(str(body.get('manager_note', ''))[:1000])}")
+    if sets:
+        db.run(f"UPDATE {schema()}.leads SET {', '.join(sets)} WHERE id = {lid}")
+    return reply(200, leads_data(db))
+
+
+def delete_lead(db: Db, body: dict) -> dict:
+    db.run(f'DELETE FROM {schema()}.leads WHERE id = {int(body.get("id", 0))}')
+    return reply(200, leads_data(db))
+
+
 def upload_image(body: dict) -> dict:
     mime = str(body.get('mime', ''))
     if mime not in ('image/jpeg', 'image/png', 'image/webp'):
@@ -276,7 +306,7 @@ def upload_image(body: dict) -> dict:
 
 
 def handler(event: dict, context) -> dict:
-    """Защищённая панель управления каталогом: вход администратора, категории, модели дверей, загрузка фото."""
+    """Защищённая панель управления: вход администратора, категории, модели дверей, загрузка фото, заявки клиентов."""
     if event.get('httpMethod') == 'OPTIONS':
         return {'statusCode': 200, 'headers': CORS, 'body': ''}
 
@@ -306,6 +336,8 @@ def handler(event: dict, context) -> dict:
             return reply(200, {'ok': True})
         if action == 'data':
             return reply(200, all_data(db))
+        if action == 'leads':
+            return reply(200, leads_data(db))
         if method != 'POST':
             return reply(405, {'error': 'Метод не поддерживается'})
 
@@ -317,6 +349,8 @@ def handler(event: dict, context) -> dict:
             'product_delete': lambda: delete_product(db, body),
             'product_reorder': lambda: reorder(db, 'products', body),
             'upload': lambda: upload_image(body),
+            'lead_update': lambda: update_lead(db, body),
+            'lead_delete': lambda: delete_lead(db, body),
         }
         fn = routes.get(action)
         return fn() if fn else reply(404, {'error': 'Неизвестное действие'})

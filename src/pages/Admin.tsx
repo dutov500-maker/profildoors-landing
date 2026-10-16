@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Icon from "@/components/ui/icon";
-import { AuthError, adminApi, adminToken, type CatalogData, type CatalogProduct } from "@/lib/api";
+import { AuthError, adminApi, adminToken, type CatalogData, type CatalogProduct, type Lead, type LeadsData } from "@/lib/api";
+import LeadsPanel from "@/components/admin/LeadsPanel";
 import useNoIndex from "@/hooks/useNoIndex";
 import CategoriesPanel from "@/components/admin/CategoriesPanel";
 import ProductForm, { type ProductDraft } from "@/components/admin/ProductForm";
@@ -25,7 +26,8 @@ const Admin = () => {
   const nav = useNavigate();
   const [data, setData] = useState<CatalogData | null>(null);
   const [login, setLogin] = useState("");
-  const [tab, setTab] = useState<"products" | "categories">("products");
+  const [tab, setTab] = useState<"leads" | "products" | "categories">("leads");
+  const [leads, setLeads] = useState<Lead[]>([]);
   const [editing, setEditing] = useState<ProductDraft | null>(null);
   const [error, setError] = useState("");
 
@@ -45,11 +47,23 @@ const Admin = () => {
     adminApi<{ login: string }>("me")
       .then((r) => {
         setLogin(r.login);
-        return adminApi("data");
+        return Promise.all([adminApi("data"), adminApi<LeadsData>("leads")]);
       })
-      .then(setData)
+      .then(([d, l]) => {
+        setData(d);
+        setLeads(l.leads);
+      })
       .catch(fail);
   }, [nav, fail]);
+
+  const leadsRun = async (action: string, body?: unknown) => {
+    setError("");
+    try {
+      setLeads((await adminApi<LeadsData>(action, body)).leads);
+    } catch (e) {
+      fail(e);
+    }
+  };
 
   const run = async (action: string, body: unknown) => {
     setError("");
@@ -79,6 +93,7 @@ const Admin = () => {
 
   const catName = (id: number) => data.categories.find((c) => c.id === id)?.name ?? "—";
   const products = data.products as CatalogProduct[];
+  const newLeads = leads.filter((l) => l.status === "new").length;
 
   return (
     <div className="min-h-screen bg-secondary pb-20">
@@ -86,7 +101,7 @@ const Admin = () => {
         <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between gap-4 px-4 sm:px-6">
           <div className="leading-tight">
             <p className="text-[0.95em] font-semibold uppercase tracking-[0.16em]">ProfilDoors</p>
-            <p className="text-[0.72em] text-muted-foreground">Панель управления каталогом</p>
+            <p className="text-[0.72em] text-muted-foreground">Панель управления</p>
           </div>
           <div className="flex items-center gap-3 text-sm">
             <Link to="/#catalog" target="_blank" className="hidden items-center gap-1.5 text-muted-foreground hover:text-foreground sm:inline-flex">
@@ -105,6 +120,7 @@ const Admin = () => {
           <div className="inline-flex rounded-full border border-[#E5E7EB] bg-card p-1">
             {(
               [
+                ["leads", `Заявки${newLeads ? ` · ${newLeads} нов.` : ` (${leads.length})`}`],
                 ["products", `Модели (${products.length})`],
                 ["categories", `Категории каталога (${data.categories.length})`],
               ] as const
@@ -136,6 +152,14 @@ const Admin = () => {
         {error && <p className="mt-4 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">{error}</p>}
 
         <div className="mt-6">
+          {tab === "leads" && (
+            <LeadsPanel
+              leads={leads}
+              onUpdate={(b) => leadsRun("lead_update", b)}
+              onDelete={(id) => leadsRun("lead_delete", { id })}
+              onRefresh={() => leadsRun("leads")}
+            />
+          )}
           {tab === "categories" && <CategoriesPanel categories={data.categories} products={products} run={safeRun} />}
 
           {tab === "products" && editing && (
