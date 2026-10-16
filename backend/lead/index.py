@@ -26,7 +26,7 @@ def q(v: str) -> str:
     return "'" + v.replace("'", "''") + "'"
 
 
-def db_exec(sql: str):
+def db_query(sql: str):
     conn = psycopg2.connect(os.environ['DATABASE_URL'])
     conn.autocommit = True
     cur = conn.cursor()
@@ -77,7 +77,7 @@ def handler(event: dict, context) -> dict:
         return reply(400, {'ok': False, 'error': 'Телефон должен содержать минимум 10 цифр'})
 
     schema = os.environ.get('MAIN_DB_SCHEMA', 'public')
-    lead_id = db_exec(
+    lead_id = db_query(
         f'INSERT INTO {schema}.leads (name, phone, comment, page, source) '
         f'VALUES ({q(name)}, {q(phone)}, {q(comment)}, {q(page)}, {q(source)}) RETURNING id'
     )[0]
@@ -92,6 +92,6 @@ def handler(event: dict, context) -> dict:
         f'🌐 <b>Страница:</b> {e(page) or "—"}'
     )
     if send_telegram(text):
-        db_exec(f'UPDATE {schema}.leads SET telegram_sent = TRUE WHERE id = {int(lead_id)}')
+        db_query(f'UPDATE {schema}.leads SET telegram_sent = TRUE WHERE id = {int(lead_id)}')
 
     return reply(200, {'ok': True, 'id': lead_id})
