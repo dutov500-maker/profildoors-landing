@@ -176,10 +176,6 @@ const ProductForm = ({ initial, categories, onSave, onCancel }: Props) => {
             <option value="draft">Черновик</option>
           </select>
         </label>
-        <label>
-          <span className={label}>Порядок отображения</span>
-          <Input type="number" value={p.sort_order ?? 0} onChange={(e) => set("sort_order", Number(e.target.value))} />
-        </label>
 
         {error && <p className="text-sm text-destructive sm:col-span-2">{error}</p>}
         <div className="flex gap-2.5 sm:col-span-2">

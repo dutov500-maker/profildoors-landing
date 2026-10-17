@@ -12,6 +12,7 @@ import LeadDialog from "@/components/LeadDialog";
 import { callMeasurer } from "@/components/Header";
 import { SITE } from "@/lib/site";
 import useSeo from "@/hooks/useSeo";
+import PrivacyLink from "@/components/legal/PrivacyLink";
 
 const FACTS = ["Полотна до 3000 мм", "Скрытые короба Reverse", "Экспозиция А149–А151"];
 
@@ -156,7 +157,10 @@ const Orange = () => {
               <a href={SITE.phoneHref} className="text-white hover:underline">{SITE.phone}</a> · {SITE.hours}
             </p>
           </div>
-          <BackLink className="text-white/80 hover:text-white" />
+          <div className="flex flex-col gap-3 md:items-end">
+            <BackLink className="text-white/80 hover:text-white" />
+            <PrivacyLink className="text-white/50" />
+          </div>
         </div>
       </footer>
 

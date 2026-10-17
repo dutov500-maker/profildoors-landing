@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/compone
 import Icon from "@/components/ui/icon";
 import { SITE, copyText, waLink } from "@/lib/site";
 import OrangeCarousel from "./OrangeCarousel";
+import Consent from "@/components/legal/Consent";
 import type { Model } from "./orangeData";
 
 type Props = { model: Model | null; onClose: () => void; onZoom: (m: Model, i: number) => void };
@@ -92,6 +93,7 @@ const OrangeModelDialog = ({ model, onClose, onZoom }: Props) => {
               <p className="mt-3 text-center text-[0.75em] font-light text-muted-foreground">
                 Текст с моделью{f ? " и отделкой" : ""} скопируется — просто вставьте в чат. Или звоните: <a href={SITE.phoneHref} className="text-foreground">{SITE.phone}</a>
               </p>
+              <Consent className="mt-2 text-center" />
             </div>
           </div>
         </div>

@@ -5,6 +5,7 @@ import Icon from "@/components/ui/icon";
 import { SITE, phoneMask, copyText } from "@/lib/site";
 import { sendLead, pageLabel } from "@/lib/api";
 import { goal } from "@/lib/metrika";
+import Consent from "@/components/legal/Consent";
 
 export type LeadOptions = {
   title: string;
@@ -168,9 +169,7 @@ const LeadDialog = () => {
                   </>
                 )}
               </button>
-              <p className="text-center text-xs font-light text-muted-foreground">
-                Нажимая кнопку, вы соглашаетесь на обработку персональных данных
-              </p>
+              <Consent className="text-center" />
             </form>
           </>
         )}

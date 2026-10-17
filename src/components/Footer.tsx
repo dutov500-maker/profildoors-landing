@@ -1,8 +1,9 @@
 import { SITE } from "@/lib/site";
+import PrivacyLink from "@/components/legal/PrivacyLink";
 
 const Footer = () => (
   <footer className="bg-[#0F1012] text-white/50">
-    <div className="mx-auto grid max-w-[1440px] gap-10 px-4 py-14 pb-28 text-[0.88em] font-light sm:px-6 md:grid-cols-[1.4fr_1fr_1fr] md:pb-14 lg:px-[34px]">
+    <div className="mx-auto grid max-w-[1440px] gap-10 px-4 py-14 text-[0.88em] font-light sm:px-6 md:grid-cols-[1.4fr_1fr_1fr] lg:px-[34px]">
       <div>
         <p className="text-[1.05em] font-semibold uppercase tracking-[0.14em] text-white">ProfilDoors</p>
         <p className="mt-3 max-w-[26em] leading-relaxed">Официальный шоурум в МЦ Roomer. {SITE.addressFull}.</p>
@@ -20,6 +21,12 @@ const Footer = () => (
           Маршрут до МЦ Roomer
         </a>
         <p className="text-[0.85em] text-white/35">{SITE.routeTarget}</p>
+      </div>
+    </div>
+    <div className="border-t border-white/[0.06]">
+      <div className="mx-auto flex max-w-[1440px] flex-col gap-2 px-4 py-5 pb-28 text-[0.8em] font-light text-white/40 sm:flex-row sm:items-center sm:justify-between sm:px-6 md:pb-5 lg:px-[34px]">
+        <span>© {new Date().getFullYear()} ProfilDoors в МЦ Roomer</span>
+        <PrivacyLink className="text-white/60" />
       </div>
     </div>
   </footer>

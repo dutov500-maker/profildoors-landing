@@ -6,11 +6,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import MetrikaTracker from "./components/MetrikaTracker";
+import PrivacyDialog from "./components/legal/PrivacyDialog";
 
 const Orange = lazy(() => import("./pages/Orange"));
 const Admin = lazy(() => import("./pages/Admin"));
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const Privacy = lazy(() => import("./pages/Privacy"));
 
 const queryClient = new QueryClient();
 
@@ -23,10 +25,12 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <MetrikaTracker />
+        <PrivacyDialog />
         <Suspense fallback={<Fallback />}>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/orange" element={<Orange />} />
+            <Route path="/privacy" element={<Privacy />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/*" element={<Admin />} />

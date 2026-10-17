@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { goal, goalOnce } from "@/lib/metrika";
+import Consent from "@/components/legal/Consent";
 import Icon from "@/components/ui/icon";
 import { SITE, copyText } from "@/lib/site";
 
@@ -124,6 +125,7 @@ const OrangeQuiz = () => {
           <p className="mt-3 text-center text-[0.76em] font-light text-white/40">
             Текст заявки скопирован — вставьте его в чат MAX
           </p>
+          <Consent button="кнопку" dark className="mt-2 text-center" />
           <button
             onClick={() => {
               setStep(0);

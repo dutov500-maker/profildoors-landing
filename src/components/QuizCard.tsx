@@ -4,6 +4,7 @@ import DoorGlyph from "@/components/DoorGlyph";
 import { QuizPreset, SITE, openMax, phoneMask, phoneValid } from "@/lib/site";
 import { sendLead, pageLabel } from "@/lib/api";
 import { goal, goalOnce } from "@/lib/metrika";
+import Consent from "@/components/legal/Consent";
 
 type Opt = { id: string; name: string; sub: string; glyph?: "classic" | "invisible" | "glass" | "entry"; icon?: string; price?: number; mult?: number };
 
@@ -271,9 +272,7 @@ const QuizCard = ({ glass = false, preset, title = "Расчёт стоимос�
                     {touched && !phoneOk && <p className={`mt-1 text-xs ${glass ? "text-red-300" : "text-destructive"}`}>Введите телефон полностью</p>}
                   </div>
                 </div>
-                <p className={`text-[0.8em] leading-snug ${muted}`}>
-                  Нажимая кнопку, вы соглашаетесь на обработку персональных данных. Расчёт придёт от менеджера салона.
-                </p>
+                <Consent button="«Получить расчёт»" dark={glass} />
               </div>
             )}
           </div>
