@@ -253,3 +253,16 @@
     animation: none !important;
   }
 }
+
+@media (max-width: 767px) {
+  .hero-title {
+    font-size: 26px;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+  }
+  main > section,
+  body section[id] {
+    position: relative;
+    height: auto;
+  }
+}

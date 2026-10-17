@@ -61,7 +61,7 @@ const Catalog = () => {
   const list = useMemo(() => (active === "all" ? models : models.filter((m) => m.cat === active)), [active, models]);
 
   return (
-    <section id="catalog" className="border-t border-border bg-card">
+    <section id="catalog" data-fab-hide className="relative border-t border-border bg-card">
       <div className="mx-auto max-w-[1440px] px-4 py-20 sm:px-6 sm:py-28 lg:px-[34px]">
         <Reveal className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>

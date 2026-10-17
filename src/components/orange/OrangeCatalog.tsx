@@ -15,7 +15,7 @@ const ModelCard = ({ m, i, onDetails, onZoom }: { m: Model; i: number; onDetails
       <div className="relative">
         <button
           onClick={() => onZoom(0)}
-          className="group relative block aspect-[3/4] w-full cursor-zoom-in overflow-hidden rounded-[8px] bg-neutral-200"
+          className="group relative block aspect-[3/4] w-full cursor-zoom-in overflow-hidden rounded-[8px] bg-white/[0.06]"
           aria-label={`Открыть фото ${m.name}`}
         >
           <SmartImg
@@ -39,21 +39,21 @@ const ModelCard = ({ m, i, onDetails, onZoom }: { m: Model; i: number; onDetails
       </div>
       <div className="flex flex-1 flex-col pt-5">
         <button onClick={onDetails} className="text-left">
-          <h3 className="text-[1.12em] font-medium leading-tight tracking-[-0.025em] hover:text-[#B8522E]">{m.name}</h3>
-          <p className="mt-1 text-[0.86em] text-muted-foreground">{m.subtitle}</p>
+          <h3 className="text-[1.12em] font-medium leading-tight tracking-[-0.025em] hover:text-[#E05A2B]">{m.name}</h3>
+          <p className="mt-1 text-[0.86em] text-white/55">{m.subtitle}</p>
         </button>
-        <p className="mt-3 line-clamp-3 text-[0.85em] font-light leading-relaxed text-muted-foreground">{m.text}</p>
+        <p className="mt-3 line-clamp-3 text-[0.85em] font-light leading-relaxed text-white/55">{m.text}</p>
         {m.finishes.length > 0 && (
         <button onClick={onDetails} className="mt-4 flex w-fit items-center gap-1.5">
           {m.finishes.map((s) => (
-            <span key={s.name} title={s.name} className="h-4 w-4 rounded-full border border-black/10" style={{ background: s.color }} />
+            <span key={s.name} title={s.name} className="h-4 w-4 rounded-full border border-white/20" style={{ background: s.color }} />
           ))}
-          <span className="ml-1 text-[0.75em] text-muted-foreground">{m.finishesLabel === "Профиль" ? "цвета профиля" : "отделки"}</span>
+          <span className="ml-1 text-[0.75em] text-white/55">{m.finishesLabel === "Профиль" ? "цвета профиля" : "отделки"}</span>
         </button>
         )}
         <div className="mt-auto flex items-end justify-between gap-3 pt-5">
           <p className="text-[1.25em] font-medium tracking-[-0.02em]">{m.price}</p>
-          <button onClick={onDetails} className="inline-flex items-center gap-1 text-[0.84em] font-medium text-foreground underline-offset-4 hover:underline">
+          <button onClick={onDetails} className="inline-flex items-center gap-1 text-[0.84em] font-medium text-white underline-offset-4 hover:underline">
             Подробнее <Icon name="ArrowRight" size={13} strokeWidth={1.8} />
           </button>
         </div>
@@ -62,7 +62,7 @@ const ModelCard = ({ m, i, onDetails, onZoom }: { m: Model; i: number; onDetails
           target="_blank"
           rel="noreferrer"
           onClick={() => copyText(`Здравствуйте! Хочу рассчитать ${m.name}${m.subtitle ? ` (${m.subtitle})` : ""}.`)}
-          className="btn-pill mt-4 w-full bg-[#121316] py-3 text-[0.86em] text-white hover:bg-black"
+          className="btn-pill mt-4 w-full bg-white py-3 text-[0.86em] font-medium text-[#121316] hover:bg-white/90"
         >
           Рассчитать в MAX <Icon name="ArrowUpRight" size={14} strokeWidth={1.8} />
         </a>
@@ -102,19 +102,19 @@ const OrangeCatalog = () => {
   };
 
   return (
-    <section id="orange-catalog" className="bg-[#F8F7F5]">
+    <section id="orange-catalog" data-fab-hide className="relative border-t border-white/[0.06] bg-[#0F1012] text-white">
       <div className="mx-auto max-w-[1440px] px-4 py-20 sm:px-6 sm:py-28 lg:px-[34px]">
         <Reveal className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <span className="eyebrow-chip text-[#B8522E]">Витрина Orange 2026</span>
+            <span className="eyebrow-chip text-[#E05A2B]">Витрина Orange 2026</span>
             <h2 className="section-title mt-6 max-w-[13em]">Каталог моделей ProfilDoors Orange</h2>
           </div>
-          <p className="max-w-[26em] font-light leading-relaxed text-muted-foreground">
+          <p className="max-w-[26em] font-light leading-relaxed text-white/55">
             Нажмите на фото, чтобы рассмотреть детали в полном размере, или откройте модель, чтобы выбрать отделку.
           </p>
         </Reveal>
 
-        <div className="-mx-4 mt-14 overflow-x-auto border-b border-neutral-200 px-4 [scrollbar-width:none] sm:mx-0 sm:px-0">
+        <div className="-mx-4 mt-14 overflow-x-auto border-b border-white/[0.08] px-4 [scrollbar-width:none] sm:mx-0 sm:px-0">
           <div className="flex w-max gap-7">
             {TABS.map((t) => {
               const count = t.id === "all" ? models.length : models.filter((m) => m.cat === t.id).length;
@@ -123,10 +123,10 @@ const OrangeCatalog = () => {
                   key={t.id}
                   onClick={() => setTab(t.id)}
                   className={`-mb-px whitespace-nowrap border-b pb-4 text-[0.88em] tracking-[-0.01em] transition-colors duration-300 ${
-                    active === t.id ? "border-[#E05A2B] font-medium text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
+                    active === t.id ? "border-[#E05A2B] font-medium text-white" : "border-transparent text-white/55 hover:text-white"
                   }`}
                 >
-                  {t.label} <span className="ml-1 text-[0.85em] text-muted-foreground">{count}</span>
+                  {t.label} <span className="ml-1 text-[0.85em] text-white/55">{count}</span>
                 </button>
               );
             })}
@@ -137,16 +137,16 @@ const OrangeCatalog = () => {
           <div className="mt-10 grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
             {[0, 1, 2].map((i) => (
               <div key={i}>
-                <div className="aspect-[3/4] animate-pulse rounded-[8px] bg-neutral-200" />
-                <div className="mt-5 h-5 w-2/3 animate-pulse rounded bg-neutral-200" />
-                <div className="mt-3 h-4 w-1/2 animate-pulse rounded bg-neutral-200" />
+                <div className="aspect-[3/4] animate-pulse rounded-[8px] bg-white/[0.06]" />
+                <div className="mt-5 h-5 w-2/3 animate-pulse rounded bg-white/[0.06]" />
+                <div className="mt-3 h-4 w-1/2 animate-pulse rounded bg-white/[0.06]" />
               </div>
             ))}
           </div>
         )}
         {!loading && !list.length && (
-          <p className="mt-10 rounded-[12px] border border-neutral-200 bg-white p-10 text-center font-light text-muted-foreground">
-            Витрина обновляется. Актуальные модели Orange подскажет менеджер салона: <a href={SITE.phoneHref} className="text-foreground">{SITE.phone}</a>
+          <p className="mt-10 rounded-[12px] border border-white/[0.08] bg-white/[0.03] p-10 text-center font-light text-white/55">
+            Витрина обновляется. Актуальные модели Orange подскажет менеджер салона: <a href={SITE.phoneHref} className="text-white">{SITE.phone}</a>
           </p>
         )}
         <div key={active} className="mt-10 grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
@@ -161,7 +161,7 @@ const OrangeCatalog = () => {
           ))}
         </div>
 
-        <Reveal className="mt-20 flex flex-col gap-6 rounded-[12px] bg-[#121316] p-7 text-white sm:p-10 lg:flex-row lg:items-center lg:justify-between">
+        <Reveal className="mt-20 flex flex-col gap-6 rounded-[12px] border border-white/[0.08] bg-[#16171A] p-7 text-white sm:p-10 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex gap-5">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#E05A2B]">
               <Icon name="MapPin" size={22} />

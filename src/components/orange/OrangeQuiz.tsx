@@ -55,7 +55,7 @@ const OrangeQuiz = () => {
   };
 
   return (
-    <div id="orange-calc" className="rounded-[14px] border border-white/[0.08] bg-[#121316]/90 p-5 text-white backdrop-blur-xl sm:p-7">
+    <div id="orange-calc" data-fab-hide className="rounded-[14px] border border-white/[0.08] bg-[#121316]/90 p-5 text-white backdrop-blur-xl sm:p-7">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-[0.68em] font-medium uppercase tracking-[0.22em] text-[#E8A27E]">Экспресс-расчёт Orange</p>

@@ -38,7 +38,7 @@ const Showroom = () => (
         </div>
       </Reveal>
 
-      <div className="-mx-4 mt-14 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:-mx-6 sm:px-6 md:mx-0 md:grid md:grid-cols-4 md:grid-rows-[300px_300px] md:overflow-visible md:px-0 md:pb-0 lg:grid-rows-[320px_320px] [&::-webkit-scrollbar]:hidden">
+      <div className="relative -mx-4 mt-14 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:-mx-6 sm:px-6 md:mx-0 md:grid md:grid-cols-4 md:grid-rows-[300px_300px] md:overflow-visible md:px-0 md:pb-0 lg:grid-rows-[320px_320px] [&::-webkit-scrollbar]:hidden">
         {TILES.map((t, i) => (
           <Reveal
             key={t.src}
@@ -49,7 +49,7 @@ const Showroom = () => (
               type="button"
               onClick={t.go}
               aria-label={t.cap}
-              className="group relative block h-[420px] w-full overflow-hidden rounded-[16px] bg-secondary text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/40 md:h-full"
+              className="group relative block aspect-[4/5] w-full overflow-hidden rounded-[16px] bg-secondary text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/40 md:aspect-auto md:h-full"
             >
               <img
                 src={t.src}
@@ -73,7 +73,7 @@ const Showroom = () => (
       </div>
 
       <Reveal delay={120}>
-        <div className="mt-3 grid gap-8 rounded-[10px] border border-border bg-card p-6 sm:p-10 lg:grid-cols-[1fr_1.3fr] lg:items-center lg:gap-14 lg:p-12">
+        <div className="relative mt-10 grid gap-8 rounded-[10px] border border-border bg-card p-6 md:mt-3 sm:p-10 lg:grid-cols-[1fr_1.3fr] lg:items-center lg:gap-14 lg:p-12">
           <div>
             <span className="eyebrow-chip">Гарантия фабрики</span>
             <h3 className="mt-5 text-2xl font-medium leading-tight tracking-[-0.035em] sm:text-[2rem]">

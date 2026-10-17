@@ -165,6 +165,7 @@ const QuizCard = ({ glass = false, preset, title = "Расчёт стоимос�
 
   return (
     <section
+      data-fab-hide
       aria-label="Расчёт стоимости"
       className={`flex min-h-[460px] flex-col rounded-[14px] p-5 sm:p-7 ${glass ? "glass-card" : "border border-border bg-card"}`}
     >
