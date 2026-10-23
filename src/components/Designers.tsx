@@ -22,7 +22,7 @@ const Designers = () => (
           </div>
           <div className="flex flex-col gap-4 min-[480px]:flex-row min-[480px]:items-center">
             <a href={SITE.max} target="_blank" rel="noreferrer" className="btn-pill btn-light">
-              Получить партнёрский прайс в MAX
+              Получить партнёрский расчёт в MAX
             </a>
             <span className="text-[0.84em] font-light text-white/40">Ответим в течение часа</span>
           </div>

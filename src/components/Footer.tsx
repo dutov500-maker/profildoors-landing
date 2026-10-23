@@ -1,4 +1,5 @@
 import { SITE } from "@/lib/site";
+import { LEGAL } from "@/lib/legal";
 import PrivacyLink from "@/components/legal/PrivacyLink";
 
 const Footer = () => (
@@ -25,7 +26,9 @@ const Footer = () => (
     </div>
     <div className="border-t border-white/[0.06]">
       <div className="mx-auto flex max-w-[1440px] flex-col gap-2 px-4 py-5 pb-28 text-[0.8em] font-light text-white/40 sm:flex-row sm:items-center sm:justify-between sm:px-6 md:pb-5 lg:px-[34px]">
-        <span>© {new Date().getFullYear()} ProfilDoors в МЦ Roomer</span>
+        <span>
+          © {new Date().getFullYear()} ProfilDoors в МЦ Roomer · {LEGAL.short}, ИНН {LEGAL.inn}, ОГРНИП {LEGAL.ogrn}
+        </span>
         <PrivacyLink className="text-white/60" />
       </div>
     </div>

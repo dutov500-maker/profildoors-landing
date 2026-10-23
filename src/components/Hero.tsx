@@ -2,7 +2,7 @@ import Icon from "@/components/ui/icon";
 import QuizCard from "@/components/QuizCard";
 import { SITE, METRO_LINES, openCalc, openCatalogTab } from "@/lib/site";
 
-const FACTS = ["Экспозиция 60+ моделей", "Высота полотен до 4 000 мм", "Гарантия 5 лет"];
+const FACTS = ["Экспозиция 26 моделей", "Высота полотен до 4 000 мм", "Гарантия 1 год"];
 
 const Hero = () => (
   <div id="top" className="relative isolate overflow-hidden bg-[#0B0C0E] pt-24 text-white">

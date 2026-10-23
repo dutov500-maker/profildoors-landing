@@ -12,6 +12,7 @@ import LeadDialog from "@/components/LeadDialog";
 import { callMeasurer } from "@/components/Header";
 import { SITE } from "@/lib/site";
 import useSeo from "@/hooks/useSeo";
+import { LEGAL } from "@/lib/legal";
 import PrivacyLink from "@/components/legal/PrivacyLink";
 
 const FACTS = ["Полотна до 3000 мм", "Скрытые короба Reverse", "Экспозиция А149–А151"];
@@ -26,7 +27,7 @@ const Orange = () => {
   useSeo({
     title: "ProfilDoors Orange 2026 — новая коллекция дверей в МЦ Roomer, Москва",
     description:
-      "Коллекция ProfilDoors Orange 2026: дизайнерские двери в эмали, рельефные, классические и алюминиевые серии. Смотрите вживую в шоуруме МЦ Roomer, м. Автозаводская. Расчёт и замер бесплатно.",
+      "Коллекция ProfilDoors Orange 2026: дизайнерские двери в эмали, рельефные, классические и алюминиевые серии. Смотрите вживую в шоуруме МЦ Roomer, м. Автозаводская. Расчёт стоимости и вызов замерщика.",
     path: "/orange",
   });
   useEffect(() => {
@@ -155,6 +156,9 @@ const Orange = () => {
             <p className="mt-2">{SITE.addressFull}</p>
             <p className="mt-1">
               <a href={SITE.phoneHref} className="text-white hover:underline">{SITE.phone}</a> · {SITE.hours}
+            </p>
+            <p className="mt-3 text-[0.88em] text-white/35">
+              {LEGAL.short}, ИНН {LEGAL.inn}, ОГРНИП {LEGAL.ogrn}
             </p>
           </div>
           <div className="flex flex-col gap-3 md:items-end">

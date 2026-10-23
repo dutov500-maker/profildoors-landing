@@ -15,7 +15,7 @@ const TILES: Tile[] = [
 const GUARANTEE = [
   { icon: "Factory", text: "Собственное производство в Подмосковье" },
   { icon: "ScanLine", text: "Автоматизированный контроль геометрии" },
-  { icon: "ShieldCheck", text: "Гарантия 5 лет на полотна и фурнитуру" },
+  { icon: "ShieldCheck", text: "Гарантия 1 год на полотна и фурнитуру" },
 ];
 
 const Showroom = () => (
@@ -30,7 +30,7 @@ const Showroom = () => (
         </div>
         <div className="flex max-w-[26em] flex-col gap-4">
           <p className="font-light leading-relaxed text-muted-foreground">
-            Экспозиция более 60 моделей дверей и перегородок вживую. этаж 1, павильон А149–А151. Ежедневно с 10:00 до 22:00.
+            Экспозиция из 26 моделей дверей и перегородок вживую. Этаж 1, павильон А149–А151. Ежедневно с 10:00 до 22:00.
           </p>
           <a href={SITE.routeUrl} target="_blank" rel="noreferrer" className="btn-pill btn-outline w-fit">
             <Icon name="Navigation" size={15} /> Как добраться

@@ -31,6 +31,8 @@ const PrivacyText = () => (
     <H>2. Реквизиты оператора</H>
     <ul className="mt-3 space-y-1.5">
       <li>Оператор персональных данных: {LEGAL.operator}.</li>
+      <li>ИНН: {LEGAL.inn}, ОГРНИП: {LEGAL.ogrn}</li>
+      <li>Адрес регистрации: {LEGAL.legalAddress}.</li>
       <li>Контактный e-mail для обращений: <Mail /></li>
       <li>Контактный телефон: {LEGAL.phone}</li>
       <li>Адрес шоурума: {LEGAL.address}.</li>

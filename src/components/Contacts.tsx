@@ -75,7 +75,7 @@ const Contacts = () => (
                 </a>
               </div>
               <button onClick={callMeasurer} className="btn-pill btn-outline">
-                Вызвать замерщика бесплатно
+                Вызвать замерщика
               </button>
             </div>
           </Reveal>

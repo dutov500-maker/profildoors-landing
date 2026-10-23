@@ -30,7 +30,7 @@ export const OrangeLink = ({ className = "", onClick }: { className?: string; on
 export const callMeasurer = () =>
   openLead({
     title: "Вызвать замерщика",
-    description: "Бесплатный выезд по Москве. Замерщик привезёт образцы покрытий и рассчитает смету на месте.",
+    description: "Выезд по Москве и МО. Замерщик привезёт образцы покрытий и рассчитает смету на месте.",
     source: "Вызов замерщика",
     button: "Вызвать замерщика",
   });
