@@ -48,11 +48,25 @@ export type CatalogProduct = {
   in_orange?: boolean;
   finishes?: Finish[];
   finishes_label?: string;
+  slug?: string;
+  updated?: string;
 };
-export type Finish = { name: string; color: string };
+export type Finish = { name: string; color: string; texture?: string; image?: string };
+
+/** Стиль кружочка отделки: фото текстуры или цвет. */
+export const swatchStyle = (f: Finish) =>
+  f.texture ? { backgroundImage: `url(${f.texture})`, backgroundSize: "cover", backgroundPosition: "center" } : { background: f.color };
 export type CatalogData = { categories: CatalogCategory[]; products: CatalogProduct[] };
 
-export const fetchCatalog = async (section: "main" | "orange" = "main"): Promise<CatalogData> => {
+export const fetchModel = async (slug: string): Promise<CatalogData | null> => {
+  if (!urls.catalog) return null;
+  const res = await fetch(`${urls.catalog}?slug=${encodeURIComponent(slug)}`);
+  if (!res.ok) return null;
+  const data: CatalogData = await res.json();
+  return data.products.length ? data : null;
+};
+
+export const fetchCatalog = async (section: "main" | "orange" | "all" = "main"): Promise<CatalogData> => {
   if (!urls.catalog) throw new Error("Каталог ещё не подключён");
   const res = await fetch(`${urls.catalog}?section=${section}`);
   if (!res.ok) throw new Error("Не удалось загрузить каталог");

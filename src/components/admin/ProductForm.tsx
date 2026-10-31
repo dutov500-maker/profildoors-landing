@@ -125,6 +125,31 @@ const ProductForm = ({ initial, categories, onSave, onCancel }: Props) => {
           <span className={label}>Название модели</span>
           <Input value={p.name} onChange={(e) => set("name", e.target.value)} placeholder="Натуральный шпон" maxLength={160} />
         </label>
+        <label className="sm:col-span-2">
+          <span className={label}>Адрес страницы модели (для поиска)</span>
+          <div className="flex items-center gap-2">
+            <span className="shrink-0 text-sm text-muted-foreground">/models/</span>
+            <Input
+              value={p.slug ?? ""}
+              onChange={(e) => set("slug", e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"))}
+              placeholder="заполнится сам из названия"
+              maxLength={90}
+            />
+            {p.id && p.slug && p.status === "published" && (
+              <a
+                href={`/models/${p.slug}`}
+                target="_blank"
+                rel="noreferrer"
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-md border border-input text-muted-foreground hover:text-foreground"
+                aria-label="Открыть страницу модели"
+                title="Открыть страницу модели"
+              >
+                <Icon name="ExternalLink" size={15} />
+              </a>
+            )}
+          </div>
+          <span className="mt-1 block text-[0.72em] text-muted-foreground">Латиницей, например grafika-belaya. Можно оставить пустым — адрес создастся из названия.</span>
+        </label>
         <label>
           <span className={label}>Серии / подзаголовок</span>
           <Input value={p.series} onChange={(e) => set("series", e.target.value)} placeholder="Серии VE · VA · VT" maxLength={160} />

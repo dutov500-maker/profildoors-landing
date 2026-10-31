@@ -17,6 +17,18 @@
       "method": "GET",
       "path": "/?section=orange",
       "expectedStatus": 200
+    },
+    {
+      "name": "Single model by slug",
+      "method": "GET",
+      "path": "/?slug=naturalnyj-shpon",
+      "expectedStatus": 200
+    },
+    {
+      "name": "All models",
+      "method": "GET",
+      "path": "/?section=all",
+      "expectedStatus": 200
     }
   ]
 }

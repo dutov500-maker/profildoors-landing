@@ -65,8 +65,9 @@ const Header = () => {
       </div>
       <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between gap-6 px-4 sm:px-6 lg:px-[34px]">
         <a
-          href="#top"
+          href="/"
           onClick={(e) => {
+            if (window.location.pathname !== "/") return;
             e.preventDefault();
             window.scrollTo({ top: 0, behavior: "smooth" });
           }}

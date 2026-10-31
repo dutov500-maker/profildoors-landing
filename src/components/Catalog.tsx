@@ -1,14 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link as RLink } from "@tanstack/react-router";
 import Icon from "@/components/ui/icon";
 import Reveal from "@/components/Reveal";
 import { Link } from "@/lib/router-compat";
 import { openLead } from "@/components/LeadDialog";
 import { CATALOG_TAB_EVENT, presetQuiz } from "@/lib/site";
 import { goal } from "@/lib/metrika";
-import { fetchCatalog, type CatalogCategory, type CatalogData } from "@/lib/api";
+import { fetchCatalog, type CatalogCategory, type CatalogData, type Finish } from "@/lib/api";
+import Swatches from "@/components/catalog/Swatches";
 
 type Model = {
   id: number;
+  slug: string;
+  finishes: Finish[];
+  finishesLabel: string;
   cat: string;
   series: string;
   name: string;
@@ -25,6 +30,9 @@ const toModels = ({ categories, products }: CatalogData): Model[] => {
   const byId = new Map(categories.map((c) => [c.id, c]));
   return products.map((p) => ({
     id: p.id,
+    slug: p.slug ?? "",
+    finishes: p.finishes ?? [],
+    finishesLabel: p.finishes_label || "Отделки",
     cat: byId.get(p.category_id)?.slug ?? "",
     series: p.series,
     name: p.name,
@@ -34,6 +42,110 @@ const toModels = ({ categories, products }: CatalogData): Model[] => {
     badge: p.badge,
     quiz: byId.get(p.category_id)?.quiz_type ?? "interior",
   }));
+};
+
+const PLACEHOLDER = "/img/door-placeholder.webp";
+
+const ModelCard = ({ m, i }: { m: Model; i: number }) => {
+  const [fi, setFi] = useState(0);
+  const f = m.finishes[fi];
+  const img = f?.image || m.img;
+  const title = `${m.series} ${m.name}`.trim();
+  const toPage = m.slug ? { to: "/models/$slug" as const, params: { slug: m.slug } } : null;
+
+  const photo = (
+    <img
+      key={img}
+      src={img}
+      alt={f ? `${m.name} — ${f.name}` : m.name}
+      onError={(e) => {
+        const el = e.currentTarget;
+        if (!el.src.endsWith(PLACEHOLDER)) el.src = PLACEHOLDER;
+      }}
+      loading={i < 4 ? "eager" : "lazy"}
+      className="h-full w-full object-cover transition-transform duration-[1100ms] ease-out animate-fade-in group-hover:scale-[1.06]"
+    />
+  );
+
+  return (
+    <article
+      className="group flex h-full flex-col overflow-hidden rounded-[12px] border border-neutral-200 bg-card animate-rise"
+      style={{ animationDelay: `${(i % 8) * 50}ms` }}
+    >
+      <div className="relative aspect-[3/4] shrink-0 overflow-hidden bg-secondary">
+        {toPage ? (
+          <RLink {...toPage} aria-label={`Подробнее: ${m.name}`} className="block h-full w-full">
+            {photo}
+          </RLink>
+        ) : (
+          photo
+        )}
+        {m.badge && (
+          <span className="pointer-events-none absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[0.7em] font-medium tracking-[0.01em] text-graphite backdrop-blur">
+            {m.badge}
+          </span>
+        )}
+      </div>
+      <div className="flex flex-1 flex-col p-5">
+        <span className="line-clamp-1 text-[0.68em] font-medium uppercase tracking-[0.2em] text-muted-foreground">{m.series}</span>
+        <h3 className="mt-2 line-clamp-2 min-h-[2.5em] text-[1.08em] font-medium leading-[1.25] tracking-[-0.025em]">
+          {toPage ? (
+            <RLink {...toPage} className="hover:underline hover:underline-offset-4">
+              {m.name}
+            </RLink>
+          ) : (
+            m.name
+          )}
+        </h3>
+        <p className="mt-2 line-clamp-3 min-h-[4.875em] text-[0.85em] font-light leading-[1.625] text-muted-foreground">{m.text}</p>
+        {m.finishes.length > 0 && (
+          <div className="mt-4">
+            <div className="flex items-baseline justify-between gap-2 text-[0.72em]">
+              <span className="uppercase tracking-[0.16em] text-muted-foreground">{m.finishesLabel}</span>
+              <span className="line-clamp-1 font-medium">{f?.name}</span>
+            </div>
+            <div className="mt-2.5">
+              <Swatches finishes={m.finishes} active={fi} onPick={setFi} limit={8} />
+            </div>
+          </div>
+        )}
+        <div className="mt-auto pt-5">
+          <div className="flex items-baseline justify-between border-t border-neutral-200 pt-4">
+            <span className="text-[0.74em] text-muted-foreground">Комплект от</span>
+            <span className="text-[1.5em] font-light tracking-[-0.04em]">{fmt(m.price)} ₽</span>
+          </div>
+          <button
+            onClick={() => presetQuiz(m.quiz, f ? `${title}, отделка «${f.name}»` : title)}
+            className="btn-pill btn-graphite mt-4 w-full py-3 text-[0.86em]"
+          >
+            Рассчитать эту модель
+          </button>
+          {toPage ? (
+            <RLink
+              {...toPage}
+              className="mt-2 inline-flex w-full items-center justify-center gap-1.5 py-1.5 text-[0.82em] text-muted-foreground transition hover:text-foreground"
+            >
+              Подробнее о модели <Icon name="ArrowRight" size={14} />
+            </RLink>
+          ) : (
+            <button
+              onClick={() =>
+                openLead({
+                  title: "Посмотреть образцы в шоуруме",
+                  description: `${title}. Подготовим образец и веер покрытий к вашему визиту в МЦ Roomer.`,
+                  source: `Визит в шоурум: ${title}`,
+                  button: "Записаться на визит",
+                })
+              }
+              className="mt-2 inline-flex w-full items-center justify-center gap-1.5 py-1.5 text-[0.82em] text-muted-foreground transition hover:text-foreground"
+            >
+              <Icon name="Eye" size={14} /> Посмотреть в шоуруме
+            </button>
+          )}
+        </div>
+      </div>
+    </article>
+  );
 };
 
 const Catalog = ({ initial = null }: { initial?: CatalogData | null }) => {
@@ -138,54 +250,7 @@ const Catalog = ({ initial = null }: { initial?: CatalogData | null }) => {
         )}
         <div key={active} className="mt-10 grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {list.map((m, i) => (
-            <article
-              key={m.id}
-              className="group flex h-full flex-col overflow-hidden rounded-[12px] border border-neutral-200 bg-card animate-rise"
-              style={{ animationDelay: `${(i % 8) * 50}ms` }}
-            >
-              <div className="relative aspect-[3/4] shrink-0 overflow-hidden bg-secondary">
-                <img
-                  src={m.img}
-                  alt={m.name}
-                  onError={(e) => {
-                    const el = e.currentTarget;
-                    if (!el.src.endsWith("/img/door-placeholder.webp")) el.src = "/img/door-placeholder.webp";
-                  }}
-                  loading={i < 4 ? "eager" : "lazy"}
-                  className="h-full w-full object-cover transition-transform duration-[1100ms] ease-out group-hover:scale-[1.06]"
-                />
-                <span className={`absolute left-3 top-3 rounded-full px-2.5 py-1 text-[0.7em] font-medium tracking-[0.01em] backdrop-blur  bg-white/90 text-graphite`}>
-                  {m.badge}
-                </span>
-              </div>
-              <div className="flex flex-1 flex-col p-5">
-                <span className="line-clamp-1 text-[0.68em] font-medium uppercase tracking-[0.2em] text-muted-foreground">{m.series}</span>
-                <h3 className="mt-2 line-clamp-2 min-h-[2.5em] text-[1.08em] font-medium leading-[1.25] tracking-[-0.025em]">{m.name}</h3>
-                <p className="mt-2 line-clamp-3 min-h-[4.875em] text-[0.85em] font-light leading-[1.625] text-muted-foreground">{m.text}</p>
-                <div className="mt-auto pt-5">
-                  <div className="flex items-baseline justify-between border-t border-neutral-200 pt-4">
-                    <span className="text-[0.74em] text-muted-foreground">Комплект от</span>
-                    <span className="text-[1.5em] font-light tracking-[-0.04em]">{fmt(m.price)} ₽</span>
-                  </div>
-                  <button onClick={() => presetQuiz(m.quiz, `${m.series} ${m.name}`)} className="btn-pill btn-graphite mt-4 w-full py-3 text-[0.86em]">
-                    Рассчитать эту модель
-                  </button>
-                  <button
-                    onClick={() =>
-                      openLead({
-                        title: "Посмотреть образцы в шоуруме",
-                        description: `${m.series} ${m.name}. Подготовим образец и веер покрытий к вашему визиту в МЦ Roomer.`,
-                        source: `Визит в шоурум: ${m.series} ${m.name}`,
-                        button: "Записаться на визит",
-                      })
-                    }
-                    className="mt-2 inline-flex w-full items-center justify-center gap-1.5 py-1.5 text-[0.82em] text-muted-foreground transition hover:text-foreground"
-                  >
-                    <Icon name="Eye" size={14} /> Посмотреть в шоуруме
-                  </button>
-                </div>
-              </div>
-            </article>
+            <ModelCard key={m.id} m={m} i={i} />
           ))}
         </div>
       </div>

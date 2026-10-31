@@ -12,9 +12,11 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OrangeRouteImport } from './routes/orange'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminSplatRouteImport } from './routes/admin.$'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as ModelsSlugRouteImport } from './routes/models.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -29,6 +31,11 @@ const OrangeRoute = OrangeRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
@@ -46,21 +53,30 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ModelsSlugRoute = ModelsSlugRouteImport.update({
+  id: '/models/$slug',
+  path: '/models/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/orange': typeof OrangeRoute
   '/privacy': typeof PrivacyRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/$': typeof AdminSplatRoute
   '/admin/login': typeof AdminLoginRoute
+  '/models/$slug': typeof ModelsSlugRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/orange': typeof OrangeRoute
   '/privacy': typeof PrivacyRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/$': typeof AdminSplatRoute
   '/admin/login': typeof AdminLoginRoute
+  '/models/$slug': typeof ModelsSlugRoute
   '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
@@ -68,23 +84,42 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/orange': typeof OrangeRoute
   '/privacy': typeof PrivacyRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/$': typeof AdminSplatRoute
   '/admin/login': typeof AdminLoginRoute
+  '/models/$slug': typeof ModelsSlugRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/orange' | '/privacy' | '/admin/$' | '/admin/login' | '/admin/'
+    | '/'
+    | '/orange'
+    | '/privacy'
+    | '/sitemap.xml'
+    | '/admin/$'
+    | '/admin/login'
+    | '/models/$slug'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/orange' | '/privacy' | '/admin/$' | '/admin/login' | '/admin'
+  to:
+    | '/'
+    | '/orange'
+    | '/privacy'
+    | '/sitemap.xml'
+    | '/admin/$'
+    | '/admin/login'
+    | '/models/$slug'
+    | '/admin'
   id:
     | '__root__'
     | '/'
     | '/orange'
     | '/privacy'
+    | '/sitemap.xml'
     | '/admin/$'
     | '/admin/login'
+    | '/models/$slug'
     | '/admin/'
   fileRoutesById: FileRoutesById
 }
@@ -92,8 +127,10 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   OrangeRoute: typeof OrangeRoute
   PrivacyRoute: typeof PrivacyRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   AdminSplatRoute: typeof AdminSplatRoute
   AdminLoginRoute: typeof AdminLoginRoute
+  ModelsSlugRoute: typeof ModelsSlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
@@ -120,6 +157,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/': {
       id: '/admin/'
       path: '/admin'
@@ -141,6 +185,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/models/$slug': {
+      id: '/models/$slug'
+      path: '/models/$slug'
+      fullPath: '/models/$slug'
+      preLoaderRoute: typeof ModelsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -148,8 +199,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   OrangeRoute: OrangeRoute,
   PrivacyRoute: PrivacyRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   AdminSplatRoute: AdminSplatRoute,
   AdminLoginRoute: AdminLoginRoute,
+  ModelsSlugRoute: ModelsSlugRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 export const routeTree = rootRouteImport

@@ -50,7 +50,9 @@ export const openMax = (text?: string) => {
 };
 
 export const scrollToId = (id: string) => {
-  document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  else window.location.href = `/#${id}`;
 };
 
 /** Open the cost calculator modal from anywhere, optionally with a preset door type/model. */

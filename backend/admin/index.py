@@ -137,6 +137,35 @@ def current_admin(db: Db, event: dict):
     )
 
 
+TRANSLIT = dict(zip(
+    'абвгдеёжзийклмнопрстуфхцчшщъыьэюя',
+    ['a', 'b', 'v', 'g', 'd', 'e', 'e', 'zh', 'z', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't', 'u', 'f',
+     'h', 'c', 'ch', 'sh', 'sch', '', 'y', '', 'e', 'yu', 'ya'],
+))
+
+
+def model_slug(text: str) -> str:
+    low = str(text).lower()
+    out = ''.join(TRANSLIT.get(ch, ch) for ch in low)
+    return re.sub(r'[^a-z0-9]+', '-', out).strip('-')[:90]
+
+
+def unique_slug(db: Db, wanted: str, name: str, pid) -> str:
+    base = model_slug(wanted) or model_slug(name) or 'model'
+    slug, n = base, 2
+    while True:
+        row = db.one(f'SELECT id FROM {schema()}.products WHERE slug = {q(slug)}')
+        if not row or (pid and int(row['id']) == int(pid)):
+            return slug
+        slug, n = f'{base}-{n}', n + 1
+
+
+def clean_url(v) -> str:
+    url = str(v or '').strip()[:500]
+    cdn_prefix = f"https://cdn.poehali.dev/projects/{os.environ.get('AWS_ACCESS_KEY_ID', '')}/"
+    return url if url and (url.startswith('/img/') or url.startswith(cdn_prefix)) else ''
+
+
 def slugify(name: str) -> str:
     base = re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')
     return (base or 'cat')[:40] + '-' + uuid.uuid4().hex[:6]
@@ -146,7 +175,7 @@ def all_data(db: Db) -> dict:
     s = schema()
     products = db.all(
             f'SELECT id, category_id, name, series, badge, description, price, image_url, status, sort_order, updated_at, '
-            f'in_main, in_orange, finishes, finishes_label '
+            f'in_main, in_orange, finishes, finishes_label, slug '
             f'FROM {s}.products ORDER BY sort_order, id'
     )
     for p in products:
@@ -216,13 +245,23 @@ def save_product(db: Db, body: dict) -> dict:
     if not in_main and not in_orange:
         return reply(400, {'error': 'Выберите хотя бы один раздел: основной каталог или Orange'})
     finishes = []
-    for f in (body.get('finishes') or [])[:12]:
+    for f in (body.get('finishes') or [])[:24]:
         if not isinstance(f, dict):
             continue
-        fname = str(f.get('name', '')).strip()[:40]
+        fname = str(f.get('name', '')).strip()[:60]
         color = str(f.get('color', '')).strip()[:20]
-        if fname and re.fullmatch(r'#[0-9a-fA-F]{6}', color or ''):
-            finishes.append({'name': fname, 'color': color})
+        if not re.fullmatch(r'#[0-9a-fA-F]{6}', color or ''):
+            color = '#cccccc'
+        if not fname:
+            continue
+        item = {'name': fname, 'color': color}
+        texture = clean_url(f.get('texture'))
+        photo = clean_url(f.get('image'))
+        if texture:
+            item['texture'] = texture
+        if photo:
+            item['image'] = photo
+        finishes.append(item)
     image = str(body.get('image_url', '')).strip()[:500]
     cdn_prefix = f"https://cdn.poehali.dev/projects/{os.environ.get('AWS_ACCESS_KEY_ID', '')}/"
     if image and not (image.startswith('/img/') or image.startswith(cdn_prefix)):
@@ -243,6 +282,7 @@ def save_product(db: Db, body: dict) -> dict:
         'finishes_label': q(str(body.get('finishes_label') or 'Отделки').strip()[:40]),
     }
     pid = body.get('id')
+    fields['slug'] = q(unique_slug(db, str(body.get('slug') or ''), name, pid))
     if pid:
         sets = ', '.join(f'{k} = {v}' for k, v in fields.items())
         db.run(f'UPDATE {s}.products SET {sets}, updated_at = NOW() WHERE id = {int(pid)}')
@@ -312,7 +352,12 @@ def upload_image(body: dict) -> dict:
         return reply(400, {'error': 'Можно загружать только JPEG, PNG или WEBP'})
 
     img = img.convert('RGB')
-    img.thumbnail((1400, 1400), Image.LANCZOS)
+    if body.get('kind') == 'texture':
+        side = min(img.width, img.height)
+        left, top = (img.width - side) // 2, (img.height - side) // 2
+        img = img.crop((left, top, left + side, top + side)).resize((240, 240), Image.LANCZOS)
+    else:
+        img.thumbnail((1400, 1400), Image.LANCZOS)
     out = io.BytesIO()
     img.save(out, format='WEBP', quality=82, method=6)
 

@@ -6,6 +6,7 @@ export type Photo = { src: string };
 
 export type Model = {
   id: number;
+  slug: string;
   cat: string;
   name: string;
   subtitle: string;
@@ -23,6 +24,7 @@ const fmt = (n: number) => new Intl.NumberFormat("ru-RU").format(n);
 
 export const toModel = (p: CatalogProduct, slug: string): Model => ({
   id: p.id,
+  slug: p.slug ?? "",
   cat: slug,
   name: p.name,
   subtitle: p.series,
@@ -33,3 +35,6 @@ export const toModel = (p: CatalogProduct, slug: string): Model => ({
   finishes: p.finishes ?? [],
   photos: [{ src: p.image_url || PLACEHOLDER }],
 });
+
+/** Фото модели в выбранной отделке; если своего фото у отделки нет — основное. */
+export const photoFor = (m: Model, finish?: Finish): Photo => (finish?.image ? { src: finish.image } : m.photos[0]);

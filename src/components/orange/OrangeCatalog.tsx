@@ -3,24 +3,29 @@ import Icon from "@/components/ui/icon";
 import Reveal from "@/components/Reveal";
 import { SITE, copyText } from "@/lib/site";
 import { fetchCatalog, type CatalogData } from "@/lib/api";
-import { toModel, type Model } from "./orangeData";
+import { toModel, photoFor, type Model } from "./orangeData";
+import { Link as RLink } from "@tanstack/react-router";
+import Swatches from "@/components/catalog/Swatches";
 import SmartImg from "./SmartImg";
 import OrangeLightbox from "./OrangeLightbox";
 import OrangeModelDialog from "./OrangeModelDialog";
 import { goal } from "@/lib/metrika";
 
-const ModelCard = ({ m, i, onDetails, onZoom }: { m: Model; i: number; onDetails: () => void; onZoom: (i: number) => void }) => {
+const ModelCard = ({ m, i, onDetails, onZoom }: { m: Model; i: number; onDetails: (finish: number) => void; onZoom: (i: number, finish: number) => void }) => {
+  const [fi, setFi] = useState(0);
+  const f = m.finishes[fi];
   return (
     <article className="flex flex-col animate-rise" style={{ animationDelay: `${Math.min(i, 8) * 50}ms` }}>
       <div className="relative">
         <button
-          onClick={() => onZoom(0)}
+          onClick={() => onZoom(0, fi)}
           className="group relative block aspect-[3/4] w-full cursor-zoom-in overflow-hidden rounded-[8px] bg-white/[0.06]"
           aria-label={`Открыть фото ${m.name}`}
         >
           <SmartImg
-            photo={m.photos[0]}
-            alt={`${m.name} — ${m.subtitle}`}
+            key={photoFor(m, f).src}
+            photo={photoFor(m, f)}
+            alt={`${m.name} — ${f ? f.name : m.subtitle}`}
             loading={i < 3 ? "eager" : "lazy"}
             className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
           />
@@ -38,22 +43,32 @@ const ModelCard = ({ m, i, onDetails, onZoom }: { m: Model; i: number; onDetails
         </span>
       </div>
       <div className="flex flex-1 flex-col pt-5">
-        <button onClick={onDetails} className="text-left">
-          <h3 className="text-[1.12em] font-medium leading-tight tracking-[-0.025em] hover:text-[#E05A2B]">{m.name}</h3>
-          <p className="mt-1 text-[0.86em] text-white/55">{m.subtitle}</p>
-        </button>
+        {m.slug ? (
+          <RLink to="/models/$slug" params={{ slug: m.slug }} className="text-left">
+            <h3 className="text-[1.12em] font-medium leading-tight tracking-[-0.025em] hover:text-[#E05A2B]">{m.name}</h3>
+            <p className="mt-1 text-[0.86em] text-white/55">{m.subtitle}</p>
+          </RLink>
+        ) : (
+          <button onClick={() => onDetails(fi)} className="text-left">
+            <h3 className="text-[1.12em] font-medium leading-tight tracking-[-0.025em] hover:text-[#E05A2B]">{m.name}</h3>
+            <p className="mt-1 text-[0.86em] text-white/55">{m.subtitle}</p>
+          </button>
+        )}
         <p className="mt-3 line-clamp-3 text-[0.85em] font-light leading-relaxed text-white/55">{m.text}</p>
         {m.finishes.length > 0 && (
-        <button onClick={onDetails} className="mt-4 flex w-fit items-center gap-1.5">
-          {m.finishes.map((s) => (
-            <span key={s.name} title={s.name} className="h-4 w-4 rounded-full border border-white/20" style={{ background: s.color }} />
-          ))}
-          <span className="ml-1 text-[0.75em] text-white/55">{m.finishesLabel === "Профиль" ? "цвета профиля" : "отделки"}</span>
-        </button>
+        <div className="mt-4">
+          <div className="flex items-baseline justify-between gap-2 text-[0.72em]">
+            <span className="uppercase tracking-[0.16em] text-white/45">{m.finishesLabel}</span>
+            <span className="line-clamp-1 font-medium text-white/85">{f?.name}</span>
+          </div>
+          <div className="mt-2.5">
+            <Swatches finishes={m.finishes} active={fi} onPick={setFi} limit={8} dark />
+          </div>
+        </div>
         )}
         <div className="mt-auto flex items-end justify-between gap-3 pt-5">
           <p className="text-[1.25em] font-medium tracking-[-0.02em]">{m.price}</p>
-          <button onClick={onDetails} className="inline-flex items-center gap-1 text-[0.84em] font-medium text-white underline-offset-4 hover:underline">
+          <button onClick={() => onDetails(fi)} className="inline-flex items-center gap-1 text-[0.84em] font-medium text-white underline-offset-4 hover:underline">
             Подробнее <Icon name="ArrowRight" size={13} strokeWidth={1.8} />
           </button>
         </div>
@@ -61,7 +76,7 @@ const ModelCard = ({ m, i, onDetails, onZoom }: { m: Model; i: number; onDetails
           href={SITE.max}
           target="_blank"
           rel="noreferrer"
-          onClick={() => copyText(`Здравствуйте! Хочу рассчитать ${m.name}${m.subtitle ? ` (${m.subtitle})` : ""}.`)}
+          onClick={() => copyText(`Здравствуйте! Хочу рассчитать ${m.name}${m.subtitle ? ` (${m.subtitle})` : ""}${f ? `, ${m.finishesLabel.toLowerCase()} «${f.name}»` : ""}.`)}
           className="btn-pill mt-4 w-full bg-white py-3 text-[0.86em] font-medium text-[#121316] hover:bg-white/90"
         >
           Рассчитать в MAX <Icon name="ArrowUpRight" size={14} strokeWidth={1.8} />
@@ -71,7 +86,7 @@ const ModelCard = ({ m, i, onDetails, onZoom }: { m: Model; i: number; onDetails
   );
 };
 
-type Zoom = { m: Model; i: number; back?: boolean };
+type Zoom = { m: Model; i: number; back?: boolean; finish?: number };
 
 const toModels = ({ categories, products }: CatalogData): Model[] => {
   const slug = new Map(categories.map((c) => [c.id, c.slug]));
@@ -85,7 +100,7 @@ const OrangeCatalog = ({ initial = null }: { initial?: CatalogData | null }) => 
     initial ? initial.categories.map((c) => ({ id: c.slug, label: c.name })) : [],
   );
   const [loading, setLoading] = useState(!initial);
-  const [details, setDetails] = useState<Model | null>(null);
+  const [details, setDetails] = useState<{ m: Model; finish: number } | null>(null);
   const [zoom, setZoom] = useState<Zoom | null>(null);
 
   useEffect(() => {
@@ -104,7 +119,7 @@ const OrangeCatalog = ({ initial = null }: { initial?: CatalogData | null }) => 
   const list = useMemo(() => (active === "all" ? models : models.filter((m) => m.cat === active)), [active, models]);
 
   const closeZoom = () => {
-    if (zoom?.back) setDetails(zoom.m);
+    if (zoom?.back) setDetails({ m: zoom.m, finish: zoom.finish ?? 0 });
     setZoom(null);
   };
 
@@ -158,11 +173,11 @@ const OrangeCatalog = ({ initial = null }: { initial?: CatalogData | null }) => 
         )}
         <div key={active} className="mt-10 grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
           {list.map((m, i) => (
-            <ModelCard key={m.id} m={m} i={i} onDetails={() => {
-              setDetails(m);
+            <ModelCard key={m.id} m={m} i={i} onDetails={(fin) => {
+              setDetails({ m, finish: fin });
               goal("orange_model_open", { model: m.name });
-            }} onZoom={(idx) => {
-              setZoom({ m, i: idx });
+            }} onZoom={(idx, fin) => {
+              setZoom({ m, i: idx, finish: fin });
               goal("orange_photo_zoom", { model: m.name });
             }} />
           ))}
@@ -190,16 +205,17 @@ const OrangeCatalog = ({ initial = null }: { initial?: CatalogData | null }) => 
       </div>
 
       <OrangeModelDialog
-        model={details}
+        model={details?.m ?? null}
+        initialFinish={details?.finish ?? 0}
         onClose={() => setDetails(null)}
-        onZoom={(m, i) => {
+        onZoom={(m, i, finish) => {
           setDetails(null);
-          setZoom({ m, i, back: true });
+          setZoom({ m, i, back: true, finish });
         }}
       />
       {zoom && (
         <OrangeLightbox
-          photos={zoom.m.photos}
+          photos={[photoFor(zoom.m, zoom.m.finishes[zoom.finish ?? 0])]}
           index={zoom.i}
           title={zoom.m.name}
           onClose={closeZoom}
