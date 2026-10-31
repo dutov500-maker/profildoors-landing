@@ -95,6 +95,7 @@ export const adminToken = {
 };
 
 export class AuthError extends Error {}
+export class NetworkError extends Error {}
 
 export const adminApi = async <T = CatalogData>(action: string, body?: unknown): Promise<T> => {
   if (!urls.admin) throw new Error("Панель управления ещё не опубликована");
@@ -112,7 +113,7 @@ export const adminApi = async <T = CatalogData>(action: string, body?: unknown):
     try {
       res = await call();
     } catch {
-      throw new Error("Нет связи с сервером. Проверьте интернет и обновите страницу. Если не помогает — возможно, исчерпан лимит тарифа (poehali.dev/p/pay).");
+      throw new NetworkError("Нет соединения с сервером. Проверьте интернет и нажмите «Повторить».");
     }
   }
   if (res.status === 402) throw new Error("Сервер временно недоступен: достигнут лимит тарифа. Обновите подписку на poehali.dev/p/pay.");

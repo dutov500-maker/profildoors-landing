@@ -1,14 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link, useNavigate } from "@/lib/router-compat";
+import { useNavigate } from "@tanstack/react-router";
 import Icon from "@/components/ui/icon";
-import { AuthError, adminApi, adminToken, type CatalogData, type CatalogProduct, type Lead, type LeadsData } from "@/lib/api";
-import LeadsPanel from "@/components/admin/LeadsPanel";
+import { toast } from "sonner";
+import { AuthError, NetworkError, adminApi, adminToken, type CatalogData, type CatalogProduct, type Lead, type LeadsData } from "@/lib/api";
 import useNoIndex from "@/hooks/useNoIndex";
 import useLeadsPolling, { playChime } from "@/hooks/useLeadsPolling";
+import AdminShell, { PageHead, type AdminTab } from "@/components/admin/AdminShell";
+import LeadsPanel from "@/components/admin/LeadsPanel";
+import ProductsPanel from "@/components/admin/ProductsPanel";
 import CategoriesPanel from "@/components/admin/CategoriesPanel";
 import ProductForm, { type ProductDraft } from "@/components/admin/ProductForm";
-
-const fmt = (n: number) => new Intl.NumberFormat("ru-RU").format(n);
 
 const EMPTY: ProductDraft = {
   name: "",
@@ -24,24 +25,41 @@ const EMPTY: ProductDraft = {
   in_orange: false,
   finishes: [],
   finishes_label: "Отделки",
+  slug: "",
+};
+
+const SAVED: Record<string, string> = {
+  product_save: "Модель сохранена",
+  product_delete: "Модель удалена",
+  product_reorder: "Порядок обновлён",
+  category_save: "Категория сохранена",
+  category_delete: "Категория удалена",
+  category_reorder: "Порядок вкладок обновлён",
+  lead_update: "Заявка обновлена",
+  lead_delete: "Заявка удалена",
 };
 
 const Admin = () => {
   useNoIndex("Панель управления");
-  const nav = useNavigate();
+  const navigate = useNavigate();
+  const nav = useCallback((to: "/admin/login") => navigate({ to, replace: true }), [navigate]);
   const [data, setData] = useState<CatalogData | null>(null);
   const [login, setLogin] = useState("");
-  const [tab, setTab] = useState<"leads" | "products" | "categories">("leads");
+  const [tab, setTab] = useState<AdminTab>("leads");
   const [leads, setLeads] = useState<Lead[]>([]);
   const [editing, setEditing] = useState<ProductDraft | null>(null);
-  const [section, setSection] = useState<"all" | "main" | "orange">("all");
-  const [error, setError] = useState("");
-  const [sound, setSound] = useState(() => localStorage.getItem("pd_admin_sound") !== "off");
+  const [bootError, setBootError] = useState("");
+  const [sound, setSound] = useState(true);
+  const [attempt, setAttempt] = useState(0);
+
+  useEffect(() => {
+    setSound(localStorage.getItem("pd_admin_sound") !== "off");
+  }, []);
 
   useLeadsPolling(!!data, leads, setLeads, sound);
 
   useEffect(() => {
-    const reset = () => (document.title = "Панель управления");
+    const reset = () => (document.title = "Панель управления — ProfilDoors");
     window.addEventListener("focus", reset);
     return () => window.removeEventListener("focus", reset);
   }, []);
@@ -51,21 +69,28 @@ const Admin = () => {
     setSound(next);
     localStorage.setItem("pd_admin_sound", next ? "on" : "off");
     if (next) playChime();
+    toast(next ? "Звук новых заявок включён" : "Звук новых заявок выключен");
   };
 
   const fail = useCallback(
     (e: unknown) => {
-      if (e instanceof AuthError) nav("/admin/login", { replace: true });
-      else setError(e instanceof Error ? e.message : "Ошибка");
+      if (e instanceof AuthError) {
+        toast.error("Сессия истекла — войдите снова");
+        nav("/admin/login");
+        return;
+      }
+      const msg = e instanceof Error ? e.message : "Что-то пошло не так";
+      toast.error(e instanceof NetworkError ? "Нет связи с сервером" : "Не получилось", { description: msg });
     },
     [nav],
   );
 
   useEffect(() => {
     if (!adminToken.get()) {
-      nav("/admin/login", { replace: true });
+      nav("/admin/login");
       return;
     }
+    setBootError("");
     adminApi<{ login: string }>("me")
       .then((r) => {
         setLogin(r.login);
@@ -75,235 +100,146 @@ const Admin = () => {
         setData(d);
         setLeads(l.leads);
       })
-      .catch(fail);
-  }, [nav, fail]);
+      .catch((e) => {
+        if (e instanceof AuthError) nav("/admin/login");
+        else setBootError(e instanceof Error ? e.message : "Не удалось загрузить данные");
+      });
+  }, [nav, attempt]);
 
   const leadsRun = async (action: string, body?: unknown) => {
-    setError("");
     try {
       setLeads((await adminApi<LeadsData>(action, body)).leads);
+      if (SAVED[action]) toast.success(SAVED[action]);
     } catch (e) {
       fail(e);
     }
   };
 
   const run = async (action: string, body: unknown) => {
-    setError("");
     try {
       setData(await adminApi(action, body));
+      if (SAVED[action]) toast.success(SAVED[action]);
     } catch (e) {
       fail(e);
       throw e;
     }
   };
-
   const safeRun = (action: string, body: unknown) => run(action, body).catch(() => undefined);
 
   const logout = async () => {
     await adminApi("logout", {}).catch(() => undefined);
     adminToken.clear();
-    nav("/admin/login", { replace: true });
+    nav("/admin/login");
   };
 
   if (!data) {
     return (
-      <div className="grid min-h-screen place-items-center bg-secondary">
-        {error ? <p className="text-destructive">{error}</p> : <Icon name="Loader2" size={26} className="animate-spin text-muted-foreground" />}
+      <div className="grid min-h-screen place-items-center bg-[#F4F3F1] px-4">
+        {bootError ? (
+          <div className="max-w-[380px] rounded-2xl bg-white p-8 text-center shadow-sm">
+            <Icon name="WifiOff" size={30} className="mx-auto text-black/25" />
+            <p className="mt-4 font-semibold">Не удалось загрузить панель</p>
+            <p className="mt-1 text-[0.88em] text-black/50">{bootError}</p>
+            <button onClick={() => setAttempt((a) => a + 1)} className="mt-5 inline-flex h-11 items-center gap-2 rounded-xl bg-[#0F1012] px-6 text-[0.9em] font-medium text-white">
+              <Icon name="RefreshCw" size={15} /> Повторить
+            </button>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center gap-3 text-black/45">
+            <Icon name="Loader2" size={26} className="animate-spin" />
+            <span className="text-[0.85em]">Загружаем панель…</span>
+          </div>
+        )}
       </div>
     );
   }
 
-  const catName = (id: number) => data.categories.find((c) => c.id === id)?.name ?? "—";
   const allProducts = data.products as CatalogProduct[];
-  const products = allProducts.filter((p) => section === "all" || (section === "orange" ? p.in_orange : p.in_main));
-  const swap = (a: number, b: number) => {
-    const ids = allProducts.map((x) => x.id);
-    const ia = ids.indexOf(a);
-    const ib = ids.indexOf(b);
-    [ids[ia], ids[ib]] = [ids[ib], ids[ia]];
-    safeRun("product_reorder", { ids });
-  };
   const newLeads = leads.filter((l) => l.status === "new").length;
+  const nextOrder = (allProducts.at(-1)?.sort_order ?? 0) + 10;
+
+  const openNew = () => setEditing({ ...EMPTY, category_id: data.categories[0]?.id ?? 0, sort_order: nextOrder });
+  const duplicate = (p: CatalogProduct) => {
+    const { id: _id, ...rest } = p;
+    void _id;
+    setEditing({ ...rest, name: `${p.name} (копия)`, slug: "", status: "draft", sort_order: nextOrder });
+    toast("Копия открыта — проверьте название и сохраните", { description: "Копия сохранится как черновик" });
+  };
 
   return (
-    <div className="min-h-screen bg-secondary pb-20">
-      <header className="sticky top-0 z-30 border-b border-[#E5E7EB] bg-card">
-        <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between gap-4 px-4 sm:px-6">
-          <div className="leading-tight">
-            <p className="text-[0.95em] font-semibold uppercase tracking-[0.16em]">ProfilDoors</p>
-            <p className="text-[0.72em] text-muted-foreground">Панель управления</p>
-          </div>
-          <div className="flex items-center gap-3 text-sm">
-            <Link to="/#catalog" target="_blank" className="hidden items-center gap-1.5 text-muted-foreground hover:text-foreground sm:inline-flex">
-              <Icon name="ExternalLink" size={14} /> Открыть сайт
-            </Link>
-            <button
-              onClick={toggleSound}
-              title={sound ? "Звук новых заявок включён" : "Звук новых заявок выключен"}
-              className="grid h-9 w-9 place-items-center rounded-full border border-[#E5E7EB] hover:bg-secondary"
-              aria-label="Звук уведомлений"
-            >
-              <Icon name={sound ? "Bell" : "BellOff"} size={16} />
-            </button>
-            <span className="hidden text-muted-foreground sm:inline">{login}</span>
-            <button onClick={logout} className="btn-pill btn-outline px-4 py-2">
-              <Icon name="LogOut" size={14} /> Выйти
-            </button>
-          </div>
-        </div>
-      </header>
+    <AdminShell
+      tab={tab}
+      onTab={(t) => {
+        if (editing && !confirm("Выйти из редактирования? Несохранённые изменения пропадут.")) return;
+        setTab(t);
+        setEditing(null);
+        window.scrollTo(0, 0);
+      }}
+      login={login}
+      newLeads={newLeads}
+      productsCount={allProducts.length}
+      categoriesCount={data.categories.length}
+      sound={sound}
+      onSound={toggleSound}
+      onLogout={logout}
+    >
+      {tab === "leads" && (
+        <>
+          <PageHead title="Заявки" text="Все обращения с сайта. Новые подсвечены оранжевым — позвоните клиенту и переведите заявку «В работу». Список обновляется сам раз в минуту." />
+          <LeadsPanel
+            leads={leads}
+            onUpdate={(b) => leadsRun("lead_update", b)}
+            onDelete={(id) => leadsRun("lead_delete", { id })}
+            onRefresh={() => leadsRun("leads")}
+          />
+        </>
+      )}
 
-      <main className="mx-auto max-w-[1200px] px-4 pt-8 sm:px-6">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="inline-flex rounded-full border border-[#E5E7EB] bg-card p-1">
-            {(
-              [
-                ["leads", `Заявки${newLeads ? ` · ${newLeads} нов.` : ` (${leads.length})`}`],
-                ["products", `Модели (${allProducts.length})`],
-                ["categories", `Категории каталога (${data.categories.length})`],
-              ] as const
-            ).map(([id, l]) => (
-              <button
-                key={id}
-                onClick={() => {
-                  setTab(id);
-                  setEditing(null);
-                }}
-                className={`rounded-full px-4 py-2 text-sm font-medium transition ${tab === id ? "bg-[#1A1A1A] text-white" : "text-muted-foreground hover:text-foreground"}`}
-              >
-                {l}
+      {tab === "products" && editing && (
+        <ProductForm
+          key={editing.id ?? `new-${editing.name}`}
+          initial={editing}
+          categories={data.categories}
+          onCancel={() => setEditing(null)}
+          onSave={async (p) => {
+            await run("product_save", p);
+            setEditing(null);
+            window.scrollTo(0, 0);
+          }}
+        />
+      )}
+
+      {tab === "products" && !editing && (
+        <>
+          <PageHead
+            title="Модели"
+            text="Двери, которые видят клиенты на сайте. Переключатель «На сайте» скрывает модель без удаления, стрелки меняют порядок в каталоге."
+            action={
+              <button onClick={openNew} className="inline-flex h-11 items-center gap-2 rounded-xl bg-[#0F1012] px-5 text-[0.9em] font-medium text-white hover:bg-black">
+                <Icon name="Plus" size={16} /> Добавить модель
               </button>
-            ))}
-          </div>
-          {tab === "products" && !editing && (
-            <button
-              onClick={() =>
-                setEditing({ ...EMPTY, category_id: data.categories[0]?.id ?? 0, sort_order: (allProducts.at(-1)?.sort_order ?? 0) + 10, in_main: section !== "orange", in_orange: section === "orange" })
-              }
-              className="btn-pill btn-graphite"
-            >
-              <Icon name="Plus" size={15} /> Добавить модель
-            </button>
-          )}
-        </div>
+            }
+          />
+          <ProductsPanel
+            products={allProducts}
+            categories={data.categories}
+            onEdit={(p) => {
+              setEditing({ ...p });
+              window.scrollTo(0, 0);
+            }}
+            onDuplicate={duplicate}
+            run={safeRun}
+          />
+        </>
+      )}
 
-        {error && <p className="mt-4 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">{error}</p>}
-
-        <div className="mt-6">
-          {tab === "leads" && (
-            <LeadsPanel
-              leads={leads}
-              onUpdate={(b) => leadsRun("lead_update", b)}
-              onDelete={(id) => leadsRun("lead_delete", { id })}
-              onRefresh={() => leadsRun("leads")}
-            />
-          )}
-          {tab === "categories" && <CategoriesPanel categories={data.categories} products={products} run={safeRun} />}
-
-          {tab === "products" && editing && (
-            <div className="rounded-[14px] border border-[#E5E7EB] bg-card p-5 sm:p-6">
-              <h2 className="mb-5 text-lg font-medium">{editing.id ? "Редактирование модели" : "Новая модель"}</h2>
-              <ProductForm
-                key={editing.id ?? "new"}
-                initial={editing}
-                categories={data.categories}
-                onCancel={() => setEditing(null)}
-                onSave={async (p) => {
-                  await run("product_save", p);
-                  setEditing(null);
-                }}
-              />
-            </div>
-          )}
-
-          {tab === "products" && !editing && (
-            <div className="mb-4 flex flex-wrap gap-2">
-              {(
-                [
-                  ["all", "Все"],
-                  ["main", "Основной каталог"],
-                  ["orange", "Коллекция Orange"],
-                ] as const
-              ).map(([id, l]) => (
-                <button
-                  key={id}
-                  onClick={() => setSection(id)}
-                  className={`rounded-full border px-3 py-1.5 text-sm transition ${
-                    section === id ? "border-[#1A1A1A] bg-[#1A1A1A] text-white" : "border-[#E5E7EB] bg-card text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {l} ({id === "all" ? allProducts.length : allProducts.filter((p) => (id === "orange" ? p.in_orange : p.in_main)).length})
-                </button>
-              ))}
-            </div>
-          )}
-          {tab === "products" && !editing && (
-            <div className="overflow-hidden rounded-[14px] border border-[#E5E7EB] bg-card">
-              {!products.length && <p className="p-10 text-center text-muted-foreground">Пока нет моделей. Нажмите «Добавить модель».</p>}
-              <ul>
-                {products.map((p, i) => (
-                  <li key={p.id} className="flex items-center gap-4 border-b border-[#E5E7EB] p-3 last:border-0 sm:p-4">
-                    <div className="flex flex-col">
-                      <button
-                        disabled={i === 0}
-                        onClick={() => {
-                          swap(p.id, products[i - 1].id);
-                        }}
-                        className="text-muted-foreground hover:text-foreground disabled:opacity-25"
-                        aria-label="Выше"
-                      >
-                        <Icon name="ChevronUp" size={16} />
-                      </button>
-                      <button
-                        disabled={i === products.length - 1}
-                        onClick={() => {
-                          swap(p.id, products[i + 1].id);
-                        }}
-                        className="text-muted-foreground hover:text-foreground disabled:opacity-25"
-                        aria-label="Ниже"
-                      >
-                        <Icon name="ChevronDown" size={16} />
-                      </button>
-                    </div>
-                    <div className="h-16 w-12 shrink-0 overflow-hidden rounded-md bg-secondary">
-                      {p.image_url && <img src={p.image_url} alt="" className="h-full w-full object-cover" />}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-[0.7em] font-medium uppercase tracking-[0.16em] text-muted-foreground">{p.series || "—"}</p>
-                      <p className="truncate font-medium">{p.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {catName(p.category_id)} · {fmt(p.price)} ₽{p.badge ? ` · ${p.badge}` : ""}
-                      </p>
-                      <p className="mt-1 flex flex-wrap gap-1.5">
-                        {p.in_main && <span className="rounded-full bg-secondary px-2 py-0.5 text-[0.7em] font-medium text-muted-foreground">Основной каталог</span>}
-                        {p.in_orange && <span className="rounded-full bg-[#E05A2B]/10 px-2 py-0.5 text-[0.7em] font-medium text-[#B8522E]">Orange</span>}
-                      </p>
-                    </div>
-                    <span
-                      className={`hidden rounded-full px-2.5 py-1 text-xs font-medium sm:inline ${
-                        p.status === "published" ? "bg-emerald-50 text-emerald-700" : "bg-secondary text-muted-foreground"
-                      }`}
-                    >
-                      {p.status === "published" ? "Опубликовано" : "Черновик"}
-                    </span>
-                    <button onClick={() => setEditing({ ...p })} className="grid h-9 w-9 place-items-center rounded-full hover:bg-secondary" aria-label="Редактировать">
-                      <Icon name="Pencil" size={16} />
-                    </button>
-                    <button
-                      onClick={() => confirm(`Удалить «${p.name}»?`) && safeRun("product_delete", { id: p.id })}
-                      className="grid h-9 w-9 place-items-center rounded-full text-muted-foreground hover:bg-secondary hover:text-destructive"
-                      aria-label="Удалить"
-                    >
-                      <Icon name="Trash2" size={16} />
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      </main>
-    </div>
+      {tab === "categories" && (
+        <>
+          <PageHead title="Категории каталога" text="Вкладки, по которым клиенты фильтруют модели на сайте." />
+          <CategoriesPanel categories={data.categories} products={allProducts} run={safeRun} />
+        </>
+      )}
+    </AdminShell>
   );
 };
 

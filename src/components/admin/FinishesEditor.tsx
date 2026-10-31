@@ -74,14 +74,11 @@ const FinishesEditor = ({ value, label, onChange, onLabel }: Props) => {
   };
 
   return (
-    <div className="rounded-[10px] border border-[#E5E7EB] p-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <span className="block text-[0.85em] font-medium">Цвета, текстуры и отделки</span>
-          <span className="mt-0.5 block text-[0.75em] text-muted-foreground">
-            Кружок — цвет или фото текстуры (дерево, камень). Если добавить фото двери в этой отделке, оно будет показываться при выборе кружка.
-          </span>
-        </div>
+    <div>
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-[#F4F3F1] px-4 py-3">
+        <p className="max-w-[34em] text-[0.78em] text-black/55">
+          Кружок — это <b>цвет</b> или <b>фото текстуры</b> (дерево, камень). Добавьте <b>фото двери в этой отделке</b> — и оно покажется, когда клиент нажмёт на кружок.
+        </p>
         <select value={label} onChange={(e) => onLabel(e.target.value)} className="h-9 rounded-md border border-input bg-background px-2 text-sm">
           <option value="Отделки">Подпись: «Отделки»</option>
           <option value="Цвета">Подпись: «Цвета»</option>
