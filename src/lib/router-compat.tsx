@@ -1,7 +1,7 @@
 // Совместимость с react-router-dom поверх TanStack Router: старые страницы
 // продолжают импортировать Link/useNavigate/useParams/useLocation, меняется
 // только строка импорта. Новый код пишем на API TanStack напрямую.
-import {forwardRef, type AnchorHTMLAttributes, type ReactNode} from "react";
+import {forwardRef, useCallback, type AnchorHTMLAttributes, type ReactNode} from "react";
 import {
     Link as TsLink,
     Navigate as TsNavigate,
@@ -54,12 +54,12 @@ NavLink.displayName = "NavLink";
 
 export function useNavigate() {
     const router = useRouter();
-    return (to: To | number, options?: {replace?: boolean; state?: unknown}) => {
+    return useCallback((to: To | number, options?: {replace?: boolean; state?: unknown}) => {
         if (typeof to === "number") return router.history.go(to);
         const target = splitTo(to);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return router.navigate({to: target.to as any, search: target.search as any, hash: target.hash, replace: options?.replace});
-    };
+    }, [router]);
 }
 
 export function useParams<T extends Record<string, string | undefined> = Record<string, string | undefined>>(): T {

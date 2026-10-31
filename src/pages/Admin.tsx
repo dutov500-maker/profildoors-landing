@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import Icon from "@/components/ui/icon";
 import { toast } from "sonner";
@@ -85,7 +85,10 @@ const Admin = () => {
     [nav],
   );
 
+  const booted = useRef(-1);
   useEffect(() => {
+    if (booted.current === attempt) return;
+    booted.current = attempt;
     if (!adminToken.get()) {
       nav("/admin/login");
       return;
