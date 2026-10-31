@@ -94,14 +94,11 @@ const Admin = () => {
       return;
     }
     setBootError("");
-    adminApi<{ login: string }>("me")
+    adminApi<{ login: string } & CatalogData & LeadsData>("boot")
       .then((r) => {
         setLogin(r.login);
-        return Promise.all([adminApi("data"), adminApi<LeadsData>("leads")]);
-      })
-      .then(([d, l]) => {
-        setData(d);
-        setLeads(l.leads);
+        setData({ categories: r.categories, products: r.products });
+        setLeads(r.leads);
       })
       .catch((e) => {
         if (e instanceof AuthError) nav("/admin/login");
@@ -188,7 +185,7 @@ const Admin = () => {
     >
       {tab === "leads" && (
         <>
-          <PageHead title="Заявки" text="Все обращения с сайта. Новые подсвечены оранжевым — позвоните клиенту и переведите заявку «В работу». Список обновляется сам раз в 2 минуты, кнопка ↻ — обновить сразу." />
+          <PageHead title="Заявки" text="Все обращения с сайта. Новые подсвечены оранжевым — позвоните клиенту и переведите заявку «В работу». Новые заявки появляются сами в течение 30 секунд, кнопка ↻ — обновить сразу." />
           <LeadsPanel
             leads={leads}
             onUpdate={(b) => leadsRun("lead_update", b)}

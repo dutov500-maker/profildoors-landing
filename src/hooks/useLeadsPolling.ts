@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { adminApi, type Lead, type LeadsData } from "@/lib/api";
+import { CDN_BASE, adminApi, type Lead, type LeadsData } from "@/lib/api";
 
 export const playChime = () => {
   const Ctx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
@@ -21,14 +21,27 @@ export const playChime = () => {
   setTimeout(() => ctx.close(), 1000);
 };
 
-/** Вкладка открыта и на экране — раз в 2 минуты. */
-const VISIBLE_MS = 120_000;
-/** Вкладка свёрнута, звук включён — раз в 5 минут. */
-const HIDDEN_MS = 300_000;
-/** Никто не трогал админку 30 минут — проверки останавливаются до первого движения мыши / касания. */
-const IDLE_MS = 30 * 60_000;
-/** Не чаще одной проверки в 20 секунд, даже если вкладку часто переключают. */
-const MIN_GAP_MS = 20_000;
+/**
+ * Проверка новых заявок читает крошечный файл-метку с CDN — это бесплатно, вычислительное время не тратится.
+ * Функция админки вызывается, только когда в метке появилась новая заявка.
+ */
+const MARK_URL = `${CDN_BASE}/site/leads-mark.json`;
+/** Вкладка открыта — раз в 30 секунд (бесплатно). */
+const VISIBLE_MS = 30_000;
+/** Вкладка свёрнута, звук включён — раз в 2 минуты (бесплатно). */
+const HIDDEN_MS = 120_000;
+/** Никто не трогал админку 2 часа — проверки останавливаются до первого движения мыши / касания. */
+const IDLE_MS = 2 * 60 * 60_000;
+const MIN_GAP_MS = 10_000;
+/** Если метки на CDN почему-то нет — запасная проверка через функцию не чаще раза в 10 минут. */
+const FALLBACK_MS = 10 * 60_000;
+
+type Mark = { last: number; new: number };
+const readMark = async (): Promise<Mark | null> => {
+  const r = await fetch(`${MARK_URL}?t=${Date.now()}`, { cache: "no-store" }).catch(() => null);
+  if (!r?.ok) return null;
+  return r.json().catch(() => null);
+};
 
 const useLeadsPolling = (enabled: boolean, leads: Lead[], onLeads: (l: Lead[]) => void, soundOn: boolean) => {
   const maxId = useRef(0);
@@ -49,6 +62,7 @@ const useLeadsPolling = (enabled: boolean, leads: Lead[], onLeads: (l: Lead[]) =
     let timer = 0;
     let busy = false;
     let lastCall = Date.now();
+    let lastReal = Date.now();
     let lastActivity = Date.now();
     let stopped = false;
 
@@ -64,6 +78,13 @@ const useLeadsPolling = (enabled: boolean, leads: Lead[], onLeads: (l: Lead[]) =
       if (busy) return schedule();
       busy = true;
       lastCall = Date.now();
+      const mark = await readMark();
+      const noNews = mark ? mark.last <= maxId.current : Date.now() - lastReal < FALLBACK_MS;
+      if (noNews) {
+        busy = false;
+        return schedule();
+      }
+      lastReal = Date.now();
       const res = await adminApi<LeadsData>("leads").catch(() => null);
       busy = false;
       if (res) {

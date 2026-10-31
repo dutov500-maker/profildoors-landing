@@ -171,6 +171,50 @@ def slugify(name: str) -> str:
     return (base or 'cat')[:40] + '-' + uuid.uuid4().hex[:6]
 
 
+def s3_client():
+    return boto3.client(
+        's3',
+        endpoint_url='https://bucket.poehali.dev',
+        aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
+        aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'],
+    )
+
+
+def cdn_url(key: str) -> str:
+    return f"https://cdn.poehali.dev/projects/{os.environ['AWS_ACCESS_KEY_ID']}/bucket/{key}"
+
+
+def put_json(key: str, data) -> None:
+    s3_client().put_object(
+        Bucket='files', Key=key, ContentType='application/json; charset=utf-8', CacheControl='no-cache',
+        Body=json.dumps(data, ensure_ascii=False, default=str).encode(),
+    )
+
+
+def publish_catalog(db: Db) -> None:
+    """Готовый каталог одним файлом на CDN: сайт читает его без вызова функций."""
+    s = schema()
+    cats = db.all(f'SELECT id, slug, name, quiz_type FROM {s}.categories ORDER BY sort_order, id')
+    rows = db.all(
+        f"SELECT id, slug, name, series, badge, description, price, image_url, category_id, finishes, finishes_label, "
+        f"in_main, in_orange, updated_at::date::text AS updated FROM {s}.products "
+        f"WHERE status = 'published' ORDER BY sort_order, id"
+    )
+    for p in rows:
+        try:
+            raw = json.loads(p['finishes'] or '[]')
+        except ValueError:
+            raw = []
+        p['finishes'] = [{k: f[k] for k in ('name', 'color', 'texture', 'image') if f.get(k)} for f in raw if isinstance(f, dict) and f.get('name')][:24]
+    put_json('site/catalog.json', {'categories': cats, 'products': rows, 'v': uuid.uuid4().hex[:8]})
+
+
+def touch_leads(db: Db) -> None:
+    """Метка последней заявки — админка проверяет её с CDN бесплатно."""
+    row = db.one(f'SELECT COALESCE(MAX(id), 0) AS id, COUNT(*) FILTER (WHERE status = \'new\') AS n FROM {schema()}.leads')
+    put_json('site/leads-mark.json', {'last': int(row['id']), 'new': int(row['n'])})
+
+
 def all_data(db: Db) -> dict:
     s = schema()
     products = db.all(
@@ -362,14 +406,8 @@ def upload_image(body: dict) -> dict:
     img.save(out, format='WEBP', quality=82, method=6)
 
     key = f'catalog/{uuid.uuid4().hex}.webp'
-    s3 = boto3.client(
-        's3',
-        endpoint_url='https://bucket.poehali.dev',
-        aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
-        aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'],
-    )
-    s3.put_object(Bucket='files', Key=key, Body=out.getvalue(), ContentType='image/webp')
-    url = f"https://cdn.poehali.dev/projects/{os.environ['AWS_ACCESS_KEY_ID']}/bucket/{key}"
+    s3_client().put_object(Bucket='files', Key=key, Body=out.getvalue(), ContentType='image/webp', CacheControl='public, max-age=31536000, immutable')
+    url = cdn_url(key)
     return reply(200, {'url': url, 'width': img.width, 'height': img.height})
 
 
@@ -404,6 +442,17 @@ def handler(event: dict, context) -> dict:
             return reply(200, {'ok': True})
         if action == 'data':
             return reply(200, all_data(db))
+        if action == 'boot':
+            try:
+                publish_catalog(db)
+                touch_leads(db)
+            except Exception as err:
+                print('publish on boot failed', str(err)[:200])
+            return reply(200, {'login': admin['login'], **all_data(db), **leads_data(db)})
+        if action == 'publish' and method == 'POST':
+            publish_catalog(db)
+            touch_leads(db)
+            return reply(200, {'ok': True})
         if action == 'leads':
             return reply(200, leads_data(db))
         if method != 'POST':
@@ -421,6 +470,19 @@ def handler(event: dict, context) -> dict:
             'lead_delete': lambda: delete_lead(db, body),
         }
         fn = routes.get(action)
-        return fn() if fn else reply(404, {'error': 'Неизвестное действие'})
+        if not fn:
+            return reply(404, {'error': 'Неизвестное действие'})
+        res = fn()
+        if res['statusCode'] == 200 and action.startswith(('product_', 'category_')):
+            try:
+                publish_catalog(db)
+            except Exception as err:
+                print('publish_catalog failed', str(err)[:200])
+        if res['statusCode'] == 200 and action.startswith('lead_'):
+            try:
+                touch_leads(db)
+            except Exception as err:
+                print('touch_leads failed', str(err)[:200])
+        return res
     finally:
         db.close()

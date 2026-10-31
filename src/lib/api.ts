@@ -63,30 +63,55 @@ export type CatalogData = { categories: CatalogCategory[]; products: CatalogProd
  * переиспользовать 2 минуты: сайт и поисковые роботы не дёргают функцию на каждый показ страницы.
  * Хранится только общедоступный каталог — никаких данных конкретного посетителя.
  */
-const CACHE_MS = 2 * 60_000;
+const CACHE_MS = 60_000;
 const publicCache = new Map<string, { at: number; data: Promise<unknown> }>();
-const cachedJson = <T,>(url: string): Promise<T> => {
+const cachedJson = <T,>(url: string, ms = CACHE_MS): Promise<T> => {
   const hit = publicCache.get(url);
-  if (hit && Date.now() - hit.at < CACHE_MS) return hit.data as Promise<T>;
+  if (hit && Date.now() - hit.at < ms) return hit.data as Promise<T>;
   const data = fetch(url).then((r) => {
     if (!r.ok) throw new Error("Не удалось загрузить каталог");
     return r.json();
   });
   publicCache.set(url, { at: Date.now(), data });
   data.catch(() => publicCache.delete(url));
-  if (publicCache.size > 200) publicCache.delete(publicCache.keys().next().value as string);
+  if (publicCache.size > 50) publicCache.delete(publicCache.keys().next().value as string);
   return data as Promise<T>;
 };
 
+/**
+ * Весь опубликованный каталог лежит готовым файлом на CDN — админка обновляет его при каждом сохранении.
+ * Чтение файла с CDN бесплатно и не расходует вычислительное время.
+ * Функция каталога вызывается только как запасной вариант, если файла ещё нет.
+ */
+export const CDN_BASE = "https://cdn.poehali.dev/projects/442e1379-6c54-4c99-9e28-859842ae37d4/bucket";
+const CATALOG_FILE = `${CDN_BASE}/site/catalog.json`;
+
+const loadAll = async (): Promise<CatalogData> => {
+  try {
+    return await cachedJson<CatalogData>(CATALOG_FILE);
+  } catch {
+    if (!urls.catalog) throw new Error("Каталог ещё не подключён");
+    return cachedJson<CatalogData>(`${urls.catalog}?section=all`, 5 * 60_000);
+  }
+};
+
+const pick = (all: CatalogData, keep: (p: CatalogProduct) => boolean): CatalogData => {
+  const products = all.products.filter(keep);
+  const used = new Set(products.map((p) => p.category_id));
+  return { categories: all.categories.filter((c) => used.has(c.id)), products };
+};
+
 export const fetchModel = async (slug: string): Promise<CatalogData | null> => {
-  if (!urls.catalog) return null;
-  const data = await cachedJson<CatalogData>(`${urls.catalog}?slug=${encodeURIComponent(slug)}`).catch(() => null);
-  return data?.products.length ? data : null;
+  const all = await loadAll().catch(() => null);
+  if (!all) return null;
+  const data = pick(all, (p) => p.slug === slug);
+  return data.products.length ? data : null;
 };
 
 export const fetchCatalog = async (section: "main" | "orange" | "all" = "main"): Promise<CatalogData> => {
-  if (!urls.catalog) throw new Error("Каталог ещё не подключён");
-  return cachedJson<CatalogData>(`${urls.catalog}?section=${section}`);
+  const all = await loadAll();
+  if (section === "all") return pick(all, () => true);
+  return pick(all, (p) => (section === "orange" ? !!p.in_orange : !!p.in_main));
 };
 
 export type LeadStatus = "new" | "in_work" | "done" | "spam";

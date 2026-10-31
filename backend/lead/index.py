@@ -6,6 +6,7 @@ import urllib.error
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor, wait
 
+import boto3
 import psycopg2
 
 BOTS = [
@@ -66,6 +67,24 @@ def notify(text: str) -> bool:
     return any(f.result() for f in done)
 
 
+def touch_mark(cur, schema: str) -> None:
+    """Метка «есть новая заявка» на CDN: админка проверяет её без вызова функций."""
+    try:
+        cur.execute(f"SELECT COALESCE(MAX(id), 0), COUNT(*) FILTER (WHERE status = 'new') FROM {schema}.leads")
+        last, new = cur.fetchone()
+        boto3.client(
+            's3',
+            endpoint_url='https://bucket.poehali.dev',
+            aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
+            aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'],
+        ).put_object(
+            Bucket='files', Key='site/leads-mark.json', ContentType='application/json', CacheControl='no-cache',
+            Body=json.dumps({'last': int(last), 'new': int(new)}).encode(),
+        )
+    except Exception as err:
+        print('leads mark failed', str(err)[:200])
+
+
 def handler(event: dict, context) -> dict:
     """Принимает заявку с сайта, сохраняет её в базу и пробует продублировать в Telegram-ботов."""
     if event.get('httpMethod') == 'OPTIONS':
@@ -105,6 +124,7 @@ def handler(event: dict, context) -> dict:
     )
     if notify(text):
         cur.execute(f'UPDATE {schema}.leads SET telegram_sent = TRUE WHERE id = {int(lead_id)}')
+    touch_mark(cur, schema)
     conn.close()
 
     return reply(200, {'ok': True, 'id': lead_id})
