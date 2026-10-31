@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "@/lib/router-compat";
 import Icon from "@/components/ui/icon";
 import { AuthError, adminApi, adminToken, type CatalogData, type CatalogProduct, type Lead, type LeadsData } from "@/lib/api";
 import LeadsPanel from "@/components/admin/LeadsPanel";

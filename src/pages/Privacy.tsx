@@ -1,15 +1,9 @@
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import Icon from "@/components/ui/icon";
 import PrivacyText from "@/components/legal/PrivacyText";
-import useSeo from "@/hooks/useSeo";
 
 const Privacy = () => {
-  useSeo({
-    title: "Политика конфиденциальности — ProfilDoors в МЦ Roomer",
-    description: "Политика обработки персональных данных сайта profildoors-roomer.ru в соответствии с 152-ФЗ.",
-    path: "/privacy",
-  });
   useEffect(() => window.scrollTo(0, 0), []);
 
   return (

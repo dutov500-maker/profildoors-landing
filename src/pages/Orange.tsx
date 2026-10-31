@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import Icon from "@/components/ui/icon";
 import Reveal from "@/components/Reveal";
 import OrangeQuiz from "@/components/orange/OrangeQuiz";
@@ -11,7 +11,7 @@ import FloatingMessenger from "@/components/FloatingMessenger";
 import LeadDialog from "@/components/LeadDialog";
 import { callMeasurer } from "@/components/Header";
 import { SITE } from "@/lib/site";
-import useSeo from "@/hooks/useSeo";
+import type { CatalogData } from "@/lib/api";
 import { LEGAL } from "@/lib/legal";
 import PrivacyLink from "@/components/legal/PrivacyLink";
 
@@ -23,13 +23,7 @@ const BackLink = ({ className = "" }: { className?: string }) => (
   </Link>
 );
 
-const Orange = () => {
-  useSeo({
-    title: "ProfilDoors Orange 2026 — новая коллекция дверей в МЦ Roomer, Москва",
-    description:
-      "Коллекция ProfilDoors Orange 2026: дизайнерские двери в эмали, рельефные, классические и алюминиевые серии. Смотрите вживую в шоуруме МЦ Roomer, м. Автозаводская. Расчёт стоимости и вызов замерщика.",
-    path: "/orange",
-  });
+const Orange = ({ catalog = null }: { catalog?: CatalogData | null }) => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -98,7 +92,7 @@ const Orange = () => {
       </section>
 
       <div className="text-foreground">
-        <OrangeCatalog />
+        <OrangeCatalog initial={catalog} />
       </div>
 
       <OrangePalette />

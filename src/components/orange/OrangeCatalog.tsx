@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import Icon from "@/components/ui/icon";
 import Reveal from "@/components/Reveal";
 import { SITE, copyText } from "@/lib/site";
-import { fetchCatalog } from "@/lib/api";
+import { fetchCatalog, type CatalogData } from "@/lib/api";
 import { toModel, type Model } from "./orangeData";
 import SmartImg from "./SmartImg";
 import OrangeLightbox from "./OrangeLightbox";
@@ -73,24 +73,31 @@ const ModelCard = ({ m, i, onDetails, onZoom }: { m: Model; i: number; onDetails
 
 type Zoom = { m: Model; i: number; back?: boolean };
 
-const OrangeCatalog = () => {
+const toModels = ({ categories, products }: CatalogData): Model[] => {
+  const slug = new Map(categories.map((c) => [c.id, c.slug]));
+  return products.map((p) => toModel(p, slug.get(p.category_id) ?? ""));
+};
+
+const OrangeCatalog = ({ initial = null }: { initial?: CatalogData | null }) => {
   const [tab, setTab] = useState<string>("all");
-  const [models, setModels] = useState<Model[]>([]);
-  const [tabs, setTabs] = useState<{ id: string; label: string }[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [models, setModels] = useState<Model[]>(() => (initial ? toModels(initial) : []));
+  const [tabs, setTabs] = useState<{ id: string; label: string }[]>(() =>
+    initial ? initial.categories.map((c) => ({ id: c.slug, label: c.name })) : [],
+  );
+  const [loading, setLoading] = useState(!initial);
   const [details, setDetails] = useState<Model | null>(null);
   const [zoom, setZoom] = useState<Zoom | null>(null);
 
   useEffect(() => {
+    if (initial) return;
     fetchCatalog("orange")
-      .then(({ categories, products }) => {
-        const slug = new Map(categories.map((c) => [c.id, c.slug]));
-        setModels(products.map((p) => toModel(p, slug.get(p.category_id) ?? "")));
-        setTabs(categories.map((c) => ({ id: c.slug, label: c.name })));
+      .then((data) => {
+        setModels(toModels(data));
+        setTabs(data.categories.map((c) => ({ id: c.slug, label: c.name })));
       })
       .catch(() => setModels([]))
       .finally(() => setLoading(false));
-  }, []);
+  }, [initial]);
 
   const TABS = useMemo(() => [{ id: "all", label: "Все модели" }, ...tabs], [tabs]);
   const active = TABS.some((t) => t.id === tab) ? tab : "all";

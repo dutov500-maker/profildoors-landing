@@ -36,9 +36,10 @@ const FloatingMessenger = () => {
     };
   }, []);
 
-  const [mobile, setMobile] = useState(() => window.matchMedia("(max-width: 767px)").matches);
+  const [mobile, setMobile] = useState(false);
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 767px)");
+    setMobile(mq.matches);
     const h = () => setMobile(mq.matches);
     mq.addEventListener("change", h);
     return () => mq.removeEventListener("change", h);

@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import Icon from "@/components/ui/icon";
 import Reveal from "@/components/Reveal";
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import { openLead } from "@/components/LeadDialog";
 import { CATALOG_TAB_EVENT, presetQuiz } from "@/lib/site";
 import { goal } from "@/lib/metrika";
-import { fetchCatalog, type CatalogCategory } from "@/lib/api";
+import { fetchCatalog, type CatalogCategory, type CatalogData } from "@/lib/api";
 
 type Model = {
   id: number;
@@ -21,34 +21,37 @@ type Model = {
 
 const fmt = (n: number) => new Intl.NumberFormat("ru-RU").format(n);
 
-const Catalog = () => {
+const toModels = ({ categories, products }: CatalogData): Model[] => {
+  const byId = new Map(categories.map((c) => [c.id, c]));
+  return products.map((p) => ({
+    id: p.id,
+    cat: byId.get(p.category_id)?.slug ?? "",
+    series: p.series,
+    name: p.name,
+    img: p.image_url || "/img/door-placeholder.webp",
+    text: p.description,
+    price: p.price,
+    badge: p.badge,
+    quiz: byId.get(p.category_id)?.quiz_type ?? "interior",
+  }));
+};
+
+const Catalog = ({ initial = null }: { initial?: CatalogData | null }) => {
   const [tab, setTab] = useState<string>("all");
-  const [cats, setCats] = useState<CatalogCategory[]>([]);
-  const [models, setModels] = useState<Model[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [cats, setCats] = useState<CatalogCategory[]>(() => initial?.categories ?? []);
+  const [models, setModels] = useState<Model[]>(() => (initial ? toModels(initial) : []));
+  const [loading, setLoading] = useState(!initial);
 
   useEffect(() => {
+    if (initial) return;
     fetchCatalog()
-      .then(({ categories, products }) => {
-        const byId = new Map(categories.map((c) => [c.id, c]));
-        setCats(categories);
-        setModels(
-          products.map((p) => ({
-            id: p.id,
-            cat: byId.get(p.category_id)?.slug ?? "",
-            series: p.series,
-            name: p.name,
-            img: p.image_url || "/img/door-placeholder.webp",
-            text: p.description,
-            price: p.price,
-            badge: p.badge,
-            quiz: byId.get(p.category_id)?.quiz_type ?? "interior",
-          })),
-        );
+      .then((data) => {
+        setCats(data.categories);
+        setModels(toModels(data));
       })
       .catch(() => setModels([]))
       .finally(() => setLoading(false));
-  }, []);
+  }, [initial]);
 
   useEffect(() => {
     const h = (e: Event) => setTab((e as CustomEvent<string>).detail || "all");

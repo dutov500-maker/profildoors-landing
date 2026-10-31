@@ -12,7 +12,7 @@ const Hero = () => (
         src="/img/hero-interior.webp"
         alt=""
         aria-hidden
-        {...{ fetchpriority: "high" }}
+        fetchPriority="high"
         className="absolute inset-x-0 top-0 -z-20 h-[680px] w-full object-cover object-top md:inset-0 md:h-full md:object-[70%_50%]"
       />
     </picture>

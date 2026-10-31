@@ -1,3 +1,4 @@
+import type { CatalogData } from "@/lib/api";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import LeadDialog from "@/components/LeadDialog";
@@ -11,14 +12,14 @@ import Contacts from "@/components/Contacts";
 import Footer from "@/components/Footer";
 import FloatingMessenger from "@/components/FloatingMessenger";
 
-const Index = () => {
+const Index = ({ catalog = null }: { catalog?: CatalogData | null }) => {
   return (
     <div className="min-h-screen bg-card text-foreground">
       <Header />
       <Hero />
       <Showroom />
       <Factory />
-      <Catalog />
+      <Catalog initial={catalog} />
       <WhyUs />
       <Designers />
       <Contacts />
