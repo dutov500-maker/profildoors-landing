@@ -6,6 +6,7 @@ const SITE_URL = "https://profildoors-roomer.ru";
 const abs = (u: string) => (u.startsWith("http") ? u : `${SITE_URL}${u}`);
 
 export const Route = createFileRoute("/models/$slug")({
+  staleTime: 5 * 60_000,
   loader: async ({ params }) => {
     const data = await fetchModel(params.slug).catch(() => null);
     const product = data?.products[0];

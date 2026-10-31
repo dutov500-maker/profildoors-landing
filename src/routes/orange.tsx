@@ -9,6 +9,7 @@ const URL = "https://profildoors-roomer.ru/orange";
 
 export const Route = createFileRoute("/orange")({
   loader: async () => ({ catalog: await fetchCatalog("orange").catch(() => null) }),
+  staleTime: 5 * 60_000,
   head: () => ({
     meta: [
       { title: TITLE },

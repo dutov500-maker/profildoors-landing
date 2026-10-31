@@ -65,6 +65,6 @@ def handler(event: dict, context) -> dict:
 
     return {
         'statusCode': 200,
-        'headers': {**CORS, 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=60'},
+        'headers': {**CORS, 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=300, stale-while-revalidate=600'},
         'body': json.dumps({'categories': categories, 'products': products}, ensure_ascii=False),
     }

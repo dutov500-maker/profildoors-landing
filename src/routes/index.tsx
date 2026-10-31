@@ -4,6 +4,7 @@ import { fetchCatalog } from "@/lib/api";
 
 export const Route = createFileRoute("/")({
   loader: async () => ({ catalog: await fetchCatalog("main").catch(() => null) }),
+  staleTime: 5 * 60_000,
   head: () => ({
     links: [
       { rel: "canonical", href: "https://profildoors-roomer.ru/" },
