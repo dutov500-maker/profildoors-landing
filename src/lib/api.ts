@@ -86,9 +86,12 @@ const cachedJson = <T,>(url: string, ms = CACHE_MS): Promise<T> => {
 export const CDN_BASE = "https://cdn.poehali.dev/projects/442e1379-6c54-4c99-9e28-859842ae37d4/bucket";
 const CATALOG_FILE = `${CDN_BASE}/site/catalog.json`;
 
+/** Номер минуты: CDN отдаёт свежий файл не позже чем через минуту после сохранения в админке. */
+const minuteStamp = () => Math.floor(Date.now() / 60_000);
+
 const loadAll = async (): Promise<CatalogData> => {
   try {
-    return await cachedJson<CatalogData>(CATALOG_FILE);
+    return await cachedJson<CatalogData>(`${CATALOG_FILE}?m=${minuteStamp()}`);
   } catch {
     if (!urls.catalog) throw new Error("Каталог ещё не подключён");
     return cachedJson<CatalogData>(`${urls.catalog}?section=all`, 5 * 60_000);

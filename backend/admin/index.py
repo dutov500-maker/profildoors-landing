@@ -186,7 +186,7 @@ def cdn_url(key: str) -> str:
 
 def put_json(key: str, data) -> None:
     s3_client().put_object(
-        Bucket='files', Key=key, ContentType='application/json; charset=utf-8', CacheControl='no-cache',
+        Bucket='files', Key=key, ContentType='application/json; charset=utf-8', CacheControl='no-cache, max-age=0',
         Body=json.dumps(data, ensure_ascii=False, default=str).encode(),
     )
 
@@ -443,11 +443,11 @@ def handler(event: dict, context) -> dict:
         if action == 'data':
             return reply(200, all_data(db))
         if action == 'boot':
-            try:
-                publish_catalog(db)
-                touch_leads(db)
-            except Exception as err:
-                print('publish on boot failed', str(err)[:200])
+            for step in (publish_catalog, touch_leads):
+                try:
+                    step(db)
+                except Exception as err:
+                    print(f'{step.__name__} on boot failed:', repr(err)[:300])
             return reply(200, {'login': admin['login'], **all_data(db), **leads_data(db)})
         if action == 'publish' and method == 'POST':
             publish_catalog(db)
